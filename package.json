@@ -1,0 +1,19 @@
+{
+  "name": "node-js-template",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/phartenfeller/node-js-template.git",
+  "author": "phartenfeller <pharti@hotmail.de>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
+  }
+}
