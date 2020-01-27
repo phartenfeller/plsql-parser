@@ -6,7 +6,8 @@
   "author": "phartenfeller <pharti@hotmail.de>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "generate-parser": "cd jison && npx jison ./plsql.jison && cd .."
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -17,6 +18,7 @@
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "flex-js": "^1.0.5"
+    "flex-js": "^1.0.5",
+    "jison": "^0.4.18"
   }
 }

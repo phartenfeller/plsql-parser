@@ -1,8 +1,11 @@
-const fs = require('fs');
+const readFile = require('./util/readFile');
+const parserGenerator = require('./jison/parser');
 
-const run = require('./src/lexer/lexer');
+const main = async () => {
+  const parser = await parserGenerator();
+  const file = await readFile('./test/plsql/test.sql');
+  const res = parser.parse(file);
+  console.log(res);
+};
 
-fs.readFile('./test/plsql/test.sql', (err, data) => {
-  if (err) throw err;
-  run(data.toString());
-});
+main();
