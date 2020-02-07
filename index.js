@@ -1,11 +1,13 @@
 const readFile = require('./util/readFile');
-const parserGenerator = require('./jison/parser');
+const { parse } = require('./chevrotain/rules');
 
 const main = async () => {
-  const parser = await parserGenerator();
-  const file = await readFile('./test/plsql/test.sql');
-  const res = parser.parse(file);
-  console.log(res);
+  try {
+    const file = await readFile('./test/plsql/test.sql');
+    parse(file);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 main();
