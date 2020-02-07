@@ -22,6 +22,11 @@ const End = createToken({
   pattern: /end/,
   longer_alt: Identifier
 });
+const DtypeNumber = createToken({
+  name: 'DtypeNumber',
+  pattern: /number/,
+  longer_alt: Identifier
+});
 const Assignment = createToken({
   name: 'Assignment',
   pattern: /:=/,
@@ -62,6 +67,7 @@ const allTokens = [
   Declare,
   Begin,
   End,
+  DtypeNumber,
   Assignment,
   Semicolon,
   SingleLineComment,

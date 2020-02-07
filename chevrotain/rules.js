@@ -9,9 +9,11 @@ class SelectParser extends CstParser {
 
     $.RULE('block', () => {
       $.SUBRULE($.declareClause);
-      // $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.numberDeclaration);
       $.SUBRULE($.beginClause);
-      // $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.multilineComment);
+      $.SUBRULE($.singleComment);
+      $.SUBRULE($.assignment);
       $.SUBRULE($.endClause);
       $.SUBRULE($.semicolon);
     });
@@ -26,6 +28,35 @@ class SelectParser extends CstParser {
 
     $.RULE('endClause', () => {
       $.CONSUME(tokenVocabulary.End);
+    });
+
+    $.RULE('numberDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeNumber);
+      $.CONSUME(tokenVocabulary.Assignment);
+      $.CONSUME(tokenVocabulary.Integer);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('singleComment', () => {
+      $.CONSUME(tokenVocabulary.SingleLineComment);
+    });
+
+    $.RULE('multilineComment', () => {
+      $.CONSUME(tokenVocabulary.MultiLineComment);
+    });
+
+    $.RULE('assignment', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Assignment);
+      $.SUBRULE($.additionExpression);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('additionExpression', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Plus);
+      $.CONSUME(tokenVocabulary.Integer);
     });
 
     $.RULE('semicolon', () => {
