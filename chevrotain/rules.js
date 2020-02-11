@@ -84,15 +84,24 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('assignment', () => {
+      $.OR([{ ALT: () => $.SUBRULE($.mathAssignment) }]);
+    });
+
+    $.RULE('mathAssignment', () => {
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.Assignment);
-      $.SUBRULE($.additionExpression);
+      $.SUBRULE($.mathExpression);
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('additionExpression', () => {
+    $.RULE('mathExpression', () => {
       $.CONSUME(tokenVocabulary.Identifier);
-      $.CONSUME(tokenVocabulary.Plus);
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Star) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Slash) }
+      ]);
       $.CONSUME(tokenVocabulary.Integer);
     });
 

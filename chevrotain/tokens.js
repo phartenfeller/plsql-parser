@@ -62,6 +62,21 @@ const Plus = createToken({
   pattern: /\+/,
   longer_alt: Identifier
 });
+const Minus = createToken({
+  name: 'Minus',
+  pattern: /-/,
+  longer_alt: Identifier
+});
+const Star = createToken({
+  name: 'Star',
+  pattern: /\*/,
+  longer_alt: Identifier
+});
+const Slash = createToken({
+  name: 'Slash',
+  pattern: /\//,
+  longer_alt: Identifier
+});
 const OpenBracket = createToken({
   name: 'OpenBracket',
   pattern: /\(/,
@@ -96,6 +111,9 @@ const allTokens = [
   SingleLineComment,
   MultiLineComment,
   Plus,
+  Minus,
+  Star,
+  Slash,
   OpenBracket,
   ClosingBracket,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
