@@ -8,8 +8,12 @@ class SelectParser extends CstParser {
     const $ = this;
 
     $.RULE('block', () => {
-      $.SUBRULE($.declareClause);
-      $.SUBRULE($.numberDeclaration);
+      $.OPTION(() => {
+        $.SUBRULE($.declareClause);
+        $.MANY(() => {
+          $.SUBRULE($.numberDeclaration);
+        });
+      });
       $.SUBRULE($.beginClause);
       $.SUBRULE($.multilineComment);
       $.SUBRULE($.singleComment);

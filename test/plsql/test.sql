@@ -1,5 +1,6 @@
 declare
   l_num number := 2;
+  l_sup number := 14;
 begin
   /* my cool program */
   -- comment two
