@@ -1,6 +1,7 @@
 declare
   l_num number := 2;
-  l_sup number := 14;
+  l_sup varchar2(13 char) := 'waslos';
+  l_was number;
 begin
   /* my cool program */
   -- comment two

@@ -27,6 +27,16 @@ const DtypeNumber = createToken({
   pattern: /number/,
   longer_alt: Identifier
 });
+const DtypeVarchar2 = createToken({
+  name: 'DtypeVarchar2',
+  pattern: /varchar2/,
+  longer_alt: Identifier
+});
+const Char = createToken({
+  name: 'Char',
+  pattern: /char/,
+  longer_alt: Identifier
+});
 const Assignment = createToken({
   name: 'Assignment',
   pattern: /:=/,
@@ -52,8 +62,19 @@ const Plus = createToken({
   pattern: /\+/,
   longer_alt: Identifier
 });
+const OpenBracket = createToken({
+  name: 'OpenBracket',
+  pattern: /\(/,
+  longer_alt: Identifier
+});
+const ClosingBracket = createToken({
+  name: 'ClosingBracket',
+  pattern: /\)/,
+  longer_alt: Identifier
+});
 
 const Integer = createToken({ name: 'Integer', pattern: /0|[1-9]\d*/ });
+const String = createToken({ name: 'String', pattern: /'((?:''|[^'])*)'/ });
 
 const WhiteSpace = createToken({
   name: 'WhiteSpace',
@@ -68,14 +89,19 @@ const allTokens = [
   Begin,
   End,
   DtypeNumber,
+  DtypeVarchar2,
+  Char,
   Assignment,
   Semicolon,
   SingleLineComment,
   MultiLineComment,
   Plus,
+  OpenBracket,
+  ClosingBracket,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
-  Integer
+  Integer,
+  String
 ];
 
 const SelectLexer = new Lexer(allTokens, { positionTracking: 'onlyStart' });
@@ -90,8 +116,8 @@ module.exports = {
   lex(inputText) {
     const lexingResult = SelectLexer.tokenize(inputText);
 
-    if (lexingResult.errors.length > 0) {
-      throw Error(lexingResult.errors);
+    if (lexingResult.errors && lexingResult.errors.length > 0) {
+      console.log('errors: ', lexingResult.errors);
       // throw Error('Sad Sad Panda, lexing errors detected');
     }
 
