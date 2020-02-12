@@ -167,5 +167,7 @@ module.exports = {
       //   `Sad sad panda, parsing errors detected!\n${parserInstance.errors[0].message}`
       // );
     }
+
+    return { errors: parserInstance.errors };
   }
 };

@@ -4,8 +4,7 @@ const { parse } = require('./chevrotain/rules');
 const main = async () => {
   try {
     const file = await readFile('./test/plsql/test.sql');
-    const res = parse(file);
-    console.log(res);
+    parse(file);
   } catch (err) {
     console.log(err);
   }

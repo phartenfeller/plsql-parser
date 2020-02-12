@@ -11,7 +11,7 @@ begin
   */
   -- comment two
   l_num := l_num + 5;
-  l_num := 2 - 7;
+  l_num := 2 - 7.8;
   l_num := l_num / 8;
   l_num := l_num * 9;
   l_num := l_num + l_num / l_num * 2;

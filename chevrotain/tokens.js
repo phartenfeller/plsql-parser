@@ -91,13 +91,13 @@ const ClosingBracket = createToken({
   pattern: /\)/,
   longer_alt: Identifier
 });
+const Float = createToken({
+  name: 'Float',
+  pattern: /([0-9]*[.])[0-9]+/
+});
 const Integer = createToken({
   name: 'Integer',
   pattern: /0|[1-9]\d*/
-});
-const Float = createToken({
-  name: 'Float',
-  pattern: /([0-9]*[.])?[0-9]+/
 });
 const String = createToken({ name: 'String', pattern: /'((?:''|[^'])*)'/ });
 
@@ -129,8 +129,8 @@ const allTokens = [
   ClosingBracket,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
-  Integer,
   Float,
+  Integer,
   String
 ];
 
