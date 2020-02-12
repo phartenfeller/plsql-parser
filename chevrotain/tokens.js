@@ -27,15 +27,50 @@ const DtypeNumber = createToken({
   pattern: /number/,
   longer_alt: Identifier
 });
+const DtypePlsIteger = createToken({
+  name: 'DtypePlsIteger',
+  pattern: /pls_integer/,
+  longer_alt: Identifier
+});
 const DtypeVarchar2 = createToken({
   name: 'DtypeVarchar2',
   pattern: /varchar2/,
+  longer_alt: Identifier
+});
+const DtypeBoolean = createToken({
+  name: 'DtypeBoolean',
+  pattern: /boolean/,
+  longer_alt: Identifier
+});
+const DtypeDate = createToken({
+  name: 'DtypeDate',
+  pattern: /date/,
   longer_alt: Identifier
 });
 const Char = createToken({
   name: 'Char',
   pattern: /char/,
   longer_alt: Identifier
+});
+const DateValue = createToken({
+  name: 'DateValue',
+  pattern: /(sysdate|current_date)/
+});
+const BoolValue = createToken({
+  name: 'BoolValue',
+  pattern: Lexer.NA
+});
+const BoolTrue = createToken({
+  name: 'BoolTrue',
+  pattern: /true/,
+  longer_alt: Identifier,
+  categories: BoolValue
+});
+const BoolFalse = createToken({
+  name: 'BoolTrue',
+  pattern: /false/,
+  longer_alt: Identifier,
+  categories: BoolValue
 });
 const Assignment = createToken({
   name: 'Assignment',
@@ -59,6 +94,11 @@ const MultiLineCommentEnd = createToken({
 const Semicolon = createToken({
   name: 'Semicolon',
   pattern: /;/,
+  longer_alt: Identifier
+});
+const Comma = createToken({
+  name: 'Comma',
+  pattern: /,/,
   longer_alt: Identifier
 });
 const Plus = createToken({
@@ -114,13 +154,21 @@ const allTokens = [
   Begin,
   End,
   DtypeNumber,
+  DtypePlsIteger,
   DtypeVarchar2,
+  DtypeBoolean,
+  DtypeDate,
   Char,
+  DateValue,
+  BoolValue,
+  BoolTrue,
+  BoolFalse,
   Assignment,
   SingleLineComment,
   MultiLineCommentStart,
   MultiLineCommentEnd,
   Semicolon,
+  Comma,
   Plus,
   Minus,
   Asterisk,

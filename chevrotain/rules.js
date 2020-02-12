@@ -44,17 +44,47 @@ class SelectParser extends CstParser {
     $.RULE('variableDeclaration', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.numberDeclaration) },
-        { ALT: () => $.SUBRULE($.stringDeclaration) }
+        { ALT: () => $.SUBRULE($.stringDeclaration) },
+        { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
+        { ALT: () => $.SUBRULE($.boolDeclaration) },
+        { ALT: () => $.SUBRULE($.dateDeclaration) },
+        { ALT: () => $.SUBRULE($.comment) }
       ]);
     });
 
     $.RULE('numberDeclaration', () => {
+      // l_num number
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.DtypeNumber);
+      // (3,2)
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.OpenBracket);
+        $.CONSUME(tokenVocabulary.Integer);
+        $.OPTION2(() => {
+          $.CONSUME(tokenVocabulary.Comma);
+          $.CONSUME2(tokenVocabulary.Integer);
+        });
+        $.CONSUME(tokenVocabulary.ClosingBracket);
+      });
+      // := 3
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME3(tokenVocabulary.Integer);
+      });
+      // ;
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('plsIntegerDeclaration', () => {
+      // l_pls pls_integer
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypePlsIteger);
+      // := 3
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME(tokenVocabulary.Integer);
+        $.CONSUME3(tokenVocabulary.Integer);
       });
+      // ;
       $.SUBRULE($.semicolon);
     });
 
@@ -73,6 +103,32 @@ class SelectParser extends CstParser {
         $.CONSUME(tokenVocabulary.Assignment);
         $.CONSUME(tokenVocabulary.String);
       });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('boolDeclaration', () => {
+      // l_bool boolean
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeBoolean);
+      // := true
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME(tokenVocabulary.BoolValue);
+      });
+      // ;
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('dateDeclaration', () => {
+      // l_bool boolean
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeDate);
+      // := true
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME(tokenVocabulary.DateValue);
+      });
+      // ;
       $.SUBRULE($.semicolon);
     });
 
