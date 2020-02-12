@@ -44,12 +44,16 @@ const Assignment = createToken({
 });
 const SingleLineComment = createToken({
   name: 'SingleLineComment',
-  pattern: /--.+/,
+  pattern: /--.+/
+});
+const MultiLineCommentStart = createToken({
+  name: 'MultiLineCommentStart',
+  pattern: /\/\*/,
   longer_alt: Identifier
 });
-const MultiLineComment = createToken({
-  name: 'MultiLineComment',
-  pattern: /\/*.*\//,
+const MultiLineCommentEnd = createToken({
+  name: 'MultiLineCommentEnd',
+  pattern: /\*\//,
   longer_alt: Identifier
 });
 const Semicolon = createToken({
@@ -67,8 +71,8 @@ const Minus = createToken({
   pattern: /-/,
   longer_alt: Identifier
 });
-const Star = createToken({
-  name: 'Star',
+const Asterisk = createToken({
+  name: 'Asterisk',
   pattern: /\*/,
   longer_alt: Identifier
 });
@@ -87,7 +91,6 @@ const ClosingBracket = createToken({
   pattern: /\)/,
   longer_alt: Identifier
 });
-
 const Integer = createToken({ name: 'Integer', pattern: /0|[1-9]\d*/ });
 const String = createToken({ name: 'String', pattern: /'((?:''|[^'])*)'/ });
 
@@ -107,12 +110,13 @@ const allTokens = [
   DtypeVarchar2,
   Char,
   Assignment,
-  Semicolon,
   SingleLineComment,
-  MultiLineComment,
+  MultiLineCommentStart,
+  MultiLineCommentEnd,
+  Semicolon,
   Plus,
   Minus,
-  Star,
+  Asterisk,
   Slash,
   OpenBracket,
   ClosingBracket,

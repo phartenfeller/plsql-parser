@@ -79,8 +79,18 @@ class SelectParser extends CstParser {
     $.RULE('comment', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.SingleLineComment) },
-        { ALT: () => $.CONSUME(tokenVocabulary.MultiLineComment) }
+        { ALT: () => $.SUBRULE($.multiLineComment) }
       ]);
+    });
+
+    $.RULE('multiLineComment', () => {
+      $.CONSUME(tokenVocabulary.MultiLineCommentStart);
+      $.OPTION(() => {
+        $.MANY(() => {
+          $.CONSUME(tokenVocabulary.Identifier);
+        });
+      });
+      $.CONSUME(tokenVocabulary.MultiLineCommentEnd);
     });
 
     $.RULE('assignment', () => {
@@ -95,14 +105,17 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('mathExpression', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
       $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Integer) }
+      ]);
+      $.OR2([
         { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
         { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Star) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
         { ALT: () => $.CONSUME(tokenVocabulary.Slash) }
       ]);
-      $.CONSUME(tokenVocabulary.Integer);
+      $.CONSUME2(tokenVocabulary.Integer);
     });
 
     $.RULE('semicolon', () => {
