@@ -107,15 +107,31 @@ class SelectParser extends CstParser {
     $.RULE('mathExpression', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Integer) }
+        { ALT: () => $.SUBRULE($.number) }
       ]);
-      $.OR2([
+      $.AT_LEAST_ONE(() => {
+        $.SUBRULE($.mathTerm);
+      });
+    });
+
+    $.RULE('mathTerm', () => {
+      $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
         { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
         { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
         { ALT: () => $.CONSUME(tokenVocabulary.Slash) }
       ]);
-      $.CONSUME2(tokenVocabulary.Integer);
+      $.OR2([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        { ALT: () => $.SUBRULE($.number) }
+      ]);
+    });
+
+    $.RULE('number', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Float) }
+      ]);
     });
 
     $.RULE('semicolon', () => {
