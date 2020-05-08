@@ -56,6 +56,7 @@ const DateValue = createToken({
   name: 'DateValue',
   pattern: /(sysdate|current_date)/
 });
+// TODO: Refactor more things from rules to categories
 const BoolValue = createToken({
   name: 'BoolValue',
   pattern: Lexer.NA
@@ -76,6 +77,90 @@ const BoolFalse = createToken({
 const Null = createToken({
   name: 'Null',
   pattern: /null/,
+  longer_alt: Identifier
+});
+
+const CreateKw = createToken({
+  name: 'CreateKw',
+  pattern: /create/,
+  longer_alt: Identifier
+});
+
+const OrKw = createToken({
+  name: 'OrKw',
+  pattern: /or/,
+  longer_alt: Identifier
+});
+
+const ReplaceKw = createToken({
+  name: 'ReplaceKw',
+  pattern: /replace/,
+  longer_alt: Identifier
+});
+
+const PackageKw = createToken({
+  name: 'PackageKw',
+  pattern: /package/,
+  longer_alt: Identifier
+});
+
+const AsKw = createToken({
+  name: 'AsKw',
+  pattern: /as/,
+  longer_alt: Identifier
+});
+
+const FunctionKw = createToken({
+  name: 'FunctionKw',
+  pattern: /function/,
+  longer_alt: Identifier
+});
+
+const ReturnKw = createToken({
+  name: 'ReturnKw',
+  pattern: /return/,
+  longer_alt: Identifier
+});
+
+const ResultCacheKw = createToken({
+  name: 'ResultCacheKw',
+  pattern: /result_cache/,
+  longer_alt: Identifier
+});
+
+const DeterministicKw = createToken({
+  name: 'DeterministicKw',
+  pattern: /deterministic/,
+  longer_alt: Identifier
+});
+
+const ProcedureKw = createToken({
+  name: 'ProcedureKw',
+  pattern: /procedure/,
+  longer_alt: Identifier
+});
+
+const InKw = createToken({
+  name: 'InKw',
+  pattern: /in/,
+  longer_alt: Identifier
+});
+
+const OutKw = createToken({
+  name: 'OutKw',
+  pattern: /out/,
+  longer_alt: Identifier
+});
+
+const NocopyKw = createToken({
+  name: 'NocopyKw',
+  pattern: /nocopy/,
+  longer_alt: Identifier
+});
+
+const DefaultKw = createToken({
+  name: 'DefaultKw',
+  pattern: /default/,
   longer_alt: Identifier
 });
 
@@ -175,6 +260,20 @@ const allTokens = [
   BoolTrue,
   BoolFalse,
   Null,
+  CreateKw,
+  OrKw,
+  ReplaceKw,
+  PackageKw,
+  AsKw,
+  FunctionKw,
+  ReturnKw,
+  ResultCacheKw,
+  DeterministicKw,
+  ProcedureKw,
+  InKw,
+  OutKw,
+  NocopyKw,
+  DefaultKw,
   Assignment,
   SingleLineComment,
   MultiLineCommentStart,

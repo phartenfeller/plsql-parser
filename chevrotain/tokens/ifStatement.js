@@ -25,10 +25,4 @@ const Then = createToken({
   longer_alt: Identifier
 });
 
-const EndIf = createToken({
-  name: 'EndIf',
-  pattern: /end if/,
-  longer_alt: Identifier
-});
-
 module.exports = [If, Elsif, Else, Then];

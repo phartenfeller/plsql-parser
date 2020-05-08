@@ -7,6 +7,13 @@ class SelectParser extends CstParser {
 
     const $ = this;
 
+    $.RULE('global', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.block) },
+        { ALT: () => $.SUBRULE($.createPackage) }
+      ]);
+    });
+
     $.RULE('block', () => {
       $.OPTION(() => {
         $.SUBRULE($.declareClause);
@@ -96,6 +103,25 @@ class SelectParser extends CstParser {
       $.CONSUME2(tokenVocabulary.Identifier);
     });
 
+    $.RULE('createPackage', () => {
+      $.CONSUME(tokenVocabulary.CreateKw); // create
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.OrKw); // or
+        $.CONSUME(tokenVocabulary.ReplaceKw); // replace
+      });
+      $.CONSUME(tokenVocabulary.PackageKw); // package
+      $.CONSUME(tokenVocabulary.Identifier); // pkg_name
+      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.MANY(() => {
+        $.SUBRULE($.variableDeclaration);
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.Identifier); // pkg_name
+      });
+      $.SUBRULE($.semicolon); // ;
+    });
+
     $.RULE('variableDeclaration', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.numberDeclaration) },
@@ -103,7 +129,98 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
-        { ALT: () => $.SUBRULE($.comment) }
+        { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
+        { ALT: () => $.SUBRULE($.functionDeclaration) },
+        { ALT: () => $.SUBRULE($.procedureDeclaration) }
+      ]);
+    });
+
+    $.RULE('argument', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // pi_input
+      $.OR([
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.InKw); // in
+            $.OPTION(() => {
+              $.CONSUME(tokenVocabulary.OutKw); // out
+              $.OPTION2(() => {
+                $.CONSUME(tokenVocabulary.NocopyKw); // nopy
+              });
+            });
+          }
+        },
+        {
+          ALT: () => {
+            $.CONSUME2(tokenVocabulary.OutKw); // out
+            $.OPTION3(() => {
+              $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
+            });
+          }
+        }
+      ]);
+      $.SUBRULE($.dataType); // varchar2 | number ...
+      $.OPTION4(() => {
+        $.OR2([
+          { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
+          { ALT: () => $.CONSUME(tokenVocabulary.Assignment) } // :=
+        ]);
+        $.SUBRULE($.value);
+      });
+    });
+
+    $.RULE('value', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.number) }, // 4.2
+        { ALT: () => $.CONSUME(tokenVocabulary.String) }, // 'value'
+        { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
+        { ALT: () => $.CONSUME(tokenVocabulary.DateValue) } // sysdate | current_date
+      ]);
+    });
+
+    $.RULE('argumentList', () => {
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.MANY_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.SUBRULE($.argument);
+        }
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
+    });
+
+    $.RULE('functionDeclaration', () => {
+      $.CONSUME(tokenVocabulary.FunctionKw); // procedure
+      $.CONSUME(tokenVocabulary.Identifier); // fnc_name
+      $.OPTION(() => {
+        $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
+      });
+      $.CONSUME(tokenVocabulary.ReturnKw);
+      $.SUBRULE($.dataType); // varchar2
+      $.OPTION2(() => {
+        $.CONSUME(tokenVocabulary.DeterministicKw); // deterministic
+      });
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.ResultCacheKw); // result_cache
+      });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('procedureDeclaration', () => {
+      $.CONSUME(tokenVocabulary.ProcedureKw); // procedure
+      $.CONSUME(tokenVocabulary.Identifier); // prc_name
+      $.OPTION(() => {
+        $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
+      });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('dataType', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeNumber) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) }
       ]);
     });
 
@@ -272,7 +389,7 @@ module.exports = {
     parserInstance.input = lexResult.tokens;
 
     // No semantic actions so this won't return anything yet.
-    parserInstance.block();
+    parserInstance.global();
 
     if (parserInstance.errors.length > 0) {
       throw Error(parserInstance.errors);
