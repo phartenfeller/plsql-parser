@@ -8,12 +8,16 @@ class SelectParser extends CstParser {
     const $ = this;
 
     $.RULE('block', () => {
-      $.SUBRULE($.declareClause);
-      $.SUBRULE($.numberDeclaration);
+      $.OPTION(() => {
+        $.SUBRULE($.declareClause);
+        $.MANY(() => {
+          $.SUBRULE($.variableDeclaration);
+        });
+      });
       $.SUBRULE($.beginClause);
-      $.SUBRULE($.multilineComment);
-      $.SUBRULE($.singleComment);
-      $.SUBRULE($.assignment);
+      $.MANY2(() => {
+        $.SUBRULE($.statement);
+      });
       $.SUBRULE($.endClause);
       $.SUBRULE($.semicolon);
     });
@@ -30,33 +34,160 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.End);
     });
 
+    $.RULE('statement', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.assignment) },
+        { ALT: () => $.SUBRULE($.comment) }
+      ]);
+    });
+
+    $.RULE('variableDeclaration', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.numberDeclaration) },
+        { ALT: () => $.SUBRULE($.stringDeclaration) },
+        { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
+        { ALT: () => $.SUBRULE($.boolDeclaration) },
+        { ALT: () => $.SUBRULE($.dateDeclaration) },
+        { ALT: () => $.SUBRULE($.comment) }
+      ]);
+    });
+
     $.RULE('numberDeclaration', () => {
+      // l_num number
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.DtypeNumber);
-      $.CONSUME(tokenVocabulary.Assignment);
-      $.CONSUME(tokenVocabulary.Integer);
+      // (3,2)
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.OpenBracket);
+        $.CONSUME(tokenVocabulary.Integer);
+        $.OPTION2(() => {
+          $.CONSUME(tokenVocabulary.Comma);
+          $.CONSUME2(tokenVocabulary.Integer);
+        });
+        $.CONSUME(tokenVocabulary.ClosingBracket);
+      });
+      // := 3
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME3(tokenVocabulary.Integer);
+      });
+      // ;
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('singleComment', () => {
-      $.CONSUME(tokenVocabulary.SingleLineComment);
+    $.RULE('plsIntegerDeclaration', () => {
+      // l_pls pls_integer
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypePlsIteger);
+      // := 3
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME3(tokenVocabulary.Integer);
+      });
+      // ;
+      $.SUBRULE($.semicolon);
     });
 
-    $.RULE('multilineComment', () => {
-      $.CONSUME(tokenVocabulary.MultiLineComment);
+    $.RULE('stringDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeVarchar2);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.OpenBracket);
+        $.CONSUME(tokenVocabulary.Integer);
+        $.OPTION2(() => {
+          $.CONSUME(tokenVocabulary.Char);
+        });
+        $.CONSUME(tokenVocabulary.ClosingBracket);
+      });
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME(tokenVocabulary.String);
+      });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('boolDeclaration', () => {
+      // l_bool boolean
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeBoolean);
+      // := true
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME(tokenVocabulary.BoolValue);
+      });
+      // ;
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('dateDeclaration', () => {
+      // l_bool boolean
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.DtypeDate);
+      // := true
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.CONSUME(tokenVocabulary.DateValue);
+      });
+      // ;
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('comment', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.SingleLineComment) },
+        { ALT: () => $.SUBRULE($.multiLineComment) }
+      ]);
+    });
+
+    $.RULE('multiLineComment', () => {
+      $.CONSUME(tokenVocabulary.MultiLineCommentStart);
+      $.OPTION(() => {
+        $.MANY(() => {
+          $.CONSUME(tokenVocabulary.Identifier);
+        });
+      });
+      $.CONSUME(tokenVocabulary.MultiLineCommentEnd);
     });
 
     $.RULE('assignment', () => {
+      $.OR([{ ALT: () => $.SUBRULE($.mathAssignment) }]);
+    });
+
+    $.RULE('mathAssignment', () => {
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.Assignment);
-      $.SUBRULE($.additionExpression);
+      $.SUBRULE($.mathExpression);
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('additionExpression', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.CONSUME(tokenVocabulary.Plus);
-      $.CONSUME(tokenVocabulary.Integer);
+    $.RULE('mathExpression', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        { ALT: () => $.SUBRULE($.number) }
+      ]);
+      $.AT_LEAST_ONE(() => {
+        $.SUBRULE($.mathTerm);
+      });
+    });
+
+    $.RULE('mathTerm', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Slash) }
+      ]);
+      $.OR2([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        { ALT: () => $.SUBRULE($.number) }
+      ]);
+    });
+
+    $.RULE('number', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Float) }
+      ]);
     });
 
     $.RULE('semicolon', () => {
@@ -94,5 +225,7 @@ module.exports = {
       //   `Sad sad panda, parsing errors detected!\n${parserInstance.errors[0].message}`
       // );
     }
+
+    return { errors: parserInstance.errors };
   }
 };
