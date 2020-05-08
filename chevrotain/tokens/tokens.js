@@ -1,6 +1,7 @@
 const { createToken, Lexer } = require('chevrotain');
 const Identifier = require('./Identifier');
 const relationalOperators = require('./relationalOperators');
+const ifStatement = require('./ifStatement');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -75,36 +76,6 @@ const BoolFalse = createToken({
 const Null = createToken({
   name: 'Null',
   pattern: /null/,
-  longer_alt: Identifier
-});
-
-const If = createToken({
-  name: 'If',
-  pattern: /if/,
-  longer_alt: Identifier
-});
-
-const Elsif = createToken({
-  name: 'Elsif',
-  pattern: /elsif/,
-  longer_alt: Identifier
-});
-
-const Else = createToken({
-  name: 'Else',
-  pattern: /else/,
-  longer_alt: Identifier
-});
-
-const Then = createToken({
-  name: 'Then',
-  pattern: /then/,
-  longer_alt: Identifier
-});
-
-const EndIf = createToken({
-  name: 'EndIf',
-  pattern: /end if/,
   longer_alt: Identifier
 });
 
@@ -189,11 +160,7 @@ const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
   ...relationalOperators,
-  If,
-  Elsif,
-  Else,
-  Then,
-  EndIf,
+  ...ifStatement,
   Declare,
   Begin,
   End,

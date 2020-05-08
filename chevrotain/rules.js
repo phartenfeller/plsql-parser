@@ -71,7 +71,8 @@ class SelectParser extends CstParser {
           $.SUBRULE5($.statement); // ...
         });
       });
-      $.CONSUME(tokenVocabulary.EndIf); // if
+      $.CONSUME(tokenVocabulary.End); // end
+      $.CONSUME2(tokenVocabulary.If); // if
       $.SUBRULE($.semicolon);
     });
 
