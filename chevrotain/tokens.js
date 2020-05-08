@@ -7,6 +7,7 @@ const tokenVocabulary = {};
 // The Lexer's output will contain an array of token Objects created by metadat
 const Identifier = createToken({ name: 'Identifier', pattern: /[a-zA-Z]\w*/ });
 
+/* ===== Keywords ===== */
 const Declare = createToken({
   name: 'Declare',
   pattern: /declare/
@@ -72,6 +73,8 @@ const BoolFalse = createToken({
   longer_alt: Identifier,
   categories: BoolValue
 });
+
+/* ===== Other ===== */
 const Assignment = createToken({
   name: 'Assignment',
   pattern: /:=/,
