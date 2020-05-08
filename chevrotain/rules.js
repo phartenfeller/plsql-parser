@@ -1,5 +1,5 @@
 const { CstParser } = require('chevrotain');
-const { tokenVocabulary, lex } = require('./tokens');
+const { tokenVocabulary, lex } = require('./tokens/tokens');
 
 class SelectParser extends CstParser {
   constructor() {
@@ -37,8 +37,62 @@ class SelectParser extends CstParser {
     $.RULE('statement', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.assignment) },
-        { ALT: () => $.SUBRULE($.comment) }
+        { ALT: () => $.SUBRULE($.comment) },
+        { ALT: () => $.SUBRULE($.nullStatement) },
+        { ALT: () => $.SUBRULE($.ifStatement) }
       ]);
+    });
+
+    $.RULE('nullStatement', () => {
+      $.CONSUME(tokenVocabulary.Null);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('ifStatement', () => {
+      $.CONSUME(tokenVocabulary.If); // if
+      $.SUBRULE($.condition); // l_var1 > l_var2
+      $.CONSUME(tokenVocabulary.Then); // Then
+      $.MANY(() => {
+        $.SUBRULE2($.statement); // ...
+      });
+      $.OPTION(() => {
+        $.MANY2(() => {
+          $.CONSUME(tokenVocabulary.Elsif); // elsif
+          $.SUBRULE3($.condition); // l_var1 < l_var2
+          $.CONSUME2(tokenVocabulary.Then); // then
+          $.MANY3(() => {
+            $.SUBRULE4($.statement); // ...
+          });
+        });
+      });
+      $.OPTION2(() => {
+        $.CONSUME(tokenVocabulary.Else); // else
+        $.MANY4(() => {
+          $.SUBRULE5($.statement); // ...
+        });
+      });
+      $.CONSUME(tokenVocabulary.EndIf); // if
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('relationalOperators', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Equals) },
+        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals1) },
+        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals2) },
+        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals3) },
+        { ALT: () => $.CONSUME(tokenVocabulary.BiggerEquals) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Bigger) },
+        { ALT: () => $.CONSUME(tokenVocabulary.SmallerEquals) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Smaller) }
+      ]);
+    });
+
+    // TODO: implement condition
+    $.RULE('condition', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.relationalOperators);
+      $.CONSUME2(tokenVocabulary.Identifier);
     });
 
     $.RULE('variableDeclaration', () => {

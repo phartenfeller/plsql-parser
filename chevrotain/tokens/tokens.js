@@ -1,11 +1,9 @@
 const { createToken, Lexer } = require('chevrotain');
+const Identifier = require('./Identifier');
+const relationalOperators = require('./relationalOperators');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
-
-// createToken is used to create a TokenType
-// The Lexer's output will contain an array of token Objects created by metadat
-const Identifier = createToken({ name: 'Identifier', pattern: /[a-zA-Z]\w*/ });
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -74,6 +72,42 @@ const BoolFalse = createToken({
   categories: BoolValue
 });
 
+const Null = createToken({
+  name: 'Null',
+  pattern: /null/,
+  longer_alt: Identifier
+});
+
+const If = createToken({
+  name: 'If',
+  pattern: /if/,
+  longer_alt: Identifier
+});
+
+const Elsif = createToken({
+  name: 'Elsif',
+  pattern: /elsif/,
+  longer_alt: Identifier
+});
+
+const Else = createToken({
+  name: 'Else',
+  pattern: /else/,
+  longer_alt: Identifier
+});
+
+const Then = createToken({
+  name: 'Then',
+  pattern: /then/,
+  longer_alt: Identifier
+});
+
+const EndIf = createToken({
+  name: 'EndIf',
+  pattern: /end if/,
+  longer_alt: Identifier
+});
+
 /* ===== Other ===== */
 const Assignment = createToken({
   name: 'Assignment',
@@ -124,6 +158,7 @@ const Slash = createToken({
   pattern: /\//,
   longer_alt: Identifier
 });
+
 const OpenBracket = createToken({
   name: 'OpenBracket',
   pattern: /\(/,
@@ -153,6 +188,12 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
+  ...relationalOperators,
+  If,
+  Elsif,
+  Else,
+  Then,
+  EndIf,
   Declare,
   Begin,
   End,
@@ -166,6 +207,7 @@ const allTokens = [
   BoolValue,
   BoolTrue,
   BoolFalse,
+  Null,
   Assignment,
   SingleLineComment,
   MultiLineCommentStart,
