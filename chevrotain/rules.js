@@ -60,7 +60,9 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('semicolon', () => {
-      $.CONSUME(tokenVocabulary.Semicolon);
+      $.CONSUME(tokenVocabulary.Semicolon, {
+        ERR_MSG: 'expteted ";" at the end of the statemet'
+      });
     });
 
     // very important to call this after all the rules have been defined.
