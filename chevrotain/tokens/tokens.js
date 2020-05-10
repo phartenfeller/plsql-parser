@@ -3,6 +3,8 @@ const Identifier = require('./Identifier');
 const relationalOperators = require('./relationalOperators');
 const ifStatement = require('./ifStatement');
 const subprograms = require('./subprograms');
+const dataTypes = require('./dataTypes');
+const symbols = require('./symbols');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -23,40 +25,7 @@ const End = createToken({
   pattern: /end/,
   longer_alt: Identifier
 });
-const DtypeNumber = createToken({
-  name: 'DtypeNumber',
-  pattern: /number/,
-  longer_alt: Identifier
-});
-const DtypePlsIteger = createToken({
-  name: 'DtypePlsIteger',
-  pattern: /pls_integer/,
-  longer_alt: Identifier
-});
-const DtypeVarchar2 = createToken({
-  name: 'DtypeVarchar2',
-  pattern: /varchar2/,
-  longer_alt: Identifier
-});
-const DtypeBoolean = createToken({
-  name: 'DtypeBoolean',
-  pattern: /boolean/,
-  longer_alt: Identifier
-});
-const DtypeDate = createToken({
-  name: 'DtypeDate',
-  pattern: /date/,
-  longer_alt: Identifier
-});
-const Char = createToken({
-  name: 'Char',
-  pattern: /char/,
-  longer_alt: Identifier
-});
-const DateValue = createToken({
-  name: 'DateValue',
-  pattern: /(sysdate|current_date)/
-});
+
 // TODO: Refactor more things from rules to categories
 const BoolValue = createToken({
   name: 'BoolValue',
@@ -105,67 +74,6 @@ const AsKw = createToken({
   longer_alt: Identifier
 });
 
-/* ===== Other ===== */
-const Assignment = createToken({
-  name: 'Assignment',
-  pattern: /:=/,
-  longer_alt: Identifier
-});
-const SingleLineComment = createToken({
-  name: 'SingleLineComment',
-  pattern: /--.+/
-});
-const MultiLineCommentStart = createToken({
-  name: 'MultiLineCommentStart',
-  pattern: /\/\*/,
-  longer_alt: Identifier
-});
-const MultiLineCommentEnd = createToken({
-  name: 'MultiLineCommentEnd',
-  pattern: /\*\//,
-  longer_alt: Identifier
-});
-const Semicolon = createToken({
-  name: 'Semicolon',
-  pattern: /;/,
-  longer_alt: Identifier
-});
-const Comma = createToken({
-  name: 'Comma',
-  pattern: /,/,
-  longer_alt: Identifier
-});
-const Plus = createToken({
-  name: 'Plus',
-  pattern: /\+/,
-  longer_alt: Identifier
-});
-const Minus = createToken({
-  name: 'Minus',
-  pattern: /-/,
-  longer_alt: Identifier
-});
-const Asterisk = createToken({
-  name: 'Asterisk',
-  pattern: /\*/,
-  longer_alt: Identifier
-});
-const Slash = createToken({
-  name: 'Slash',
-  pattern: /\//,
-  longer_alt: Identifier
-});
-
-const OpenBracket = createToken({
-  name: 'OpenBracket',
-  pattern: /\(/,
-  longer_alt: Identifier
-});
-const ClosingBracket = createToken({
-  name: 'ClosingBracket',
-  pattern: /\)/,
-  longer_alt: Identifier
-});
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/
@@ -190,13 +98,7 @@ const allTokens = [
   Declare,
   Begin,
   End,
-  DtypeNumber,
-  DtypePlsIteger,
-  DtypeVarchar2,
-  DtypeBoolean,
-  DtypeDate,
-  Char,
-  DateValue,
+  ...dataTypes,
   BoolValue,
   BoolTrue,
   BoolFalse,
@@ -206,18 +108,7 @@ const allTokens = [
   ReplaceKw,
   AsKw,
   ...subprograms,
-  Assignment,
-  SingleLineComment,
-  MultiLineCommentStart,
-  MultiLineCommentEnd,
-  Semicolon,
-  Comma,
-  Plus,
-  Minus,
-  Asterisk,
-  Slash,
-  OpenBracket,
-  ClosingBracket,
+  ...symbols,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
   Float,
