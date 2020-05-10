@@ -14,11 +14,24 @@ class SelectParser extends CstParser {
       ]);
     });
 
+    $.RULE('createPackage', () => {
+      $.OR({
+        MAX_LOOKAHEAD: 5, // create or replace package ?BODY? pkg_name
+        DEF: [
+          { ALT: () => $.SUBRULE($.createPackageSpec) },
+          { ALT: () => $.SUBRULE($.createPackageBody) }
+        ]
+      });
+    });
+
     $.RULE('block', () => {
       $.OPTION(() => {
         $.SUBRULE($.declareClause);
         $.MANY(() => {
-          $.SUBRULE($.variableDeclaration);
+          $.OR([
+            { ALT: () => $.SUBRULE($.packageObjSpec) },
+            { ALT: () => $.SUBRULE($.variableDeclaration) }
+          ]);
         });
       });
       $.SUBRULE($.beginClause);
@@ -103,23 +116,99 @@ class SelectParser extends CstParser {
       $.CONSUME2(tokenVocabulary.Identifier);
     });
 
-    $.RULE('createPackage', () => {
+    $.RULE('createPackageStatement', () => {
       $.CONSUME(tokenVocabulary.CreateKw); // create
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.OrKw); // or
         $.CONSUME(tokenVocabulary.ReplaceKw); // replace
       });
       $.CONSUME(tokenVocabulary.PackageKw); // package
+    });
+
+    $.RULE('createPackageSpec', () => {
+      $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.Identifier); // pkg_name
       $.CONSUME(tokenVocabulary.AsKw); // as
       $.MANY(() => {
-        $.SUBRULE($.variableDeclaration);
+        $.OR([
+          { ALT: () => $.SUBRULE($.objectDeclaration) },
+          { ALT: () => $.SUBRULE($.variableDeclaration) }
+        ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
       $.OPTION2(() => {
         $.CONSUME2(tokenVocabulary.Identifier); // pkg_name
       });
       $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('createPackageBody', () => {
+      $.SUBRULE($.createPackageStatement); // create (or replace) package
+      $.CONSUME(tokenVocabulary.BodyKw); // body
+      $.CONSUME(tokenVocabulary.Identifier); // pkg_name
+      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.MANY(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.packageObjSpec) },
+          { ALT: () => $.SUBRULE($.variableDeclaration) } // TODO: here is also spec ? where is spec allowed ? remove from variable declaration ? wth
+        ]);
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.Identifier); // pkg_name
+      });
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    // TODO: Add more: http://cui.unige.ch/isi/bnf/PLSQL21/package_obj_spec.html
+    $.RULE('packageObjSpec', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.funcBody) },
+        { ALT: () => $.SUBRULE($.procBody) }
+      ]);
+    });
+
+    $.RULE('funcBody', () => {
+      $.SUBRULE($.funcSpec);
+      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.MANY(() => {
+        $.SUBRULE($.variableDeclaration); // l_num number := 1;
+      });
+      $.CONSUME(tokenVocabulary.Begin); // begin
+      $.MANY2(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.statement) },
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.ReturnKw); // return
+              $.CONSUME(tokenVocabulary.Identifier); // l_var
+              $.SUBRULE($.semicolon); // ;
+            }
+          }
+        ]);
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION(() => {
+        $.CONSUME2(tokenVocabulary.Identifier); // my_fnc
+      });
+      $.SUBRULE2($.semicolon); // ;
+    });
+
+    $.RULE('procBody', () => {
+      $.SUBRULE($.procSpec);
+      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.MANY(() => {
+        $.SUBRULE($.variableDeclaration); // l_num number := 1;
+      });
+      $.CONSUME(tokenVocabulary.Begin); // begin
+      $.MANY2(() => {
+        $.SUBRULE($.statement);
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION(() => {
+        $.CONSUME2(tokenVocabulary.Identifier); // my_pkg
+      });
+      $.SUBRULE2($.semicolon); // ;
     });
 
     $.RULE('variableDeclaration', () => {
@@ -129,9 +218,24 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
-        { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
-        { ALT: () => $.SUBRULE($.functionDeclaration) },
-        { ALT: () => $.SUBRULE($.procedureDeclaration) }
+        { ALT: () => $.SUBRULE($.comment) } // TODO: is this necessary???
+      ]);
+    });
+
+    $.RULE('objectDeclaration', () => {
+      $.OR([
+        {
+          ALT: () => {
+            $.SUBRULE($.funcSpec);
+            $.SUBRULE($.semicolon);
+          }
+        },
+        {
+          ALT: () => {
+            $.SUBRULE($.procSpec);
+            $.SUBRULE2($.semicolon);
+          }
+        }
       ]);
     });
 
@@ -188,7 +292,7 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket); // )
     });
 
-    $.RULE('functionDeclaration', () => {
+    $.RULE('funcSpec', () => {
       $.CONSUME(tokenVocabulary.FunctionKw); // procedure
       $.CONSUME(tokenVocabulary.Identifier); // fnc_name
       $.OPTION(() => {
@@ -202,16 +306,14 @@ class SelectParser extends CstParser {
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.ResultCacheKw); // result_cache
       });
-      $.SUBRULE($.semicolon);
     });
 
-    $.RULE('procedureDeclaration', () => {
+    $.RULE('procSpec', () => {
       $.CONSUME(tokenVocabulary.ProcedureKw); // procedure
       $.CONSUME(tokenVocabulary.Identifier); // prc_name
       $.OPTION(() => {
         $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
       });
-      $.SUBRULE($.semicolon);
     });
 
     $.RULE('dataType', () => {

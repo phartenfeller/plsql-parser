@@ -104,6 +104,17 @@ const PackageKw = createToken({
   longer_alt: Identifier
 });
 
+const CreatePackageKw = createToken({
+  name: 'CreatePackageKw',
+  pattern: /create (or replace )?package/
+});
+
+const BodyKw = createToken({
+  name: 'BodyKw',
+  pattern: /body/,
+  longer_alt: Identifier
+});
+
 const AsKw = createToken({
   name: 'AsKw',
   pattern: /as/,
@@ -264,6 +275,8 @@ const allTokens = [
   OrKw,
   ReplaceKw,
   PackageKw,
+  CreatePackageKw,
+  BodyKw,
   AsKw,
   FunctionKw,
   ReturnKw,
