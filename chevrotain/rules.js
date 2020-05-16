@@ -10,7 +10,7 @@ class SelectParser extends CstParser {
     $.RULE('global', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.block) },
-        { ALT: () => $.SUBRULE($.createPackage) }
+        { ALT: () => $.SUBRULE($.createPackage) },
       ]);
     });
 
@@ -19,8 +19,8 @@ class SelectParser extends CstParser {
         MAX_LOOKAHEAD: 5, // create or replace package ?BODY? pkg_name
         DEF: [
           { ALT: () => $.SUBRULE($.createPackageSpec) },
-          { ALT: () => $.SUBRULE($.createPackageBody) }
-        ]
+          { ALT: () => $.SUBRULE($.createPackageBody) },
+        ],
       });
     });
 
@@ -30,7 +30,7 @@ class SelectParser extends CstParser {
         $.MANY(() => {
           $.OR([
             { ALT: () => $.SUBRULE($.packageObjSpec) },
-            { ALT: () => $.SUBRULE($.variableDeclaration) }
+            { ALT: () => $.SUBRULE($.variableDeclaration) },
           ]);
         });
       });
@@ -59,7 +59,9 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.assignment) },
         { ALT: () => $.SUBRULE($.comment) },
         { ALT: () => $.SUBRULE($.nullStatement) },
-        { ALT: () => $.SUBRULE($.ifStatement) }
+        { ALT: () => $.SUBRULE($.ifStatement) },
+        { ALT: () => $.SUBRULE($.insertStatement) },
+        { ALT: () => $.SUBRULE($.transactionStatement) },
       ]);
     });
 
@@ -105,7 +107,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.BiggerEquals) },
         { ALT: () => $.CONSUME(tokenVocabulary.Bigger) },
         { ALT: () => $.CONSUME(tokenVocabulary.SmallerEquals) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Smaller) }
+        { ALT: () => $.CONSUME(tokenVocabulary.Smaller) },
       ]);
     });
 
@@ -132,7 +134,7 @@ class SelectParser extends CstParser {
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.objectDeclaration) },
-          { ALT: () => $.SUBRULE($.variableDeclaration) }
+          { ALT: () => $.SUBRULE($.variableDeclaration) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -150,7 +152,7 @@ class SelectParser extends CstParser {
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
-          { ALT: () => $.SUBRULE($.variableDeclaration) } // TODO: here is also spec ? where is spec allowed ? remove from variable declaration ? wth
+          { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO: here is also spec ? where is spec allowed ? remove from variable declaration ? wth
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -164,7 +166,7 @@ class SelectParser extends CstParser {
     $.RULE('packageObjSpec', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.funcBody) },
-        { ALT: () => $.SUBRULE($.procBody) }
+        { ALT: () => $.SUBRULE($.procBody) },
       ]);
     });
 
@@ -183,8 +185,8 @@ class SelectParser extends CstParser {
               $.CONSUME(tokenVocabulary.ReturnKw); // return
               $.CONSUME(tokenVocabulary.Identifier); // l_var
               $.SUBRULE($.semicolon); // ;
-            }
-          }
+            },
+          },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -218,8 +220,20 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
-        { ALT: () => $.SUBRULE($.comment) } // TODO: is this necessary???
+        { ALT: () => $.SUBRULE($.pragmaStatement) },
+        { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
       ]);
+    });
+
+    $.RULE('pragmaStatement', () => {
+      $.CONSUME(tokenVocabulary.PragmaKw);
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.AutonomousTransactionKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.ExceptionInitKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.RestrictReferencesKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.SeriallyReusableKw) },
+      ]);
+      $.SUBRULE($.semicolon);
     });
 
     $.RULE('objectDeclaration', () => {
@@ -228,14 +242,14 @@ class SelectParser extends CstParser {
           ALT: () => {
             $.SUBRULE($.funcSpec);
             $.SUBRULE($.semicolon);
-          }
+          },
         },
         {
           ALT: () => {
             $.SUBRULE($.procSpec);
             $.SUBRULE2($.semicolon);
-          }
-        }
+          },
+        },
       ]);
     });
 
@@ -251,7 +265,7 @@ class SelectParser extends CstParser {
                 $.CONSUME(tokenVocabulary.NocopyKw); // nopy
               });
             });
-          }
+          },
         },
         {
           ALT: () => {
@@ -259,14 +273,14 @@ class SelectParser extends CstParser {
             $.OPTION3(() => {
               $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
             });
-          }
-        }
+          },
+        },
       ]);
       $.SUBRULE($.dataType); // varchar2 | number ...
       $.OPTION4(() => {
         $.OR2([
           { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
-          { ALT: () => $.CONSUME(tokenVocabulary.Assignment) } // :=
+          { ALT: () => $.CONSUME(tokenVocabulary.Assignment) }, // :=
         ]);
         $.SUBRULE($.value);
       });
@@ -277,7 +291,8 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.number) }, // 4.2
         { ALT: () => $.CONSUME(tokenVocabulary.String) }, // 'value'
         { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
-        { ALT: () => $.CONSUME(tokenVocabulary.DateValue) } // sysdate | current_date
+        { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
+        { ALT: () => $.CONSUME(tokenVocabulary.Null) },
       ]);
     });
 
@@ -287,7 +302,7 @@ class SelectParser extends CstParser {
         SEP: tokenVocabulary.Comma,
         DEF: () => {
           $.SUBRULE($.argument);
-        }
+        },
       });
       $.CONSUME(tokenVocabulary.ClosingBracket); // )
     });
@@ -322,7 +337,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) }
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
       ]);
     });
 
@@ -409,7 +424,7 @@ class SelectParser extends CstParser {
     $.RULE('comment', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.SingleLineComment) },
-        { ALT: () => $.SUBRULE($.multiLineComment) }
+        { ALT: () => $.SUBRULE($.multiLineComment) },
       ]);
     });
 
@@ -437,7 +452,7 @@ class SelectParser extends CstParser {
     $.RULE('mathExpression', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        { ALT: () => $.SUBRULE($.number) }
+        { ALT: () => $.SUBRULE($.number) },
       ]);
       $.AT_LEAST_ONE(() => {
         $.SUBRULE($.mathTerm);
@@ -449,24 +464,60 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
         { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
         { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Slash) }
+        { ALT: () => $.CONSUME(tokenVocabulary.Slash) },
       ]);
       $.OR2([
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        { ALT: () => $.SUBRULE($.number) }
+        { ALT: () => $.SUBRULE($.number) },
       ]);
     });
 
     $.RULE('number', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Float) }
+        { ALT: () => $.CONSUME(tokenVocabulary.Float) },
       ]);
+    });
+
+    $.RULE('insertStatement', () => {
+      $.CONSUME(tokenVocabulary.InsertKw); // insert
+      $.CONSUME(tokenVocabulary.IntoKw); // into
+      $.CONSUME(tokenVocabulary.Identifier); // table_name
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.MANY_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.CONSUME2(tokenVocabulary.Identifier);
+        },
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
+      $.CONSUME(tokenVocabulary.ValuesKw); // values
+      $.CONSUME2(tokenVocabulary.OpenBracket); // (
+      $.MANY_SEP2({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.OR([
+            { ALT: () => $.CONSUME3(tokenVocabulary.Identifier) },
+            { ALT: () => $.SUBRULE($.value) },
+          ]);
+        },
+      });
+      $.CONSUME2(tokenVocabulary.ClosingBracket); // )
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('transactionStatement', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.StartTransactionKw) }, // start transaction
+        { ALT: () => $.CONSUME(tokenVocabulary.CommitKw) }, // commit
+        { ALT: () => $.CONSUME(tokenVocabulary.RollbackKw) }, // rollback
+      ]);
+      $.SUBRULE($.semicolon); // ;
     });
 
     $.RULE('semicolon', () => {
       $.CONSUME(tokenVocabulary.Semicolon, {
-        ERR_MSG: 'expteted ";" at the end of the statemet'
+        ERR_MSG: 'expteted ";" at the end of the statement',
       });
     });
 
@@ -501,5 +552,5 @@ module.exports = {
     }
 
     return { errors: parserInstance.errors };
-  }
+  },
 };
