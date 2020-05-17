@@ -31,6 +31,18 @@ const DtypeDate = createToken({
   longer_alt: Identifier,
 });
 
+const DtypeTimestampWTZ = createToken({
+  name: 'DtypeTimestampWTZ',
+  pattern: /timestamp with time zone/,
+  longer_alt: Identifier,
+});
+
+const DtypeTimestamp = createToken({
+  name: 'DtypeTimestamp',
+  pattern: /timestamp/,
+  longer_alt: DtypeTimestampWTZ,
+});
+
 const Char = createToken({
   name: 'Char',
   pattern: /char/,
@@ -40,6 +52,12 @@ const Char = createToken({
 const DateValue = createToken({
   name: 'DateValue',
   pattern: /(sysdate|current_date)/,
+  longer_alt: Identifier,
+});
+
+const TsValue = createToken({
+  name: 'TsValue',
+  pattern: /(systimestamp|current_timestamp)/,
   longer_alt: Identifier,
 });
 
@@ -61,8 +79,11 @@ module.exports = [
   DtypeVarchar2,
   DtypeBoolean,
   DtypeDate,
+  DtypeTimestampWTZ,
+  DtypeTimestamp,
   Char,
   DateValue,
+  TsValue,
   Rowtype,
   Type,
 ];

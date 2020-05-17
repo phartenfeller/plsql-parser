@@ -220,6 +220,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
+        { ALT: () => $.SUBRULE($.timestampDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
         { ALT: () => $.SUBRULE($.objectType) },
         { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
@@ -370,6 +371,8 @@ class SelectParser extends CstParser {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeNumber) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
@@ -453,16 +456,26 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('dateDeclaration', () => {
-      // l_bool boolean
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.CONSUME(tokenVocabulary.DtypeDate);
-      // := true
+      $.CONSUME(tokenVocabulary.Identifier); // l_date
+      $.CONSUME(tokenVocabulary.DtypeDate); // date
       $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME(tokenVocabulary.DateValue);
+        $.CONSUME(tokenVocabulary.Assignment); // :=
+        $.CONSUME(tokenVocabulary.DateValue); // sysdate
       });
-      // ;
-      $.SUBRULE($.semicolon);
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('timestampDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // l_ts
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) }, // timestamp
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) }, // timestamp with timezone
+      ]);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Assignment); // :=
+        $.CONSUME(tokenVocabulary.TsValue); // systimestamp
+      });
+      $.SUBRULE($.semicolon); // ;
     });
 
     $.RULE('comment', () => {

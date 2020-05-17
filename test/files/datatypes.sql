@@ -12,6 +12,8 @@ declare
   l_row2 schema.table_name%rowtype;
   l_col  my_table.my_col%type;
   l_col2 schema.table_name.col_name%type;
+  l_ts   timestamp := systimestamp;
+  l_tstz timestamp with time zone := current_timestamp;
 begin
   -- empty
 end;
