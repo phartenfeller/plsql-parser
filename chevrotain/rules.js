@@ -378,21 +378,30 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('stringDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.CONSUME(tokenVocabulary.DtypeVarchar2);
+      $.CONSUME(tokenVocabulary.Identifier); // l_str
+      $.CONSUME(tokenVocabulary.DtypeVarchar2); // varchar2
       $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.OpenBracket);
-        $.CONSUME(tokenVocabulary.Integer);
+        $.CONSUME(tokenVocabulary.OpenBracket); // (
+        $.CONSUME(tokenVocabulary.Integer); // 32
         $.OPTION2(() => {
-          $.CONSUME(tokenVocabulary.Char);
+          $.CONSUME(tokenVocabulary.Char); // char
         });
-        $.CONSUME(tokenVocabulary.ClosingBracket);
+        $.CONSUME(tokenVocabulary.ClosingBracket); // )
       });
       $.OPTION3(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME(tokenVocabulary.String);
+        $.CONSUME(tokenVocabulary.Assignment); // :=
+        $.AT_LEAST_ONE_SEP({
+          // 'concat' || l_str
+          SEP: tokenVocabulary.Concat,
+          DEF: () => {
+            $.OR([
+              { ALT: () => $.CONSUME(tokenVocabulary.String) },
+              { ALT: () => $.CONSUME2(tokenVocabulary.Identifier) },
+            ]);
+          },
+        });
       });
-      $.SUBRULE($.semicolon);
+      $.SUBRULE($.semicolon); // ;
     });
 
     $.RULE('boolDeclaration', () => {
