@@ -221,8 +221,43 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
+        { ALT: () => $.SUBRULE($.objectType) },
         { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
       ]);
+    });
+
+    $.RULE('objectType', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // l_row
+      $.OR({
+        MAX_LOOKAHEAD: 5, // table_name.column_name%?type | rowtype?
+        DEF: [
+          { ALT: () => $.SUBRULE($.columnType) },
+          { ALT: () => $.SUBRULE($.rowType) },
+        ],
+      });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('columnType', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // schema_name
+      $.CONSUME(tokenVocabulary.Dot); // .
+      $.CONSUME2(tokenVocabulary.Identifier); // table_name
+      $.OPTION(() => {
+        $.CONSUME2(tokenVocabulary.Dot); // .
+        $.CONSUME3(tokenVocabulary.Identifier); // column_name
+      });
+      $.CONSUME(tokenVocabulary.Percent); // %
+      $.CONSUME(tokenVocabulary.Type); // type
+    });
+
+    $.RULE('rowType', () => {
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Identifier); // schema_name
+        $.CONSUME(tokenVocabulary.Dot); // .
+      });
+      $.CONSUME2(tokenVocabulary.Identifier); // table_name
+      $.CONSUME(tokenVocabulary.Percent); // %
+      $.CONSUME(tokenVocabulary.Rowtype); // rowtype
     });
 
     $.RULE('pragmaStatement', () => {

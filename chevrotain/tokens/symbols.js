@@ -78,6 +78,18 @@ const Concat = createToken({
   longer_alt: Identifier,
 });
 
+const Percent = createToken({
+  name: 'Percent',
+  pattern: /%/,
+  longer_alt: Identifier,
+});
+
+const Dot = createToken({
+  name: 'Dot',
+  pattern: /\./,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   Assignment,
   SingleLineComment,
@@ -92,4 +104,6 @@ module.exports = [
   OpenBracket,
   ClosingBracket,
   Concat,
+  Percent,
+  Dot,
 ];

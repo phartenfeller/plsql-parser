@@ -8,6 +8,10 @@ declare
   l_bool boolean := true;
   l_dat1 date := current_date;
   l_dat2 date := sysdate;
+  l_row  my_table%rowtype;
+  l_row2 schema.table_name%rowtype;
+  l_col  my_table.my_col%type;
+  l_col2 schema.table_name.col_name%type;
 begin
   -- empty
 end;
