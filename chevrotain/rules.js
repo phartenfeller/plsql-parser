@@ -112,7 +112,6 @@ class SelectParser extends CstParser {
       ]);
     });
 
-    // TODO implement condition
     $.RULE('atomicExpression', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
@@ -170,7 +169,7 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    // TODO Add more: http://cui.unige.ch/isi/bnf/PLSQL21/package_obj_spec.html
+    // TODO Add more to the pkg obj spec: http://cui.unige.ch/isi/bnf/PLSQL21/package_obj_spec.html
     $.RULE('packageObjSpec', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.funcBody) },
@@ -231,7 +230,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
         { ALT: () => $.SUBRULE($.objectType) },
-        { ALT: () => $.SUBRULE($.comment) }, // TODO is this necessary???
+        { ALT: () => $.SUBRULE($.comment) }, // TODO is comment in variableDeclaration necessary?
       ]);
     });
 
@@ -580,14 +579,6 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    // TODO with clause
-    // TODO join
-    // TODO order by
-    // TODO group by
-    // TODO having
-    // TODO union, minus, intersect
-    // TODO subquery
-    // TODO distinct
     $.RULE('queryStatement', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.AT_LEAST_ONE_SEP({
