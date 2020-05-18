@@ -1,5 +1,5 @@
 const { CstParser } = require('chevrotain');
-const { tokenVocabulary, lex } = require('./tokens/tokens');
+const { tokenVocabulary, lex } = require('./tokens');
 
 class SelectParser extends CstParser {
   constructor() {
@@ -60,6 +60,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.comment) },
         { ALT: () => $.SUBRULE($.nullStatement) },
         { ALT: () => $.SUBRULE($.ifStatement) },
+        { ALT: () => $.SUBRULE($.queryStatement) },
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
       ]);
@@ -111,11 +112,18 @@ class SelectParser extends CstParser {
       ]);
     });
 
-    // TODO: implement condition
+    // TODO implement condition
+    $.RULE('atomicExpression', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+      ]);
+    });
+
     $.RULE('condition', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.atomicExpression, { LABEL: 'lhs' });
       $.SUBRULE($.relationalOperators);
-      $.CONSUME2(tokenVocabulary.Identifier);
+      $.SUBRULE2($.atomicExpression, { LABEL: 'rhs' });
     });
 
     $.RULE('createPackageStatement', () => {
@@ -152,7 +160,7 @@ class SelectParser extends CstParser {
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
-          { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO: here is also spec ? where is spec allowed ? remove from variable declaration ? wth
+          { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -162,7 +170,7 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    // TODO: Add more: http://cui.unige.ch/isi/bnf/PLSQL21/package_obj_spec.html
+    // TODO Add more: http://cui.unige.ch/isi/bnf/PLSQL21/package_obj_spec.html
     $.RULE('packageObjSpec', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.funcBody) },
@@ -223,7 +231,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
         { ALT: () => $.SUBRULE($.objectType) },
-        { ALT: () => $.SUBRULE($.comment) }, // TODO: is this necessary???
+        { ALT: () => $.SUBRULE($.comment) }, // TODO is this necessary???
       ]);
     });
 
@@ -569,6 +577,57 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.CommitKw) }, // commit
         { ALT: () => $.CONSUME(tokenVocabulary.RollbackKw) }, // rollback
       ]);
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    // TODO with clause
+    // TODO join
+    // TODO order by
+    // TODO group by
+    // TODO having
+    // TODO union, minus, intersect
+    // TODO subquery
+    // TODO distinct
+    $.RULE('queryStatement', () => {
+      $.CONSUME(tokenVocabulary.SelectKw); // select
+      $.AT_LEAST_ONE_SEP({
+        // col1, col2
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.CONSUME(tokenVocabulary.Identifier);
+        },
+      });
+      $.OPTION(() => {
+        $.CONSUME1(tokenVocabulary.IntoKw); // into
+        $.AT_LEAST_ONE_SEP2({
+          // into l_val1, l_val2
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME2(tokenVocabulary.Identifier);
+          },
+        });
+      });
+      $.CONSUME(tokenVocabulary.FromKw); // from
+      $.AT_LEAST_ONE_SEP3({
+        // table 1, table 2
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.CONSUME3(tokenVocabulary.Identifier);
+        },
+      });
+      $.OPTION2(() => {
+        // where 1 = 1 and col2 = 5
+        $.CONSUME(tokenVocabulary.WhereKw);
+        $.AT_LEAST_ONE_SEP4({
+          SEP: $.OR([
+            { ALT: () => $.CONSUME(tokenVocabulary.AndKw) },
+            { ALT: () => $.CONSUME(tokenVocabulary.OrKw) },
+          ]),
+          DEF: () => {
+            $.SUBRULE($.condition);
+          },
+        });
+      });
       $.SUBRULE($.semicolon); // ;
     });
 

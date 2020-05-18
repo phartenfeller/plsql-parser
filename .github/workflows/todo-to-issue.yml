@@ -1,4 +1,4 @@
-name: 'Workflow'
+name: 'TODO to Issues'
 on: ['push']
 jobs:
   build:
@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: 'actions/checkout@master'
       - name: 'TODO to Issue'
-        uses: 'alstr/todo-to-issue-action@v1.1.1-beta'
+        uses: 'alstr/todo-to-issue-action@master'
         with:
           REPO: ${{ github.repository }}
           BEFORE: ${{ github.event.before }}

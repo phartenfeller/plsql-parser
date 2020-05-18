@@ -6,8 +6,8 @@ const subprograms = require('./subprograms');
 const dataTypes = require('./dataTypes');
 const symbols = require('./symbols');
 const pragma = require('./pragma');
-const insert = require('./insert');
 const transaction = require('./transaction');
+const sql = require('./sql');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -96,7 +96,6 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
-  ...insert,
   ...relationalOperators,
   ...ifStatement,
   Declare,
@@ -107,6 +106,7 @@ const allTokens = [
   BoolTrue,
   BoolFalse,
   Null,
+  ...sql,
   ...pragma,
   ...transaction,
   CreateKw,
