@@ -579,6 +579,21 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
+    // TODO with clause
+
+    // TODO join
+
+    // TODO order by
+
+    // TODO group by
+
+    // TODO having
+
+    // TODO union, minus, intersect
+
+    // TODO subquery
+
+    // TODO distinct
     $.RULE('queryStatement', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.AT_LEAST_ONE_SEP({
