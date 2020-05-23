@@ -127,7 +127,7 @@ const allTokens = [
   String,
 ];
 
-const SelectLexer = new Lexer(allTokens, { positionTracking: 'onlyStart' });
+const SelectLexer = new Lexer(allTokens, { positionTracking: 'full' });
 
 allTokens.forEach((tokenType) => {
   tokenVocabulary[tokenType.name] = tokenType;

@@ -66,6 +66,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.queryStatement) },
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
+        { ALT: () => $.SUBRULE($.functionCallSemicolon) },
       ]);
     });
 
@@ -340,6 +341,7 @@ class SelectParser extends CstParser {
 
     $.RULE('value', () => {
       $.OR([
+        { ALT: () => $.SUBRULE($.functionCall) }, // function call
         { ALT: () => $.SUBRULE($.number) }, // 4.2
         { ALT: () => $.CONSUME(tokenVocabulary.String) }, // 'value'
         { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
@@ -396,6 +398,14 @@ class SelectParser extends CstParser {
       ]);
     });
 
+    $.RULE('numberValue', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.number) },
+        { ALT: () => $.SUBRULE($.functionCall) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+      ]);
+    });
+
     $.RULE('numberDeclaration', () => {
       // l_num number
       $.CONSUME(tokenVocabulary.Identifier);
@@ -413,7 +423,7 @@ class SelectParser extends CstParser {
       // := 3
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME3(tokenVocabulary.Integer);
+        $.SUBRULE($.numberValue);
       });
       // ;
       $.SUBRULE($.semicolon);
@@ -426,7 +436,7 @@ class SelectParser extends CstParser {
       // := 3
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME3(tokenVocabulary.Integer);
+        $.SUBRULE($.numberValue);
       });
       // ;
       $.SUBRULE($.semicolon);
@@ -513,13 +523,12 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('assignment', () => {
-      $.OR([{ ALT: () => $.SUBRULE($.mathAssignment) }]);
-    });
-
-    $.RULE('mathAssignment', () => {
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.Assignment);
-      $.SUBRULE($.mathExpression);
+      $.OR([
+        { ALT: () => $.SUBRULE($.mathExpression) },
+        { ALT: () => $.SUBRULE($.value) },
+      ]);
       $.SUBRULE($.semicolon);
     });
 
@@ -586,31 +595,33 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    // colname or call of function
-    $.RULE('sqlColumn', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // colname or fct_name (or schema or pkg)
-      $.OPTION(() => {
-        $.OPTION2(() => {
-          $.CONSUME(tokenVocabulary.Dot);
-          $.CONSUME2(tokenVocabulary.Identifier);
-        });
-        $.OPTION3(() => {
-          $.CONSUME2(tokenVocabulary.Dot);
-          $.CONSUME3(tokenVocabulary.Identifier);
-        });
-        $.CONSUME(tokenVocabulary.OpenBracket); // (
-        $.AT_LEAST_ONE_SEP({
-          SEP: tokenVocabulary.Comma,
-          DEF: () => {
-            $.OPTION4(() => {
-              $.CONSUME4(tokenVocabulary.Identifier); // pi_param
-              $.CONSUME(tokenVocabulary.Arrow); // =>
-            });
-            $.SUBRULE($.value); // 6
-          },
-        });
-        $.CONSUME(tokenVocabulary.ClosingBracket); // (
+    $.RULE('functionCall', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
+      $.OPTION2(() => {
+        $.CONSUME(tokenVocabulary.Dot);
+        $.CONSUME2(tokenVocabulary.Identifier);
       });
+      $.OPTION3(() => {
+        $.CONSUME2(tokenVocabulary.Dot);
+        $.CONSUME3(tokenVocabulary.Identifier);
+      });
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.MANY_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.OPTION4(() => {
+            $.CONSUME4(tokenVocabulary.Identifier); // pi_param
+            $.CONSUME(tokenVocabulary.Arrow); // =>
+          });
+          $.SUBRULE($.value); // 6
+        },
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket); // (
+    });
+
+    $.RULE('functionCallSemicolon', () => {
+      $.SUBRULE($.functionCall);
+      $.SUBRULE($.semicolon);
     });
 
     // TODO with clause
@@ -627,7 +638,7 @@ class SelectParser extends CstParser {
         // col1, col2, fct1(3)
         SEP: tokenVocabulary.Comma,
         DEF: () => {
-          $.SUBRULE($.sqlColumn);
+          $.SUBRULE($.value); // direct value / function call / variable
         },
       });
       $.OPTION(() => {
