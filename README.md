@@ -1,4 +1,4 @@
-# PLSQL-Lint
+# PL/SQL-Parser
 
 ![Test](https://github.com/phartenfeller/plsql-parser/workflows/Test/badge.svg)
 
