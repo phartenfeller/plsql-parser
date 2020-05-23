@@ -24,6 +24,11 @@ as
   as
   begin
     null;
+  exception
+    when dup_val_on_index then
+      null;
+    when others then
+      null;
   end very_important_business_process;
 
 end test_pkg;

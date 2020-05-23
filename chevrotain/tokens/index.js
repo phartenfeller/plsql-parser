@@ -8,6 +8,7 @@ const symbols = require('./symbols');
 const pragma = require('./pragma');
 const transaction = require('./transaction');
 const sql = require('./sql');
+const exception = require('./exception');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -34,12 +35,14 @@ const BoolValue = createToken({
   name: 'BoolValue',
   pattern: Lexer.NA,
 });
+
 const BoolTrue = createToken({
   name: 'BoolTrue',
   pattern: /true/,
   longer_alt: Identifier,
   categories: BoolValue,
 });
+
 const BoolFalse = createToken({
   name: 'BoolTrue',
   pattern: /false/,
@@ -81,6 +84,7 @@ const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
 });
+
 const Integer = createToken({
   name: 'Integer',
   pattern: /0|[1-9]\d*/,
@@ -97,6 +101,8 @@ const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
   ...ifStatement,
+  ...pragma,
+  ...exception,
   Declare,
   Begin,
   End,
@@ -106,7 +112,6 @@ const allTokens = [
   BoolFalse,
   Null,
   ...sql,
-  ...pragma,
   ...transaction,
   CreateKw,
   OrKw,

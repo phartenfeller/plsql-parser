@@ -38,6 +38,9 @@ class SelectParser extends CstParser {
       $.MANY2(() => {
         $.SUBRULE($.statement);
       });
+      $.OPTION2(() => {
+        $.SUBRULE($.exceptionBlock);
+      });
       $.SUBRULE($.endClause);
       $.SUBRULE($.semicolon);
     });
@@ -196,8 +199,11 @@ class SelectParser extends CstParser {
           },
         ]);
       });
-      $.CONSUME(tokenVocabulary.End); // end
       $.OPTION(() => {
+        $.SUBRULE($.exceptionBlock); // exception ...
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION2(() => {
         $.CONSUME2(tokenVocabulary.Identifier); // my_fnc
       });
       $.SUBRULE2($.semicolon); // ;
@@ -213,8 +219,11 @@ class SelectParser extends CstParser {
       $.MANY2(() => {
         $.SUBRULE($.statement);
       });
-      $.CONSUME(tokenVocabulary.End); // end
       $.OPTION(() => {
+        $.SUBRULE($.exceptionBlock); // exception ...
+      });
+      $.CONSUME(tokenVocabulary.End); // end
+      $.OPTION2(() => {
         $.CONSUME2(tokenVocabulary.Identifier); // my_pkg
       });
       $.SUBRULE2($.semicolon); // ;
@@ -653,6 +662,22 @@ class SelectParser extends CstParser {
         });
       });
       $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('exceptionBlock', () => {
+      $.CONSUME(tokenVocabulary.ExceptionKw); // exception
+      $.MANY(() => {
+        $.CONSUME(tokenVocabulary.WhenKw); // when
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.DefinedException) }, // dup_val_on_index
+          { ALT: () => $.CONSUME(tokenVocabulary.OthersKw) }, // others
+          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // user_defined_exception
+        ]);
+        $.CONSUME(tokenVocabulary.Then); // then
+        $.MANY2(() => {
+          $.SUBRULE($.statement);
+        });
+      });
     });
 
     $.RULE('semicolon', () => {
