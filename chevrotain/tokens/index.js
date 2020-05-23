@@ -96,7 +96,6 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
-  ...relationalOperators,
   ...ifStatement,
   Declare,
   Begin,
@@ -115,6 +114,7 @@ const allTokens = [
   AsKw,
   ...subprograms,
   ...symbols,
+  ...relationalOperators,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
   Float,

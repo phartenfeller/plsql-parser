@@ -336,6 +336,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
         { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
         { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
       ]);
     });
 
@@ -560,10 +561,7 @@ class SelectParser extends CstParser {
       $.MANY_SEP2({
         SEP: tokenVocabulary.Comma,
         DEF: () => {
-          $.OR([
-            { ALT: () => $.CONSUME3(tokenVocabulary.Identifier) },
-            { ALT: () => $.SUBRULE($.value) },
-          ]);
+          $.SUBRULE($.value);
         },
       });
       $.CONSUME2(tokenVocabulary.ClosingBracket); // )
@@ -579,28 +577,48 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
+    // colname or call of function
+    $.RULE('sqlColumn', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // colname or fct_name (or schema or pkg)
+      $.OPTION(() => {
+        $.OPTION2(() => {
+          $.CONSUME(tokenVocabulary.Dot);
+          $.CONSUME2(tokenVocabulary.Identifier);
+        });
+        $.OPTION3(() => {
+          $.CONSUME2(tokenVocabulary.Dot);
+          $.CONSUME3(tokenVocabulary.Identifier);
+        });
+        $.CONSUME(tokenVocabulary.OpenBracket); // (
+        $.AT_LEAST_ONE_SEP({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.OPTION4(() => {
+              $.CONSUME4(tokenVocabulary.Identifier); // pi_param
+              $.CONSUME(tokenVocabulary.Arrow); // =>
+            });
+            $.SUBRULE($.value); // 6
+          },
+        });
+        $.CONSUME(tokenVocabulary.ClosingBracket); // (
+      });
+    });
+
     // TODO with clause
-
     // TODO join
-
     // TODO order by
-
     // TODO group by
-
     // TODO having
-
     // TODO union, minus, intersect
-
     // TODO subquery
-
     // TODO distinct
     $.RULE('queryStatement', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.AT_LEAST_ONE_SEP({
-        // col1, col2
+        // col1, col2, fct1(3)
         SEP: tokenVocabulary.Comma,
         DEF: () => {
-          $.CONSUME(tokenVocabulary.Identifier);
+          $.SUBRULE($.sqlColumn);
         },
       });
       $.OPTION(() => {
@@ -625,7 +643,7 @@ class SelectParser extends CstParser {
         // where 1 = 1 and col2 = 5
         $.CONSUME(tokenVocabulary.WhereKw);
         $.AT_LEAST_ONE_SEP4({
-          SEP: $.OR([
+          SEP: $.OR2([
             { ALT: () => $.CONSUME(tokenVocabulary.AndKw) },
             { ALT: () => $.CONSUME(tokenVocabulary.OrKw) },
           ]),

@@ -90,6 +90,12 @@ const Dot = createToken({
   longer_alt: Identifier,
 });
 
+const Arrow = createToken({
+  name: 'Arrow',
+  pattern: /=>/,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   Assignment,
   SingleLineComment,
@@ -106,4 +112,5 @@ module.exports = [
   Concat,
   Percent,
   Dot,
+  Arrow,
 ];
