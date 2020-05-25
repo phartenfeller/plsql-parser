@@ -353,11 +353,12 @@ class SelectParser extends CstParser {
       });
     });
 
+    // ignore ambiguities because string can be only a variable -> Identifier as well as a number
     $.RULE('value', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.functionCall) }, // function call
-        { ALT: () => $.SUBRULE($.number) }, // 4.2
-        { ALT: () => $.CONSUME(tokenVocabulary.String) }, // 'value'
+        { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
+        { ALT: () => $.SUBRULE($.stringExpression), IGNORE_AMBIGUITIES: true }, // 'value'
         { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
         { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
         { ALT: () => $.CONSUME(tokenVocabulary.Null) },
@@ -469,18 +470,25 @@ class SelectParser extends CstParser {
       });
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.Assignment); // :=
-        $.AT_LEAST_ONE_SEP({
-          // 'concat' || l_str
-          SEP: tokenVocabulary.Concat,
-          DEF: () => {
-            $.OR([
-              { ALT: () => $.CONSUME(tokenVocabulary.String) },
-              { ALT: () => $.CONSUME2(tokenVocabulary.Identifier) },
-            ]);
-          },
-        });
+        $.SUBRULE($.stringExpression);
       });
       $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('stringVar', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+    });
+
+    $.RULE('stringExpression', () => {
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Concat,
+        DEF: () => {
+          $.OR([
+            { ALT: () => $.SUBRULE($.stringVar) },
+            { ALT: () => $.CONSUME(tokenVocabulary.String) },
+          ]);
+        },
+      });
     });
 
     $.RULE('boolDeclaration', () => {
