@@ -9,6 +9,7 @@ const pragma = require('./pragma');
 const transaction = require('./transaction');
 const sql = require('./sql');
 const exception = require('./exception');
+const dynSql = require('./dynSql');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -112,6 +113,7 @@ const allTokens = [
   BoolFalse,
   Null,
   ...sql,
+  ...dynSql,
   ...transaction,
   CreateKw,
   OrKw,

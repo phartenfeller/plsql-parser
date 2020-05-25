@@ -68,6 +68,8 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.functionCallSemicolon) },
         { ALT: () => $.SUBRULE($.returnStatement) },
+        { ALT: () => $.SUBRULE($.block) },
+        { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
       ]);
     });
 
@@ -320,31 +322,32 @@ class SelectParser extends CstParser {
       ]);
     });
 
-    $.RULE('argument', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // pi_input
+    $.RULE('inOut', () => {
       $.OR([
         {
           ALT: () => {
             $.CONSUME(tokenVocabulary.InKw); // in
             $.OPTION(() => {
               $.CONSUME(tokenVocabulary.OutKw); // out
-              $.OPTION2(() => {
-                $.CONSUME(tokenVocabulary.NocopyKw); // nopy
-              });
             });
           },
         },
         {
           ALT: () => {
             $.CONSUME2(tokenVocabulary.OutKw); // out
-            $.OPTION3(() => {
-              $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
-            });
           },
         },
       ]);
+    });
+
+    $.RULE('argument', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // pi_input
+      $.SUBRULE($.inOut); // in | out | in out
+      $.OPTION(() => {
+        $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
+      });
       $.SUBRULE($.dataType); // varchar2 | number ...
-      $.OPTION4(() => {
+      $.OPTION2(() => {
         $.OR2([
           { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
           { ALT: () => $.CONSUME(tokenVocabulary.Assignment) }, // :=
@@ -696,6 +699,46 @@ class SelectParser extends CstParser {
         });
       });
       $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('dynamicSqlStatement', () => {
+      $.CONSUME(tokenVocabulary.ExecuteImmediateKw); // execute immediate
+      $.SUBRULE($.stringExpression); // l_var or 'create table...'
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.IntoKw); // into
+        $.AT_LEAST_ONE_SEP({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME(tokenVocabulary.Identifier); // l_var, l_rec
+          },
+        });
+      });
+      $.OPTION2(() => {
+        $.CONSUME(tokenVocabulary.UsingKw); // using
+        $.OPTION3(() => {
+          $.SUBRULE($.inOut); // in | out | in out
+        });
+        $.AT_LEAST_ONE_SEP2({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME2(tokenVocabulary.Identifier); // l_var, l_var2
+          },
+        });
+      });
+      $.OPTION4(() => {
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.ReturnKw) }, // return
+          { ALT: () => $.CONSUME(tokenVocabulary.ReturningKw) }, // returning
+        ]);
+        $.CONSUME2(tokenVocabulary.IntoKw); // into
+        $.AT_LEAST_ONE_SEP3({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME3(tokenVocabulary.Identifier); // l_var, l_var2
+          },
+        });
+      });
+      $.SUBRULE($.semicolon);
     });
 
     $.RULE('exceptionBlock', () => {
