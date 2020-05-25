@@ -171,6 +171,12 @@ const WhenKw = createToken({
   longer_alt: Identifier,
 });
 
+const RaiseKw = createToken({
+  name: 'RaiseKw',
+  pattern: /raise/,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   DefinedException,
   AccessIntoNullKw,
@@ -197,4 +203,5 @@ module.exports = [
   OthersKw,
   ExceptionKw,
   WhenKw,
+  RaiseKw,
 ];

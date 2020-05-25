@@ -752,7 +752,15 @@ class SelectParser extends CstParser {
         ]);
         $.CONSUME(tokenVocabulary.Then); // then
         $.MANY2(() => {
-          $.SUBRULE($.statement);
+          $.OR2([
+            { ALT: () => $.SUBRULE($.statement) },
+            {
+              ALT: () => {
+                $.CONSUME(tokenVocabulary.RaiseKw);
+                $.SUBRULE($.semicolon);
+              },
+            },
+          ]);
         });
       });
     });
