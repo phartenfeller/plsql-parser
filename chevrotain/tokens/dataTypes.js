@@ -1,4 +1,4 @@
-const { createToken } = require('chevrotain');
+const { createToken, Lexer } = require('chevrotain');
 const Identifier = require('./Identifier');
 
 const DtypeNumber = createToken({
@@ -61,6 +61,39 @@ const TsValue = createToken({
   longer_alt: Identifier,
 });
 
+const JsonDtypes = createToken({
+  name: 'JsonDtypes',
+  pattern: Lexer.NA,
+});
+
+const JsonObjectT = createToken({
+  name: 'JsonObjectT',
+  pattern: /json_object_t/,
+  longer_alt: Identifier,
+  categories: JsonDtypes,
+});
+
+const JsonArrayT = createToken({
+  name: 'JsonArrayT',
+  pattern: /json_array_t/,
+  longer_alt: Identifier,
+  categories: JsonDtypes,
+});
+
+const JsonElementT = createToken({
+  name: 'JsonElementT',
+  pattern: /json_element_t/,
+  longer_alt: Identifier,
+  categories: JsonDtypes,
+});
+
+const JsonScalarT = createToken({
+  name: 'JsonScalarT',
+  pattern: /json_scalar_t/,
+  longer_alt: Identifier,
+  categories: JsonDtypes,
+});
+
 const Rowtype = createToken({
   name: 'Rowtype',
   pattern: /rowtype/,
@@ -84,6 +117,11 @@ module.exports = [
   Char,
   DateValue,
   TsValue,
+  JsonDtypes,
+  JsonObjectT,
+  JsonArrayT,
+  JsonElementT,
+  JsonScalarT,
   Rowtype,
   Type,
 ];

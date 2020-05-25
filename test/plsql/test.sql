@@ -89,7 +89,7 @@ create or replace package body process_webserver_logs as
 
   procedure process_date
   as
-    l_obj JSON_OBJECT_T;
+    l_obj json_object_t;
     l_sr_row server_requests%rowtype;
   begin
     for rec in (

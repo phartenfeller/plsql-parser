@@ -254,10 +254,17 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.boolDeclaration) },
         { ALT: () => $.SUBRULE($.dateDeclaration) },
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
+        { ALT: () => $.SUBRULE($.jsonDtypeDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
         { ALT: () => $.SUBRULE($.objectType) },
         { ALT: () => $.SUBRULE($.comment) }, // TODO is comment in variableDeclaration necessary?
       ]);
+    });
+
+    $.RULE('jsonDtypeDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // l_var
+      $.CONSUME(tokenVocabulary.JsonDtypes); // JSON_OBJECT_T / JSON_ARRAY_T ...
+      $.SUBRULE($.semicolon);
     });
 
     $.RULE('objectType', () => {
@@ -413,6 +420,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
+        { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
       ]);
     });
 
