@@ -49,6 +49,18 @@ const Smaller = createToken({
   longer_alt: Identifier,
 });
 
+const IsKw = createToken({
+  name: 'IsKw',
+  pattern: /is/,
+  longer_alt: Identifier,
+});
+
+const NotKw = createToken({
+  name: 'NotKw',
+  pattern: /not/,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   Equals,
   UnEquals1,
@@ -58,4 +70,6 @@ module.exports = [
   Bigger,
   SmallerEquals,
   Smaller,
+  IsKw,
+  NotKw,
 ];

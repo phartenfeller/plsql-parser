@@ -67,6 +67,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.functionCallSemicolon) },
+        { ALT: () => $.SUBRULE($.returnStatement) },
       ]);
     });
 
@@ -125,8 +126,23 @@ class SelectParser extends CstParser {
 
     $.RULE('condition', () => {
       $.SUBRULE($.atomicExpression, { LABEL: 'lhs' });
-      $.SUBRULE($.relationalOperators);
-      $.SUBRULE2($.atomicExpression, { LABEL: 'rhs' });
+      $.OR([
+        {
+          ALT: () => {
+            $.SUBRULE($.relationalOperators);
+            $.SUBRULE2($.atomicExpression, { LABEL: 'rhs' });
+          },
+        },
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.IsKw);
+            $.OPTION(() => {
+              $.CONSUME(tokenVocabulary.NotKw);
+            });
+            $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
+          },
+        },
+      ]);
     });
 
     $.RULE('createPackageStatement', () => {
@@ -181,6 +197,12 @@ class SelectParser extends CstParser {
       ]);
     });
 
+    $.RULE('returnStatement', () => {
+      $.CONSUME(tokenVocabulary.ReturnKw); // return
+      $.SUBRULE($.value); // 3, l_var ...
+      $.SUBRULE($.semicolon); // ;
+    });
+
     $.RULE('funcBody', () => {
       $.SUBRULE($.funcSpec);
       $.CONSUME(tokenVocabulary.AsKw); // as
@@ -189,16 +211,7 @@ class SelectParser extends CstParser {
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
       $.MANY2(() => {
-        $.OR([
-          { ALT: () => $.SUBRULE($.statement) },
-          {
-            ALT: () => {
-              $.CONSUME(tokenVocabulary.ReturnKw); // return
-              $.CONSUME(tokenVocabulary.Identifier); // l_var
-              $.SUBRULE($.semicolon); // ;
-            },
-          },
-        ]);
+        $.SUBRULE($.statement);
       });
       $.OPTION(() => {
         $.SUBRULE($.exceptionBlock); // exception ...
@@ -230,6 +243,7 @@ class SelectParser extends CstParser {
       $.SUBRULE2($.semicolon); // ;
     });
 
+    // TODO make sure return is only called in functions
     $.RULE('variableDeclaration', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.numberDeclaration) },
@@ -595,6 +609,7 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
+    // function or procedure call acutally
     $.RULE('functionCall', () => {
       $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
       $.OPTION2(() => {
