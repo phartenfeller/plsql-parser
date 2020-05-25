@@ -715,12 +715,12 @@ class SelectParser extends CstParser {
       });
       $.OPTION2(() => {
         $.CONSUME(tokenVocabulary.UsingKw); // using
-        $.OPTION3(() => {
-          $.SUBRULE($.inOut); // in | out | in out
-        });
         $.AT_LEAST_ONE_SEP2({
           SEP: tokenVocabulary.Comma,
           DEF: () => {
+            $.OPTION3(() => {
+              $.SUBRULE($.inOut); // in | out | in out
+            });
             $.CONSUME2(tokenVocabulary.Identifier); // l_var, l_var2
           },
         });
