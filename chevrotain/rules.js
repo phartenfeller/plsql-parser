@@ -736,7 +736,14 @@ module.exports = {
     parserInstance.global();
 
     if (parserInstance.errors.length > 0) {
-      throw Error(parserInstance.errors);
+      const error = parserInstance.errors[0];
+      throw Error(
+        `${parserInstance.errors}. 
+        RuleStack: ${error.context.ruleStack.join(', ')}
+        Token: Line: ${error.token.startLine} Column: ${
+          error.token.startColumn
+        }`
+      );
       // throw Error(
       //   `Sad sad panda, parsing errors detected!\n${parserInstance.errors[0].message}`
       // );
