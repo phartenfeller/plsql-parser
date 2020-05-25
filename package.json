@@ -8,6 +8,7 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
+    "diagram": "node ./diagram/index.js",
     "generate-parser": "cd jison && npx jison ./plsql.jison && cd .."
   },
   "devDependencies": {
