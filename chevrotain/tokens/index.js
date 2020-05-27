@@ -10,6 +10,7 @@ const transaction = require('./transaction');
 const sql = require('./sql');
 const exception = require('./exception');
 const dynSql = require('./dynSql');
+const loops = require('./loops');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -115,6 +116,7 @@ const allTokens = [
   ...sql,
   ...dynSql,
   ...transaction,
+  ...loops,
   CreateKw,
   OrKw,
   ReplaceKw,

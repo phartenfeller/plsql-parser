@@ -66,6 +66,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.queryStatement) },
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
+        { ALT: () => $.SUBRULE($.forLoop) },
         { ALT: () => $.SUBRULE($.functionCallSemicolon) },
         { ALT: () => $.SUBRULE($.returnStatement) },
         { ALT: () => $.SUBRULE($.block) },
@@ -425,11 +426,13 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('numberValue', () => {
-      $.OR([
-        { ALT: () => $.SUBRULE($.number) },
-        { ALT: () => $.SUBRULE($.functionCall) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-      ]);
+      $.OR({
+        DEF: [
+          { ALT: () => $.SUBRULE($.number) },
+          { ALT: () => $.SUBRULE($.functionCall) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        ],
+      });
     });
 
     $.RULE('numberDeclaration', () => {
@@ -666,15 +669,22 @@ class SelectParser extends CstParser {
     // TODO union, minus, intersect
     // TODO subquery
     // TODO distinct
-    $.RULE('queryStatement', () => {
+    $.RULE('query', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
-      $.AT_LEAST_ONE_SEP({
-        // col1, col2, fct1(3)
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.SUBRULE($.value); // direct value / function call / variable
+      $.OR([
+        {
+          ALT: () => {
+            $.AT_LEAST_ONE_SEP({
+              // col1, col2, fct1(3)
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.SUBRULE($.value); // direct value / function call / variable
+              },
+            });
+          },
         },
-      });
+        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) }, // *
+      ]);
       $.OPTION(() => {
         $.CONSUME1(tokenVocabulary.IntoKw); // into
         $.AT_LEAST_ONE_SEP2({
@@ -697,15 +707,16 @@ class SelectParser extends CstParser {
         // where 1 = 1 and col2 = 5
         $.CONSUME(tokenVocabulary.WhereKw);
         $.AT_LEAST_ONE_SEP4({
-          SEP: $.OR2([
-            { ALT: () => $.CONSUME(tokenVocabulary.AndKw) },
-            { ALT: () => $.CONSUME(tokenVocabulary.OrKw) },
-          ]),
+          SEP: [tokenVocabulary.AndKw, tokenVocabulary.OrKw],
           DEF: () => {
             $.SUBRULE($.condition);
           },
         });
       });
+    });
+
+    $.RULE('queryStatement', () => {
+      $.SUBRULE($.query); // select ...
       $.SUBRULE($.semicolon); // ;
     });
 
@@ -771,6 +782,35 @@ class SelectParser extends CstParser {
           ]);
         });
       });
+    });
+
+    $.RULE('forLoop', () => {
+      $.CONSUME(tokenVocabulary.ForKw); // for
+      $.CONSUME(tokenVocabulary.Identifier); // l_var
+      $.CONSUME(tokenVocabulary.InKw); // in
+      $.OR([
+        {
+          ALT: () => {
+            $.SUBRULE($.numberValue); // l_num1
+            $.CONSUME(tokenVocabulary.DoubleDot); // ..
+            $.SUBRULE2($.numberValue); // 3
+          },
+        },
+        {
+          ALT: () => {
+            $.CONSUME2(tokenVocabulary.OpenBracket); // (
+            $.SUBRULE($.query); // select * from dual
+            $.CONSUME3(tokenVocabulary.ClosingBracket); // )
+          },
+        },
+      ]);
+      $.CONSUME(tokenVocabulary.LoopKw);
+      $.MANY(() => {
+        $.SUBRULE($.statement);
+      });
+      $.CONSUME(tokenVocabulary.End);
+      $.CONSUME2(tokenVocabulary.LoopKw);
+      $.SUBRULE($.semicolon);
     });
 
     $.RULE('semicolon', () => {

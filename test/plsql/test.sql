@@ -29,7 +29,8 @@ create or replace package body process_webserver_logs as
   begin
     select TO_UTC_TIMESTAMP_TZ(pi_string)
       into l_ts
-      from dual;
+      from dual
+    ;
 
     return l_ts;
   exception

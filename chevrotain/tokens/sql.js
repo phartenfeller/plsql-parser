@@ -26,13 +26,13 @@ const WhereKw = createToken({
 });
 
 const GroupByKw = createToken({
-  name: 'WhereKw',
+  name: 'GroupByKw',
   pattern: /group by/,
   longer_alt: Identifier,
 });
 
 const OrderByKw = createToken({
-  name: 'WhereKw',
+  name: 'OrderByKw',
   pattern: /order by/,
   longer_alt: Identifier,
 });
