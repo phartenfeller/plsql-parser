@@ -367,7 +367,7 @@ class SelectParser extends CstParser {
     // ignore ambiguities because string can be only a variable -> Identifier as well as a number
     $.RULE('value', () => {
       $.OR([
-        { ALT: () => $.SUBRULE($.functionCall) }, // function call
+        { ALT: () => $.SUBRULE($.functionCall), IGNORE_AMBIGUITIES: true }, // function call
         { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
         { ALT: () => $.SUBRULE($.stringExpression), IGNORE_AMBIGUITIES: true }, // 'value'
         { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
@@ -429,7 +429,7 @@ class SelectParser extends CstParser {
       $.OR({
         DEF: [
           { ALT: () => $.SUBRULE($.number) },
-          { ALT: () => $.SUBRULE($.functionCall) },
+          { ALT: () => $.SUBRULE($.functionCall), IGNORE_AMBIGUITIES: true },
           { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
         ],
       });
@@ -631,29 +631,35 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    // function or procedure call acutally
+    // function or procedure call acutally or schema.pkg.constant
     $.RULE('functionCall', () => {
       $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
-      $.OPTION2(() => {
+      $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Dot);
         $.CONSUME2(tokenVocabulary.Identifier);
       });
-      $.OPTION3(() => {
+      $.OPTION2(() => {
         $.CONSUME2(tokenVocabulary.Dot);
         $.CONSUME3(tokenVocabulary.Identifier);
       });
-      $.CONSUME(tokenVocabulary.OpenBracket); // (
-      $.MANY_SEP({
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.OPTION4(() => {
-            $.CONSUME4(tokenVocabulary.Identifier); // pi_param
-            $.CONSUME(tokenVocabulary.Arrow); // =>
+      // pkg_var / object_var or fct without params
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.OpenBracket); // (
+        // function without params can be called like fct and fct()
+        $.OPTION4(() => {
+          $.MANY_SEP({
+            SEP: tokenVocabulary.Comma,
+            DEF: () => {
+              $.OPTION5(() => {
+                $.CONSUME4(tokenVocabulary.Identifier); // pi_param
+                $.CONSUME(tokenVocabulary.Arrow); // =>
+              });
+              $.SUBRULE($.value); // 6
+            },
           });
-          $.SUBRULE($.value); // 6
-        },
+        });
+        $.CONSUME(tokenVocabulary.ClosingBracket); // (
       });
-      $.CONSUME(tokenVocabulary.ClosingBracket); // (
     });
 
     $.RULE('functionCallSemicolon', () => {
