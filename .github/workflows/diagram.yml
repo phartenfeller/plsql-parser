@@ -16,6 +16,16 @@ jobs:
         with:
           node-version: 14.x
 
+      - uses: actions/cache@master
+        id: cacheNodeModules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+
+      - name: yarn install
+        if: steps.cacheNodeModules.outputs.cache-hit != 'true'
+        run: yarn install
+
       - name: Build
         run: yarn diagram
 
