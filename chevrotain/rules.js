@@ -59,7 +59,7 @@ class SelectParser extends CstParser {
 
     $.RULE('statement', () => {
       $.OR([
-        { ALT: () => $.SUBRULE($.assignment) },
+        { ALT: () => $.SUBRULE($.assignment), IGNORE_AMBIGUITIES: true },
         { ALT: () => $.SUBRULE($.comment) },
         { ALT: () => $.SUBRULE($.nullStatement) },
         { ALT: () => $.SUBRULE($.ifStatement) },
@@ -67,7 +67,10 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.forLoop) },
-        { ALT: () => $.SUBRULE($.functionCallSemicolon) },
+        {
+          ALT: () => $.SUBRULE($.functionCallSemicolon),
+          IGNORE_AMBIGUITIES: true,
+        },
         { ALT: () => $.SUBRULE($.returnStatement) },
         { ALT: () => $.SUBRULE($.block) },
         { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
@@ -559,7 +562,11 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('assignment', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Identifier); // l_obj
+        $.CONSUME(tokenVocabulary.Dot); // .
+      });
+      $.CONSUME2(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.Assignment);
       $.OR([
         { ALT: () => $.SUBRULE($.mathExpression) },
@@ -602,23 +609,36 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.InsertKw); // insert
       $.CONSUME(tokenVocabulary.IntoKw); // into
       $.CONSUME(tokenVocabulary.Identifier); // table_name
-      $.CONSUME(tokenVocabulary.OpenBracket); // (
-      $.MANY_SEP({
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.CONSUME2(tokenVocabulary.Identifier);
+      $.OR([
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.OpenBracket); // (
+            $.MANY_SEP({
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.CONSUME2(tokenVocabulary.Identifier);
+              },
+            });
+            $.CONSUME(tokenVocabulary.ClosingBracket); // )
+            $.CONSUME(tokenVocabulary.ValuesKw); // values
+            $.CONSUME2(tokenVocabulary.OpenBracket); // (
+            $.MANY_SEP2({
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.SUBRULE($.value);
+              },
+            });
+            $.CONSUME2(tokenVocabulary.ClosingBracket); // )
+          },
         },
-      });
-      $.CONSUME(tokenVocabulary.ClosingBracket); // )
-      $.CONSUME(tokenVocabulary.ValuesKw); // values
-      $.CONSUME2(tokenVocabulary.OpenBracket); // (
-      $.MANY_SEP2({
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.SUBRULE($.value);
+        {
+          ALT: () => {
+            $.CONSUME2(tokenVocabulary.ValuesKw); // values
+            $.CONSUME3(tokenVocabulary.Identifier); // l_rowtype
+          },
         },
-      });
-      $.CONSUME2(tokenVocabulary.ClosingBracket); // )
+      ]);
+
       $.SUBRULE($.semicolon); // ;
     });
 
@@ -658,7 +678,7 @@ class SelectParser extends CstParser {
             },
           });
         });
-        $.CONSUME(tokenVocabulary.ClosingBracket); // (
+        $.CONSUME(tokenVocabulary.ClosingBracket); // )
       });
     });
 
