@@ -1229,7 +1229,7 @@
             "definition": [
               {
                 "type": "NonTerminal",
-                "name": "objectType",
+                "name": "objectTypeDeclaration",
                 "idx": 0
               }
             ]
@@ -1276,7 +1276,7 @@
   },
   {
     "type": "Rule",
-    "name": "objectType",
+    "name": "objectTypeDeclaration",
     "orgText": "",
     "definition": [
       {
@@ -1285,6 +1285,19 @@
         "label": "Identifier",
         "idx": 0,
         "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ConstantKw",
+            "label": "ConstantKw",
+            "idx": 0,
+            "pattern": "constant"
+          }
+        ]
       },
       {
         "type": "Alternation",
@@ -1306,6 +1319,30 @@
               {
                 "type": "NonTerminal",
                 "name": "rowType",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Option",
+            "idx": 3,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Assignment",
+                "label": "Assignment",
+                "idx": 0,
+                "pattern": ":="
+              },
+              {
+                "type": "NonTerminal",
+                "name": "value",
                 "idx": 0
               }
             ]
@@ -2072,6 +2109,19 @@
         "pattern": "[a-zA-Z]\\w*"
       },
       {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ConstantKw",
+            "label": "ConstantKw",
+            "idx": 0,
+            "pattern": "constant"
+          }
+        ]
+      },
+      {
         "type": "Terminal",
         "name": "DtypeNumber",
         "label": "DtypeNumber",
@@ -2080,7 +2130,7 @@
       },
       {
         "type": "Option",
-        "idx": 0,
+        "idx": 1,
         "definition": [
           {
             "type": "Terminal",
@@ -2163,6 +2213,19 @@
         "pattern": "[a-zA-Z]\\w*"
       },
       {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ConstantKw",
+            "label": "ConstantKw",
+            "idx": 0,
+            "pattern": "constant"
+          }
+        ]
+      },
+      {
         "type": "Terminal",
         "name": "DtypePlsIteger",
         "label": "DtypePlsIteger",
@@ -2205,6 +2268,19 @@
         "label": "Identifier",
         "idx": 0,
         "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ConstantKw",
+            "label": "ConstantKw",
+            "idx": 0,
+            "pattern": "constant"
+          }
+        ]
       },
       {
         "type": "Terminal",
