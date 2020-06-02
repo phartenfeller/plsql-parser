@@ -10,4 +10,4 @@ const htmlText = chevrotain.createSyntaxDiagramsCode(serializedGrammar);
 
 // Write the HTML file to disk
 const outPath = path.resolve(__dirname, './');
-fs.writeFileSync(`${outPath}/generated_diagrams.html`, htmlText);
+fs.writeFileSync(`${outPath}/index.html`, htmlText);
