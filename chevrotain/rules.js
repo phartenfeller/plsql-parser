@@ -12,6 +12,9 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.block) },
         { ALT: () => $.SUBRULE($.createPackage) },
       ]);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Slash);
+      });
     });
 
     $.RULE('createPackage', () => {
@@ -65,6 +68,8 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.ifStatement) },
         { ALT: () => $.SUBRULE($.queryStatement) },
         { ALT: () => $.SUBRULE($.insertStatement) },
+        { ALT: () => $.SUBRULE($.deleteStatement) },
+        { ALT: () => $.SUBRULE($.updateStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.forLoop) },
         {
@@ -123,20 +128,13 @@ class SelectParser extends CstParser {
       ]);
     });
 
-    $.RULE('atomicExpression', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-      ]);
-    });
-
     $.RULE('condition', () => {
-      $.SUBRULE($.atomicExpression, { LABEL: 'lhs' });
+      $.SUBRULE($.value, { LABEL: 'lhs' });
       $.OR([
         {
           ALT: () => {
             $.SUBRULE($.relationalOperators);
-            $.SUBRULE2($.atomicExpression, { LABEL: 'rhs' });
+            $.SUBRULE2($.value, { LABEL: 'rhs' });
           },
         },
         {
@@ -642,6 +640,36 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
+    $.RULE('deleteStatement', () => {
+      $.CONSUME(tokenVocabulary.DeleteKw); // delte
+      $.CONSUME(tokenVocabulary.FromKw); // from
+      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.OPTION(() => {
+        // where 1 = 1 ...
+        $.SUBRULE($.whereClause);
+      });
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('updateStatement', () => {
+      $.CONSUME(tokenVocabulary.UpdateKw); // update
+      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.CONSUME(tokenVocabulary.SetKw); // set
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.CONSUME2(tokenVocabulary.Identifier); // col_x
+          $.CONSUME(tokenVocabulary.Equals); // =
+          $.SUBRULE($.value); // 4
+        },
+      });
+      $.OPTION(() => {
+        // where 1 = 1 ...
+        $.SUBRULE($.whereClause);
+      });
+      $.SUBRULE($.semicolon); // ;
+    });
+
     $.RULE('transactionStatement', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.StartTransactionKw) }, // start transaction
@@ -687,6 +715,17 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
+    $.RULE('whereClause', () => {
+      // where 1 = 1 and col2 = 5
+      $.CONSUME(tokenVocabulary.WhereKw);
+      $.AT_LEAST_ONE_SEP4({
+        SEP: [tokenVocabulary.AndKw, tokenVocabulary.OrKw],
+        DEF: () => {
+          $.SUBRULE($.condition);
+        },
+      });
+    });
+
     // TODO with clause
     // TODO join
     // TODO order by
@@ -730,14 +769,7 @@ class SelectParser extends CstParser {
         },
       });
       $.OPTION2(() => {
-        // where 1 = 1 and col2 = 5
-        $.CONSUME(tokenVocabulary.WhereKw);
-        $.AT_LEAST_ONE_SEP4({
-          SEP: [tokenVocabulary.AndKw, tokenVocabulary.OrKw],
-          DEF: () => {
-            $.SUBRULE($.condition);
-          },
-        });
+        $.SUBRULE($.whereClause);
       });
     });
 

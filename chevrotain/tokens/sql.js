@@ -55,6 +55,24 @@ const ValuesKw = createToken({
   longer_alt: Identifier,
 });
 
+const DeleteKw = createToken({
+  name: 'DeleteKw',
+  pattern: /delete/,
+  longer_alt: Identifier,
+});
+
+const UpdateKw = createToken({
+  name: 'UpdateKw',
+  pattern: /update/,
+  longer_alt: Identifier,
+});
+
+const SetKw = createToken({
+  name: 'SetKw',
+  pattern: /set/,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   SelectKw,
   IntoKw,
@@ -65,4 +83,7 @@ module.exports = [
   AndKw,
   InsertKw,
   ValuesKw,
+  DeleteKw,
+  UpdateKw,
+  SetKw,
 ];
