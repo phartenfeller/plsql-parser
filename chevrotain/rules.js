@@ -258,7 +258,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
         { ALT: () => $.SUBRULE($.jsonDtypeDeclaration) },
         { ALT: () => $.SUBRULE($.pragmaStatement) },
-        { ALT: () => $.SUBRULE($.objectType) },
+        { ALT: () => $.SUBRULE($.objectTypeDeclaration) },
         { ALT: () => $.SUBRULE($.comment) }, // TODO is comment in variableDeclaration necessary?
       ]);
     });
@@ -269,14 +269,24 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('objectType', () => {
+    $.RULE('objectTypeDeclaration', () => {
       $.CONSUME(tokenVocabulary.Identifier); // l_row
+      $.OPTION1(() => {
+        $.CONSUME(tokenVocabulary.ConstantKw);
+      });
       $.OR({
         MAX_LOOKAHEAD: 5, // table_name.column_name%?type | rowtype?
         DEF: [
           { ALT: () => $.SUBRULE($.columnType) },
           { ALT: () => $.SUBRULE($.rowType) },
         ],
+      });
+      $.OPTION(() => {
+        // := 'any value'
+        $.OPTION3(() => {
+          $.CONSUME(tokenVocabulary.Assignment);
+          $.SUBRULE($.value);
+        });
       });
       $.SUBRULE($.semicolon);
     });
@@ -439,9 +449,12 @@ class SelectParser extends CstParser {
     $.RULE('numberDeclaration', () => {
       // l_num number
       $.CONSUME(tokenVocabulary.Identifier);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.ConstantKw);
+      });
       $.CONSUME(tokenVocabulary.DtypeNumber);
       // (3,2)
-      $.OPTION(() => {
+      $.OPTION1(() => {
         $.CONSUME(tokenVocabulary.OpenBracket);
         $.CONSUME(tokenVocabulary.Integer);
         $.OPTION2(() => {
@@ -462,6 +475,9 @@ class SelectParser extends CstParser {
     $.RULE('plsIntegerDeclaration', () => {
       // l_pls pls_integer
       $.CONSUME(tokenVocabulary.Identifier);
+      $.OPTION1(() => {
+        $.CONSUME(tokenVocabulary.ConstantKw);
+      });
       $.CONSUME(tokenVocabulary.DtypePlsIteger);
       // := 3
       $.OPTION(() => {
@@ -474,6 +490,9 @@ class SelectParser extends CstParser {
 
     $.RULE('stringDeclaration', () => {
       $.CONSUME(tokenVocabulary.Identifier); // l_str
+      $.OPTION1(() => {
+        $.CONSUME(tokenVocabulary.ConstantKw);
+      });
       $.CONSUME(tokenVocabulary.DtypeVarchar2); // varchar2
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.OpenBracket); // (

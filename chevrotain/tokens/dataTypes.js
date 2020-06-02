@@ -106,6 +106,12 @@ const Type = createToken({
   longer_alt: Identifier,
 });
 
+const ConstantKw = createToken({
+  name: 'ConstantKw',
+  pattern: /constant/,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   DtypeNumber,
   DtypePlsIteger,
@@ -124,4 +130,5 @@ module.exports = [
   JsonScalarT,
   Rowtype,
   Type,
+  ConstantKw,
 ];
