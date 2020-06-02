@@ -29,9 +29,6 @@ jobs:
       - name: Build
         run: yarn diagram
 
-      - name: rename html file
-        run: mv generated_diagrams.html index.html
-
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
