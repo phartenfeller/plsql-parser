@@ -269,18 +269,31 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
+    $.RULE('typeDef', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // schema_name
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Dot); // .
+        $.CONSUME2(tokenVocabulary.Identifier); // table_name
+      });
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.Dot); // .
+        $.CONSUME3(tokenVocabulary.Identifier); // column_name
+      });
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.Percent); // %
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.Rowtype) }, // rowtype
+          { ALT: () => $.CONSUME(tokenVocabulary.Type) }, // type
+        ]);
+      });
+    });
+
     $.RULE('objectTypeDeclaration', () => {
       $.CONSUME(tokenVocabulary.Identifier); // l_row
       $.OPTION1(() => {
         $.CONSUME(tokenVocabulary.ConstantKw);
       });
-      $.OR({
-        MAX_LOOKAHEAD: 5, // table_name.column_name%?type | rowtype?
-        DEF: [
-          { ALT: () => $.SUBRULE($.columnType) },
-          { ALT: () => $.SUBRULE($.rowType) },
-        ],
-      });
+      $.SUBRULE($.typeDef);
       $.OPTION(() => {
         // := 'any value'
         $.OPTION3(() => {
@@ -289,28 +302,6 @@ class SelectParser extends CstParser {
         });
       });
       $.SUBRULE($.semicolon);
-    });
-
-    $.RULE('columnType', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // schema_name
-      $.CONSUME(tokenVocabulary.Dot); // .
-      $.CONSUME2(tokenVocabulary.Identifier); // table_name
-      $.OPTION(() => {
-        $.CONSUME2(tokenVocabulary.Dot); // .
-        $.CONSUME3(tokenVocabulary.Identifier); // column_name
-      });
-      $.CONSUME(tokenVocabulary.Percent); // %
-      $.CONSUME(tokenVocabulary.Type); // type
-    });
-
-    $.RULE('rowType', () => {
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Identifier); // schema_name
-        $.CONSUME(tokenVocabulary.Dot); // .
-      });
-      $.CONSUME2(tokenVocabulary.Identifier); // table_name
-      $.CONSUME(tokenVocabulary.Percent); // %
-      $.CONSUME(tokenVocabulary.Rowtype); // rowtype
     });
 
     $.RULE('pragmaStatement', () => {
@@ -365,7 +356,10 @@ class SelectParser extends CstParser {
       $.OPTION(() => {
         $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
       });
-      $.SUBRULE($.dataType); // varchar2 | number ...
+      $.OR([
+        { ALT: () => $.SUBRULE($.dataType) }, // varchar2 | number ...
+        { ALT: () => $.SUBRULE($.typeDef) },
+      ]);
       $.OPTION2(() => {
         $.OR2([
           { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
@@ -406,7 +400,10 @@ class SelectParser extends CstParser {
         $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
       });
       $.CONSUME(tokenVocabulary.ReturnKw);
-      $.SUBRULE($.dataType); // varchar2
+      $.OR([
+        { ALT: () => $.SUBRULE($.dataType) }, // varchar2
+        { ALT: () => $.SUBRULE($.typeDef) }, // rowtype, pkt type ...
+      ]);
       $.OPTION2(() => {
         $.CONSUME(tokenVocabulary.DeterministicKw); // deterministic
       });
@@ -516,7 +513,7 @@ class SelectParser extends CstParser {
     $.RULE('compilationFlag', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.plsqlUnitKw) },
-       { ALT: () => $.CONSUME(tokenVocabulary.plsqlTypeKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.plsqlTypeKw) },
       ]);
     });
 
@@ -527,7 +524,7 @@ class SelectParser extends CstParser {
           $.OR([
             { ALT: () => $.SUBRULE($.stringVar) },
             { ALT: () => $.CONSUME(tokenVocabulary.String) },
-            { ALT: () => $.SUBRULE($.compilationFlag) }
+            { ALT: () => $.SUBRULE($.compilationFlag) },
           ]);
         },
       });

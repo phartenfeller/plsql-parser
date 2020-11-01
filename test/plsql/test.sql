@@ -1,155 +1,184 @@
-create or replace package body process_webserver_logs as
+create or replace package body lct_element_types_api
+as
 
-  g_id number := 0;
+  gc_scope constant logger_logs.scope%type := $$plsql_unit || '.';
 
-  procedure log_error (
-    pi_error_message in varchar2
-  , pi_tbl in varchar2
-  , pi_val in varchar2
-  , pi_id in number
-  , pi_info in varchar2 default null
+  function get_db_checksum
+  (
+    pi_eltp_id in lct_element_types.eltp_id%type
+  )
+    return types_pkg.t_checksum
+  as
+    l_scope  constant logger_logs.scope%type := gc_scope || 'get_db_checksum';
+    l_params logger.tab_param;
+    l_return types_pkg.t_checksum;
+  begin
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_id', p_val => pi_eltp_id );
+    logger.log( p_text => 'START', p_scope => l_scope, p_params => l_params );
+
+    select to_char(eltp_updated_on, global_constants_pkg.gc_timestamp_checksum_fmt)
+      into l_return
+      from lct_element_types
+     where eltp_id = pi_eltp_id
+    ;
+
+    logger.append_param( p_params => l_params, p_name => 'l_return', p_val => l_return );
+    logger.log( p_text => 'END', p_scope => l_scope, p_params => l_params );
+
+    return l_return;
+  exception
+    when others then
+      logger.log_error( p_text => 'Unexpected Error', p_scope => l_scope, p_params => l_params );
+      raise;
+  end get_db_checksum;
+
+  procedure insert_record
+  (
+    pio_eltp_id in out lct_element_types.eltp_id%type
+  , pi_eltp_name in lct_element_types.eltp_name%type
+  , pi_eltp_internal_name in lct_element_types.eltp_internal_name%type 
+  , pi_user in types_pkg.t_user
   )
   as
-    pragma autonomous_transaction;
+    l_scope  constant logger_logs.scope%type := gc_scope || 'insert_record';
+    l_params logger.tab_param;
   begin
-    insert into process_errors
-      (info, error_message, tbl, val, webserverlogs_id)
-    values
-      (pi_info, pi_error_message, pi_tbl, pi_val, pi_id)
+    logger.append_param( p_params => l_params, p_name => 'pio_eltp_id', p_val => pio_eltp_id );
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_name', p_val => pi_eltp_name );
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_internal_name', p_val => pi_eltp_internal_name );
+    logger.append_param( p_params => l_params, p_name => 'pi_user', p_val => pi_user );
+    logger.log( p_text => 'START', p_scope => l_scope, p_params => l_params );
+
+    insert
+      into lct_element_types
+           (
+             eltp_id
+           , eltp_name
+           , eltp_internal_name
+           , eltp_created_by
+           , eltp_updated_by
+           )
+    values (
+             pio_eltp_id
+           , pi_eltp_name
+           , pi_eltp_internal_name
+           , pi_user
+           , pi_user
+           )
+    returning eltp_id into pio_eltp_id
     ;
-    commit; 
-  end;
 
-
-  function get_timestamp (
-    pi_string in varchar2
-  ) return timestamp with time zone deterministic
-  as
-    l_ts timestamp with time zone;
-  begin
-    select TO_UTC_TIMESTAMP_TZ(pi_string)
-      into l_ts
-      from dual
-    ;
-
-    return l_ts;
+    logger.append_param( p_params => l_params, p_name => 'pio_eltp_id', p_val => pio_eltp_id );
+    logger.log( p_text => 'END', p_scope => l_scope, p_params => l_params );
   exception
     when others then
-      log_error (
-        pi_error_message => sqlerrm
-      , pi_tbl => null
-      , pi_val => pi_string
-      , pi_id  => g_id
-      , pi_info => 'get_timestamp'
-      );
-  end get_timestamp;
+      logger.log_error( p_text => 'Unexpected Error', p_scope => l_scope, p_params => l_params );
+      raise;
+  end insert_record;
 
-
-  function get_or_insert_value (
-    pi_tbl_name in varchar2
-  , pi_val      in varchar2
-  ) return number deterministic result_cache
+  procedure update_record
+  (
+    pi_eltp_id in lct_element_types.eltp_id%type
+  , pi_eltp_name in lct_element_types.eltp_name%type
+  , pi_eltp_internal_name in lct_element_types.eltp_internal_name%type 
+  , pi_user in types_pkg.t_user
+  , pi_checksum in types_pkg.t_checksum
+  )
   as
-    l_select_sql varchar2(4000);
-    l_id         number;
+    l_scope  constant logger_logs.scope%type := gc_scope || 'update_record';
+    l_params logger.tab_param;
   begin
-    if pi_val is null then 
-      return null;
-    end if;
-
-    l_select_sql := 'select id from ' || pi_tbl_name || ' where val = :1';
-
-    begin
-      execute immediate l_select_sql into l_id using pi_val;
-    exception 
-      when NO_DATA_FOUND then
-        null;
-      when others then
-        raise;
-    end;
-
-    if l_id is not null then
-      return l_id;
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_id', p_val => pi_eltp_id );
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_name', p_val => pi_eltp_name );
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_internal_name', p_val => pi_eltp_internal_name );
+    logger.append_param( p_params => l_params, p_name => 'pi_user', p_val => pi_user );
+    logger.append_param( p_params => l_params, p_name => 'pi_checksum', p_val => pi_checksum );
+    logger.log( p_text => 'START', p_scope => l_scope, p_params => l_params );
+    
+    if pi_checksum = get_db_checksum(pi_eltp_id => pi_eltp_id) then
+      update lct_element_types
+         set eltp_name = pi_eltp_name
+           , eltp_internal_name = pi_eltp_internal_name
+           , eltp_updated_by = pi_user
+           , eltp_updated_on = systimestamp
+       where eltp_id = pi_eltp_id
+      ;
     else
-      l_select_sql := 'insert into ' || pi_tbl_name || ' (val) values (:1) returning id into :new_id';
-       execute immediate l_select_sql using in pi_val, out l_id;
-       return l_id;
+      raise global_constants_pkg.e_checksum_mismatch;
     end if;
 
+    logger.log( p_text => 'END', p_scope => l_scope, p_params => l_params );
   exception
     when others then
-      log_error (
-        pi_error_message => sqlerrm
-      , pi_tbl => pi_tbl_name
-      , pi_val => pi_val
-      , pi_id  => g_id
-      , pi_info => 'get_or_insert_value'
-      );
-  end get_or_insert_value; 
+      logger.log_error( p_text => 'Unexpected Error', p_scope => l_scope, p_params => l_params );
+      raise;
+  end update_record;
 
-
-  procedure process_date
+  procedure delete_record
+  (
+    pi_eltp_id in lct_element_types.eltp_id%type 
+  , pi_user in types_pkg.t_user
+  , pi_checksum in types_pkg.t_checksum
+  )
   as
-    l_obj json_object_t;
-    l_sr_row server_requests%rowtype;
+    l_scope  constant logger_logs.scope%type := gc_scope || 'delete_record';
+    l_params logger.tab_param;
   begin
-    for rec in (
-      select *
-        from webserverlogs
-       where failed is null
-    )
-    loop
-      begin
-        g_id := rec.id;
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_id', p_val => pi_eltp_id );
+    logger.append_param( p_params => l_params, p_name => 'pi_user', p_val => pi_user );
+    logger.append_param( p_params => l_params, p_name => 'pi_checksum', p_val => pi_checksum );
+    logger.log( p_text => 'START', p_scope => l_scope, p_params => l_params );
 
-        l_sr_row := null;
-        l_obj := JSON_OBJECT_T(rec.logdata);
+    if pi_checksum = get_db_checksum(pi_eltp_id => pi_eltp_id) then
+      delete
+        from lct_element_types
+       where eltp_id = pi_eltp_id
+      ;
+    else
+      raise global_constants_pkg.e_checksum_mismatch;
+    end if;
 
-        l_sr_row.client_host := get_or_insert_value('ip_addresses', l_obj.get_string('ClientHost'));
-        l_sr_row.client_port := l_obj.get_number('ClientPort');
-        l_sr_row.downstream_content_size := l_obj.get_number('DownstreamContentSize');
-        l_sr_row.downstream_cache_control := get_or_insert_value('cache_control', l_obj.get_string('downstream_Cache-Control'));
-        l_sr_row.downstream_status := l_obj.get_number('DownstreamStatus');
-        l_sr_row.duration := l_obj.get_number('Duration');
-        l_sr_row.request_address := get_or_insert_value('request_address', l_obj.get_string('RequestAddr'));
-        l_sr_row.request_host := get_or_insert_value('hosts', l_obj.get_string('RequestHost'));
-        l_sr_row.request_path := get_or_insert_value('request_paths', l_obj.get_string('RequestPath'));
-        l_sr_row.request_method := get_or_insert_value('request_methods', l_obj.get_string('RequestMethod'));
-        l_sr_row.request_protocol := get_or_insert_value('request_protocol', l_obj.get_string('RequestProtocol'));
-        l_sr_row.request_purpose := get_or_insert_value('request_purpose', l_obj.get_string('request_Purpose'));
-        l_sr_row.request_se := get_or_insert_value('request_se', l_obj.get_string('request_Sec-Fetch-Dest'));
-        l_sr_row.retry_attempts := get_or_insert_value('request_se', l_obj.get_number('RetryAttempts-Fetch-Dest'));
-        l_sr_row.time := get_timestamp(l_obj.get_string('time'));
-        l_sr_row.loglevel := get_or_insert_value('loglevel', l_obj.get_string('level'));
-        l_sr_row.accept_encoding := get_or_insert_value('accept_encoding', l_obj.get_string('request_Accept-Encoding'));
-        l_sr_row.accept_language := get_or_insert_value('accept_language', l_obj.get_string('request_Accept-Language'));
-        l_sr_row.user_agent := get_or_insert_value('user_agents', l_obj.get_string('request_User-Agent'));
-        l_sr_row.content_type := get_or_insert_value('content_type', l_obj.get_string('downstream_Content-Type'));
-        l_sr_row.request_referer := get_or_insert_value('request_referer', l_obj.get_string('request_Referer'));
+    logger.log( p_text => 'END', p_scope => l_scope, p_params => l_params );
+  exception
+    when others then
+      logger.log_error( p_text => 'Unexpected Error', p_scope => l_scope, p_params => l_params );
+      raise;
+  end delete_record;
 
-        insert into server_requests values l_sr_row;
+  procedure get_record
+  (
+    pi_eltp_id in lct_element_types.eltp_id%type
+  , po_eltp_name out nocopy lct_element_types.eltp_name%type
+  , po_eltp_internal_name out nocopy lct_element_types.eltp_internal_name%type 
+  , po_checksum out nocopy types_pkg.t_checksum
+  )
+  as
+    l_scope  constant logger_logs.scope%type := gc_scope || 'get_record';
+    l_params logger.tab_param;
+  begin
+    logger.append_param( p_params => l_params, p_name => 'pi_eltp_id', p_val => pi_eltp_id );
+    logger.log( p_text => 'START', p_scope => l_scope, p_params => l_params );
 
-        delete from webserverlogs where id = g_id;
+    select eltp_name
+         , eltp_internal_name
+         , to_char(eltp_updated_on, global_constants_pkg.gc_timestamp_checksum_fmt)
+      into po_eltp_name
+         , po_eltp_internal_name
+         , po_checksum
+      from lct_element_types
+     where 1=1
+       and eltp_id = pi_eltp_id
+    ;
 
-        commit;
-      exception
-        when others then
-          rollback;
-          log_error (
-              pi_error_message => sqlerrm
-            , pi_tbl => null
-            , pi_val => null
-            , pi_id  => g_id
-            , pi_info => 'exception in loop'
-          );
+    logger.append_param( p_params => l_params, p_name => 'po_eltp_name', p_val => po_eltp_name );
+    logger.append_param( p_params => l_params, p_name => 'po_eltp_internal_name', p_val => po_eltp_internal_name );
+    logger.append_param( p_params => l_params, p_name => 'po_checksum', p_val => po_checksum );
+    logger.log( p_text => 'END', p_scope => l_scope, p_params => l_params );
+  exception
+    when others then
+      logger.log_error( p_text => 'Unexpected Error', p_scope => l_scope, p_params => l_params );
+      raise;
+  end get_record;
 
-          update webserverlogs
-            set failed = 1
-          where id = g_id;
-          
-          commit;
-      end;
-    end loop;
-  end process_date;
-
-end process_webserver_logs;
+end lct_element_types_api;
+/
