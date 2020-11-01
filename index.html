@@ -1276,6 +1276,103 @@
   },
   {
     "type": "Rule",
+    "name": "typeDef",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Dot",
+            "label": "Dot",
+            "idx": 0,
+            "pattern": "\\."
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 2,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Dot",
+            "label": "Dot",
+            "idx": 2,
+            "pattern": "\\."
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 3,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 3,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Percent",
+            "label": "Percent",
+            "idx": 0,
+            "pattern": "%"
+          },
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Rowtype",
+                    "label": "Rowtype",
+                    "idx": 0,
+                    "pattern": "rowtype"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Type",
+                    "label": "Type",
+                    "idx": 0,
+                    "pattern": "type"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "objectTypeDeclaration",
     "orgText": "",
     "definition": [
@@ -1300,30 +1397,9 @@
         ]
       },
       {
-        "type": "Alternation",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "columnType",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "rowType",
-                "idx": 0
-              }
-            ]
-          }
-        ]
+        "type": "NonTerminal",
+        "name": "typeDef",
+        "idx": 0
       },
       {
         "type": "Option",
@@ -1353,116 +1429,6 @@
         "type": "NonTerminal",
         "name": "semicolon",
         "idx": 0
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "columnType",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Terminal",
-        "name": "Dot",
-        "label": "Dot",
-        "idx": 0,
-        "pattern": "\\."
-      },
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 2,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Dot",
-            "label": "Dot",
-            "idx": 2,
-            "pattern": "\\."
-          },
-          {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 3,
-            "pattern": "[a-zA-Z]\\w*"
-          }
-        ]
-      },
-      {
-        "type": "Terminal",
-        "name": "Percent",
-        "label": "Percent",
-        "idx": 0,
-        "pattern": "%"
-      },
-      {
-        "type": "Terminal",
-        "name": "Type",
-        "label": "Type",
-        "idx": 0,
-        "pattern": "type"
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "rowType",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 0,
-            "pattern": "[a-zA-Z]\\w*"
-          },
-          {
-            "type": "Terminal",
-            "name": "Dot",
-            "label": "Dot",
-            "idx": 0,
-            "pattern": "\\."
-          }
-        ]
-      },
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 2,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Terminal",
-        "name": "Percent",
-        "label": "Percent",
-        "idx": 0,
-        "pattern": "%"
-      },
-      {
-        "type": "Terminal",
-        "name": "Rowtype",
-        "label": "Rowtype",
-        "idx": 0,
-        "pattern": "rowtype"
       }
     ]
   },
@@ -1663,9 +1629,30 @@
         ]
       },
       {
-        "type": "NonTerminal",
-        "name": "dataType",
-        "idx": 0
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "dataType",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "typeDef",
+                "idx": 0
+              }
+            ]
+          }
+        ]
       },
       {
         "type": "Option",
@@ -1878,9 +1865,30 @@
         "pattern": "return"
       },
       {
-        "type": "NonTerminal",
-        "name": "dataType",
-        "idx": 0
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "dataType",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "typeDef",
+                "idx": 0
+              }
+            ]
+          }
+        ]
       },
       {
         "type": "Option",
