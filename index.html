@@ -2370,6 +2370,43 @@
   },
   {
     "type": "Rule",
+    "name": "compilationFlag",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "plsqlUnitKw",
+                "label": "plsqlUnitKw",
+                "idx": 0,
+                "pattern": "\\$\\$plsql_unit"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "plsqlTypeKw",
+                "label": "plsqlTypeKw",
+                "idx": 0,
+                "pattern": "\\$\\$plsql_type"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "stringExpression",
     "orgText": "",
     "definition": [
@@ -2407,6 +2444,16 @@
                     "label": "String",
                     "idx": 0,
                     "pattern": "'((?:''|[^'])*)'"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "compilationFlag",
+                    "idx": 0
                   }
                 ]
               }
