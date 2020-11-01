@@ -14,6 +14,9 @@ declare
   l_col2 schema.table_name.col_name%type;
   l_ts   timestamp := systimestamp;
   l_tstz timestamp with time zone := current_timestamp;
+
+  l_str4 varchar2(12 char) := $$plsql_unit;
+  l_str5 varchar2(12 char) := $$plsql_type;
 begin
   -- empty
 end;

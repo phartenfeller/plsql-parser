@@ -400,7 +400,7 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('funcSpec', () => {
-      $.CONSUME(tokenVocabulary.FunctionKw); // procedure
+      $.CONSUME(tokenVocabulary.FunctionKw); // function
       $.CONSUME(tokenVocabulary.Identifier); // fnc_name
       $.OPTION(() => {
         $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
@@ -513,6 +513,13 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.Identifier);
     });
 
+    $.RULE('compilationFlag', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.plsqlUnitKw) },
+       { ALT: () => $.CONSUME(tokenVocabulary.plsqlTypeKw) },
+      ]);
+    });
+
     $.RULE('stringExpression', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Concat,
@@ -520,6 +527,7 @@ class SelectParser extends CstParser {
           $.OR([
             { ALT: () => $.SUBRULE($.stringVar) },
             { ALT: () => $.CONSUME(tokenVocabulary.String) },
+            { ALT: () => $.SUBRULE($.compilationFlag) }
           ]);
         },
       });

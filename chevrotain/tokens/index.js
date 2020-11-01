@@ -11,6 +11,7 @@ const sql = require('./sql');
 const exception = require('./exception');
 const dynSql = require('./dynSql');
 const loops = require('./loops');
+const compilationFlags = require('./compilationFlags');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -124,6 +125,7 @@ const allTokens = [
   ...subprograms,
   ...symbols,
   ...relationalOperators,
+  ...compilationFlags,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
   Float,
