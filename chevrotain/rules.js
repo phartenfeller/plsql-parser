@@ -60,6 +60,20 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.End);
     });
 
+    $.RULE('throwException', () => {
+      $.CONSUME(tokenVocabulary.RaiseKw); // raise
+      $.CONSUME(tokenVocabulary.Identifier); // my_exception
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Dot);
+        $.CONSUME2(tokenVocabulary.Identifier);
+      });
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.Dot);
+        $.CONSUME3(tokenVocabulary.Identifier);
+      });
+      $.SUBRULE($.semicolon);
+    });
+
     $.RULE('statement', () => {
       $.OR([
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
@@ -78,6 +92,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.returnStatement) },
         { ALT: () => $.SUBRULE($.block) },
         { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
+        { ALT: () => $.SUBRULE($.throwException) },
       ]);
     });
 
