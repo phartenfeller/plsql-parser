@@ -770,11 +770,13 @@ class SelectParser extends CstParser {
     $.RULE('whereClause', () => {
       // where 1 = 1 and col2 = 5
       $.CONSUME(tokenVocabulary.WhereKw);
-      $.AT_LEAST_ONE_SEP4({
-        SEP: [tokenVocabulary.AndKw, tokenVocabulary.OrKw],
-        DEF: () => {
-          $.SUBRULE($.condition);
-        },
+      $.SUBRULE($.condition);
+      $.MANY(() => {
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.AndKw) },
+          { ALT: () => $.CONSUME(tokenVocabulary.OrKw) },
+        ]);
+        $.SUBRULE2($.condition);
       });
     });
 
