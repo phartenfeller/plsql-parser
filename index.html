@@ -3539,17 +3539,48 @@
         "pattern": "where"
       },
       {
-        "type": "RepetitionMandatoryWithSeparator",
-        "idx": 4,
-        "separator": {
-          "type": "Terminal",
-          "idx": 1
-        },
+        "type": "NonTerminal",
+        "name": "condition",
+        "idx": 0
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
         "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "AndKw",
+                    "label": "AndKw",
+                    "idx": 0,
+                    "pattern": "and"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "OrKw",
+                    "label": "OrKw",
+                    "idx": 0,
+                    "pattern": "or"
+                  }
+                ]
+              }
+            ]
+          },
           {
             "type": "NonTerminal",
             "name": "condition",
-            "idx": 0
+            "idx": 2
           }
         ]
       }
