@@ -390,6 +390,7 @@ class SelectParser extends CstParser {
           { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
           { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
           { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
+          { ALT: () => $.CONSUME(tokenVocabulary.TsValue) }, // systimestamp | current_timestamp
           { ALT: () => $.CONSUME(tokenVocabulary.Null) },
           // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
         ],
