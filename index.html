@@ -230,6 +230,72 @@
   },
   {
     "type": "Rule",
+    "name": "throwException",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "RaiseKw",
+        "label": "RaiseKw",
+        "idx": 0,
+        "pattern": "raise"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Dot",
+            "label": "Dot",
+            "idx": 0,
+            "pattern": "\\."
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 2,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Dot",
+            "label": "Dot",
+            "idx": 2,
+            "pattern": "\\."
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 3,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "semicolon",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "statement",
     "orgText": "",
     "definition": [
@@ -373,6 +439,16 @@
               {
                 "type": "NonTerminal",
                 "name": "dynamicSqlStatement",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "throwException",
                 "idx": 0
               }
             ]
