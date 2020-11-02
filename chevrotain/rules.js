@@ -670,7 +670,12 @@ class SelectParser extends CstParser {
           },
         },
       ]);
-
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.ReturningKw); // returning
+        $.CONSUME4(tokenVocabulary.Identifier); // identity_col
+        $.CONSUME2(tokenVocabulary.IntoKw); // into
+        $.CONSUME5(tokenVocabulary.Identifier); // variable
+      });
       $.SUBRULE($.semicolon); // ;
     });
 
