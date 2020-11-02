@@ -4,6 +4,7 @@ declare
   l_str1 varchar2(2) := 'a string!';
   l_str2 varchar2(12 char) := 'test';
   l_str3 varchar2(400 char) := 'a' || 'concatenated' || 'string' || l_str2;
+  l_scope constant logger_logs.scope%type := gc_scope || 'myfunc';
   l_plsi pls_integer := 2;
   l_bool boolean := true;
   l_dat1 date := current_date;

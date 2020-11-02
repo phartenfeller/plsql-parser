@@ -62,7 +62,7 @@ class SelectParser extends CstParser {
 
     $.RULE('statement', () => {
       $.OR([
-        { ALT: () => $.SUBRULE($.assignment), IGNORE_AMBIGUITIES: true },
+        { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
         { ALT: () => $.SUBRULE($.comment) },
         { ALT: () => $.SUBRULE($.nullStatement) },
         { ALT: () => $.SUBRULE($.ifStatement) },
@@ -74,7 +74,6 @@ class SelectParser extends CstParser {
         { ALT: () => $.SUBRULE($.forLoop) },
         {
           ALT: () => $.SUBRULE($.functionCallSemicolon),
-          IGNORE_AMBIGUITIES: true,
         },
         { ALT: () => $.SUBRULE($.returnStatement) },
         { ALT: () => $.SUBRULE($.block) },
@@ -290,16 +289,14 @@ class SelectParser extends CstParser {
 
     $.RULE('objectTypeDeclaration', () => {
       $.CONSUME(tokenVocabulary.Identifier); // l_row
-      $.OPTION1(() => {
+      $.OPTION(() => {
         $.CONSUME(tokenVocabulary.ConstantKw);
       });
       $.SUBRULE($.typeDef);
-      $.OPTION(() => {
-        // := 'any value'
-        $.OPTION3(() => {
-          $.CONSUME(tokenVocabulary.Assignment);
-          $.SUBRULE($.value);
-        });
+      $.OPTION2(() => {
+        debugger;
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.SUBRULE($.value);
       });
       $.SUBRULE($.semicolon);
     });
@@ -369,17 +366,34 @@ class SelectParser extends CstParser {
       });
     });
 
+    $.RULE('pointValue', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.Dot);
+        $.CONSUME2(tokenVocabulary.Identifier);
+      });
+    });
+
     // ignore ambiguities because string can be only a variable -> Identifier as well as a number
     $.RULE('value', () => {
-      $.OR([
-        { ALT: () => $.SUBRULE($.functionCall), IGNORE_AMBIGUITIES: true }, // function call
-        { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
-        { ALT: () => $.SUBRULE($.stringExpression), IGNORE_AMBIGUITIES: true }, // 'value'
-        { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
-        { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
-        { ALT: () => $.CONSUME(tokenVocabulary.Null) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-      ]);
+      $.OR({
+        DEF: [
+          {
+            GATE: $.BACKTRACK($.functionCall),
+            ALT: () => $.SUBRULE($.functionCall),
+          }, // function call
+          { ALT: () => $.SUBRULE($.pointValue) }, // pkg.fnc or pkg.constant or record.value
+          {
+            ALT: () => $.SUBRULE($.stringExpression),
+            IGNORE_AMBIGUITIES: true,
+          }, // 'value'
+          { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
+          { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
+          { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
+          { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+          // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        ],
+      });
     });
 
     $.RULE('argumentList', () => {
@@ -506,10 +520,6 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    $.RULE('stringVar', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
-    });
-
     $.RULE('compilationFlag', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.plsqlUnitKw) },
@@ -522,9 +532,9 @@ class SelectParser extends CstParser {
         SEP: tokenVocabulary.Concat,
         DEF: () => {
           $.OR([
-            { ALT: () => $.SUBRULE($.stringVar) },
             { ALT: () => $.CONSUME(tokenVocabulary.String) },
             { ALT: () => $.SUBRULE($.compilationFlag) },
+            { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
           ]);
         },
       });
@@ -714,24 +724,21 @@ class SelectParser extends CstParser {
         $.CONSUME2(tokenVocabulary.Dot);
         $.CONSUME3(tokenVocabulary.Identifier);
       });
-      // pkg_var / object_var or fct without params
-      $.OPTION3(() => {
-        $.CONSUME(tokenVocabulary.OpenBracket); // (
-        // function without params can be called like fct and fct()
-        $.OPTION4(() => {
-          $.MANY_SEP({
-            SEP: tokenVocabulary.Comma,
-            DEF: () => {
-              $.OPTION5(() => {
-                $.CONSUME4(tokenVocabulary.Identifier); // pi_param
-                $.CONSUME(tokenVocabulary.Arrow); // =>
-              });
-              $.SUBRULE($.value); // 6
-            },
-          });
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      // function without params can be called like fct()
+      $.OPTION4(() => {
+        $.MANY_SEP({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.OPTION5(() => {
+              $.CONSUME4(tokenVocabulary.Identifier); // pi_param
+              $.CONSUME(tokenVocabulary.Arrow); // =>
+            });
+            $.SUBRULE($.value); // 6
+          },
         });
-        $.CONSUME(tokenVocabulary.ClosingBracket); // )
       });
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
     });
 
     $.RULE('functionCallSemicolon', () => {
@@ -926,12 +933,16 @@ module.exports = {
 
     if (parserInstance.errors.length > 0) {
       const error = parserInstance.errors[0];
+      // console.log(error);
       throw Error(
         `${parserInstance.errors}. 
         RuleStack: ${error.context.ruleStack.join(', ')}
-        Token: Line: ${error.token.startLine} Column: ${
-          error.token.startColumn
-        }`
+        Token: "${error.token.image}" Line: "${
+          error.token.startLine
+        }" Column: "${error.token.startColumn}" 
+        Previous Token: ${error.previousToken.image} of type "${
+          error.previousToken.tokenType.name
+        }"`
       );
       // throw Error(
       //   `Sad sad panda, parsing errors detected!\n${parserInstance.errors[0].message}`

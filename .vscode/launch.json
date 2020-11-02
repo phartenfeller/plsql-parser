@@ -7,9 +7,16 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program",
+      "name": "Launch index",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch test",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/test/debug.js"
     }
   ]
 }
