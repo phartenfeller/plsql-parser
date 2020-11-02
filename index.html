@@ -1385,7 +1385,7 @@
       },
       {
         "type": "Option",
-        "idx": 1,
+        "idx": 0,
         "definition": [
           {
             "type": "Terminal",
@@ -1403,25 +1403,19 @@
       },
       {
         "type": "Option",
-        "idx": 0,
+        "idx": 2,
         "definition": [
           {
-            "type": "Option",
-            "idx": 3,
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Assignment",
-                "label": "Assignment",
-                "idx": 0,
-                "pattern": ":="
-              },
-              {
-                "type": "NonTerminal",
-                "name": "value",
-                "idx": 0
-              }
-            ]
+            "type": "Terminal",
+            "name": "Assignment",
+            "label": "Assignment",
+            "idx": 0,
+            "pattern": ":="
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
           }
         ]
       },
@@ -1699,6 +1693,40 @@
   },
   {
     "type": "Rule",
+    "name": "pointValue",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "RepetitionMandatory",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Dot",
+            "label": "Dot",
+            "idx": 0,
+            "pattern": "\\."
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 2,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "value",
     "orgText": "",
     "definition": [
@@ -1721,7 +1749,7 @@
             "definition": [
               {
                 "type": "NonTerminal",
-                "name": "number",
+                "name": "pointValue",
                 "idx": 0
               }
             ]
@@ -1732,6 +1760,16 @@
               {
                 "type": "NonTerminal",
                 "name": "stringExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "number",
                 "idx": 0
               }
             ]
@@ -1769,18 +1807,6 @@
                 "label": "Null",
                 "idx": 0,
                 "pattern": "null"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
-                "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
               }
             ]
           }
@@ -2364,20 +2390,6 @@
   },
   {
     "type": "Rule",
-    "name": "stringVar",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      }
-    ]
-  },
-  {
-    "type": "Rule",
     "name": "compilationFlag",
     "orgText": "",
     "definition": [
@@ -2437,16 +2449,6 @@
                 "type": "Alternative",
                 "definition": [
                   {
-                    "type": "NonTerminal",
-                    "name": "stringVar",
-                    "idx": 0
-                  }
-                ]
-              },
-              {
-                "type": "Alternative",
-                "definition": [
-                  {
                     "type": "Terminal",
                     "name": "String",
                     "label": "String",
@@ -2462,6 +2464,18 @@
                     "type": "NonTerminal",
                     "name": "compilationFlag",
                     "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 0,
+                    "pattern": "[a-zA-Z]\\w*"
                   }
                 ]
               }
@@ -3314,68 +3328,62 @@
         ]
       },
       {
+        "type": "Terminal",
+        "name": "OpenBracket",
+        "label": "OpenBracket",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
         "type": "Option",
-        "idx": 3,
+        "idx": 4,
         "definition": [
           {
-            "type": "Terminal",
-            "name": "OpenBracket",
-            "label": "OpenBracket",
+            "type": "RepetitionWithSeparator",
             "idx": 0,
-            "pattern": "\\("
-          },
-          {
-            "type": "Option",
-            "idx": 4,
+            "separator": {
+              "type": "Terminal",
+              "name": "Comma",
+              "label": "Comma",
+              "idx": 1,
+              "pattern": ","
+            },
             "definition": [
               {
-                "type": "RepetitionWithSeparator",
-                "idx": 0,
-                "separator": {
-                  "type": "Terminal",
-                  "name": "Comma",
-                  "label": "Comma",
-                  "idx": 1,
-                  "pattern": ","
-                },
+                "type": "Option",
+                "idx": 5,
                 "definition": [
                   {
-                    "type": "Option",
-                    "idx": 5,
-                    "definition": [
-                      {
-                        "type": "Terminal",
-                        "name": "Identifier",
-                        "label": "Identifier",
-                        "idx": 4,
-                        "pattern": "[a-zA-Z]\\w*"
-                      },
-                      {
-                        "type": "Terminal",
-                        "name": "Arrow",
-                        "label": "Arrow",
-                        "idx": 0,
-                        "pattern": "=>"
-                      }
-                    ]
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 4,
+                    "pattern": "[a-zA-Z]\\w*"
                   },
                   {
-                    "type": "NonTerminal",
-                    "name": "value",
-                    "idx": 0
+                    "type": "Terminal",
+                    "name": "Arrow",
+                    "label": "Arrow",
+                    "idx": 0,
+                    "pattern": "=>"
                   }
                 ]
+              },
+              {
+                "type": "NonTerminal",
+                "name": "value",
+                "idx": 0
               }
             ]
-          },
-          {
-            "type": "Terminal",
-            "name": "ClosingBracket",
-            "label": "ClosingBracket",
-            "idx": 0,
-            "pattern": "\\)"
           }
         ]
+      },
+      {
+        "type": "Terminal",
+        "name": "ClosingBracket",
+        "label": "ClosingBracket",
+        "idx": 0,
+        "pattern": "\\)"
       }
     ]
   },
