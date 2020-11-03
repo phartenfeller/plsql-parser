@@ -3,73 +3,73 @@ const Identifier = require('./Identifier');
 
 const SelectKw = createToken({
   name: 'SelectKw',
-  pattern: /select/,
+  pattern: /select/i,
   longer_alt: Identifier,
 });
 
 const IntoKw = createToken({
   name: 'IntoKw',
-  pattern: /into/,
+  pattern: /into/i,
   longer_alt: Identifier,
 });
 
 const FromKw = createToken({
   name: 'FromKw',
-  pattern: /from/,
+  pattern: /from/i,
   longer_alt: Identifier,
 });
 
 const WhereKw = createToken({
   name: 'WhereKw',
-  pattern: /where/,
+  pattern: /where/i,
   longer_alt: Identifier,
 });
 
 const GroupByKw = createToken({
   name: 'GroupByKw',
-  pattern: /group by/,
+  pattern: /group by/i,
   longer_alt: Identifier,
 });
 
 const OrderByKw = createToken({
   name: 'OrderByKw',
-  pattern: /order by/,
+  pattern: /order by/i,
   longer_alt: Identifier,
 });
 
 const AndKw = createToken({
   name: 'AndKw',
-  pattern: /and/,
+  pattern: /and/i,
   longer_alt: Identifier,
 });
 
 const InsertKw = createToken({
   name: 'InsertKw',
-  pattern: /insert/,
+  pattern: /insert/i,
   longer_alt: Identifier,
 });
 
 const ValuesKw = createToken({
   name: 'ValuesKw',
-  pattern: /values/,
+  pattern: /values/i,
   longer_alt: Identifier,
 });
 
 const DeleteKw = createToken({
   name: 'DeleteKw',
-  pattern: /delete/,
+  pattern: /delete/i,
   longer_alt: Identifier,
 });
 
 const UpdateKw = createToken({
   name: 'UpdateKw',
-  pattern: /update/,
+  pattern: /update/i,
   longer_alt: Identifier,
 });
 
 const SetKw = createToken({
   name: 'SetKw',
-  pattern: /set/,
+  pattern: /set/i,
   longer_alt: Identifier,
 });
 

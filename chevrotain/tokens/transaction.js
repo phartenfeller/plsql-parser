@@ -3,19 +3,19 @@ const Identifier = require('./Identifier');
 
 const StartTransactionKw = createToken({
   name: 'StartTransactionKw',
-  pattern: /start transaction/,
+  pattern: /start transaction/i,
   longer_alt: Identifier,
 });
 
 const CommitKw = createToken({
   name: 'CommitKw',
-  pattern: /commit/,
+  pattern: /commit/i,
   longer_alt: Identifier,
 });
 
 const RollbackKw = createToken({
   name: 'RollbackKw',
-  pattern: /rollback/,
+  pattern: /rollback/i,
   longer_alt: Identifier,
 });
 

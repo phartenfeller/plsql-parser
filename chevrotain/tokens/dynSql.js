@@ -3,19 +3,19 @@ const Identifier = require('./Identifier');
 
 const ExecuteImmediateKw = createToken({
   name: 'ExecuteImmediateKw',
-  pattern: /execute immediate/,
+  pattern: /execute immediate/i,
   longer_alt: Identifier,
 });
 
 const UsingKw = createToken({
   name: 'UsingKw',
-  pattern: /using/,
+  pattern: /using/i,
   longer_alt: Identifier,
 });
 
 const ReturningKw = createToken({
   name: 'ReturningKw',
-  pattern: /returning/,
+  pattern: /returning/i,
   longer_alt: Identifier,
 });
 

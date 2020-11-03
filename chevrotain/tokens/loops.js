@@ -3,13 +3,13 @@ const Identifier = require('./Identifier');
 
 const ForKw = createToken({
   name: 'ForKw',
-  pattern: /for/,
+  pattern: /for/i,
   longer_alt: Identifier,
 });
 
 const LoopKw = createToken({
   name: 'LoopKw',
-  pattern: /loop/,
+  pattern: /loop/i,
   longer_alt: Identifier,
 });
 

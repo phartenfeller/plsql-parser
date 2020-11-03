@@ -3,61 +3,61 @@ const Identifier = require('./Identifier');
 
 const DtypeNumber = createToken({
   name: 'DtypeNumber',
-  pattern: /number/,
+  pattern: /number/i,
   longer_alt: Identifier,
 });
 
 const DtypePlsIteger = createToken({
   name: 'DtypePlsIteger',
-  pattern: /pls_integer/,
+  pattern: /pls_integer/i,
   longer_alt: Identifier,
 });
 
 const DtypeVarchar2 = createToken({
   name: 'DtypeVarchar2',
-  pattern: /varchar2/,
+  pattern: /varchar2/i,
   longer_alt: Identifier,
 });
 
 const DtypeBoolean = createToken({
   name: 'DtypeBoolean',
-  pattern: /boolean/,
+  pattern: /boolean/i,
   longer_alt: Identifier,
 });
 
 const DtypeDate = createToken({
   name: 'DtypeDate',
-  pattern: /date/,
+  pattern: /date/i,
   longer_alt: Identifier,
 });
 
 const DtypeTimestampWTZ = createToken({
   name: 'DtypeTimestampWTZ',
-  pattern: /timestamp with time zone/,
+  pattern: /timestamp with time zone/i,
   longer_alt: Identifier,
 });
 
 const DtypeTimestamp = createToken({
   name: 'DtypeTimestamp',
-  pattern: /timestamp/,
+  pattern: /timestamp/i,
   longer_alt: DtypeTimestampWTZ,
 });
 
 const Char = createToken({
   name: 'Char',
-  pattern: /char/,
+  pattern: /char/i,
   longer_alt: Identifier,
 });
 
 const DateValue = createToken({
   name: 'DateValue',
-  pattern: /(sysdate|current_date)/,
+  pattern: /(sysdate|current_date)/i,
   longer_alt: Identifier,
 });
 
 const TsValue = createToken({
   name: 'TsValue',
-  pattern: /(systimestamp|current_timestamp)/,
+  pattern: /(systimestamp|current_timestamp)/i,
   longer_alt: Identifier,
 });
 
@@ -68,47 +68,47 @@ const JsonDtypes = createToken({
 
 const JsonObjectT = createToken({
   name: 'JsonObjectT',
-  pattern: /json_object_t/,
+  pattern: /json_object_t/i,
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
 
 const JsonArrayT = createToken({
   name: 'JsonArrayT',
-  pattern: /json_array_t/,
+  pattern: /json_array_t/i,
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
 
 const JsonElementT = createToken({
   name: 'JsonElementT',
-  pattern: /json_element_t/,
+  pattern: /json_element_t/i,
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
 
 const JsonScalarT = createToken({
   name: 'JsonScalarT',
-  pattern: /json_scalar_t/,
+  pattern: /json_scalar_t/i,
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
 
 const Rowtype = createToken({
   name: 'Rowtype',
-  pattern: /rowtype/,
+  pattern: /rowtype/i,
   longer_alt: Identifier,
 });
 
 const Type = createToken({
   name: 'Type',
-  pattern: /type/,
+  pattern: /type/i,
   longer_alt: Identifier,
 });
 
 const ConstantKw = createToken({
   name: 'ConstantKw',
-  pattern: /constant/,
+  pattern: /constant/i,
   longer_alt: Identifier,
 });
 

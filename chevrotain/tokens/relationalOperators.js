@@ -51,13 +51,13 @@ const Smaller = createToken({
 
 const IsKw = createToken({
   name: 'IsKw',
-  pattern: /is/,
+  pattern: /is/i,
   longer_alt: Identifier,
 });
 
 const NotKw = createToken({
   name: 'NotKw',
-  pattern: /not/,
+  pattern: /not/i,
   longer_alt: Identifier,
 });
 

@@ -193,9 +193,12 @@ class SelectParser extends CstParser {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.BodyKw); // body
       $.CONSUME(tokenVocabulary.Identifier); // pkg_name
-      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // as
+        { ALT: () => $.CONSUME(tokenVocabulary.IsKw) }, // is
+      ]);
       $.MANY(() => {
-        $.OR([
+        $.OR2([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
         ]);
@@ -281,6 +284,18 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.Identifier); // l_var
       $.CONSUME(tokenVocabulary.JsonDtypes); // JSON_OBJECT_T / JSON_ARRAY_T ...
       $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('jsonDtypeValue', () => {
+      $.CONSUME(tokenVocabulary.JsonDtypes); // JSON_OBJECT_T / JSON_ARRAY_T ...
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.OPTION(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.pointValue), IGNORE_AMBIGUITIES: true }, // myvar.value
+          { ALT: () => $.SUBRULE($.stringExpression) }, // '{"json": "data"}'
+        ]);
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
     });
 
     $.RULE('typeDef', () => {
@@ -393,6 +408,7 @@ class SelectParser extends CstParser {
     $.RULE('value', () => {
       $.OR({
         DEF: [
+          { ALT: () => $.SUBRULE($.jsonDtypeValue) },
           {
             GATE: $.BACKTRACK($.functionCall),
             ALT: () => $.SUBRULE($.functionCall),

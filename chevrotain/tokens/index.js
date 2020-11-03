@@ -19,17 +19,17 @@ const tokenVocabulary = {};
 /* ===== Keywords ===== */
 const Declare = createToken({
   name: 'Declare',
-  pattern: /declare/,
+  pattern: /declare/i,
   // longer_alt: Identifier
 });
 const Begin = createToken({
   name: 'Begin',
-  pattern: /begin/,
+  pattern: /begin/i,
   longer_alt: Identifier,
 });
 const End = createToken({
   name: 'End',
-  pattern: /end/,
+  pattern: /end/i,
   longer_alt: Identifier,
 });
 
@@ -41,45 +41,45 @@ const BoolValue = createToken({
 
 const BoolTrue = createToken({
   name: 'BoolTrue',
-  pattern: /true/,
+  pattern: /true/i,
   longer_alt: Identifier,
   categories: BoolValue,
 });
 
 const BoolFalse = createToken({
   name: 'BoolTrue',
-  pattern: /false/,
+  pattern: /false/i,
   longer_alt: Identifier,
   categories: BoolValue,
 });
 
 const Null = createToken({
   name: 'Null',
-  pattern: /null/,
+  pattern: /null/i,
   longer_alt: Identifier,
 });
 
 const CreateKw = createToken({
   name: 'CreateKw',
-  pattern: /create/,
+  pattern: /create/i,
   longer_alt: Identifier,
 });
 
 const OrKw = createToken({
   name: 'OrKw',
-  pattern: /or/,
+  pattern: /or/i,
   longer_alt: Identifier,
 });
 
 const ReplaceKw = createToken({
   name: 'ReplaceKw',
-  pattern: /replace/,
+  pattern: /replace/i,
   longer_alt: Identifier,
 });
 
 const AsKw = createToken({
   name: 'AsKw',
-  pattern: /as/,
+  pattern: /as/i,
   longer_alt: Identifier,
 });
 
