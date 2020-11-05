@@ -410,6 +410,10 @@ class SelectParser extends CstParser {
         DEF: [
           { ALT: () => $.SUBRULE($.jsonDtypeValue) },
           {
+            GATE: $.BACKTRACK($.mathExpression),
+            ALT: () => $.SUBRULE($.mathExpression),
+          },
+          {
             GATE: $.BACKTRACK($.functionCall),
             ALT: () => $.SUBRULE($.functionCall),
           }, // function call
@@ -622,18 +626,22 @@ class SelectParser extends CstParser {
       });
       $.CONSUME2(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.Assignment);
-      $.OR([
-        { ALT: () => $.SUBRULE($.mathExpression) },
-        { ALT: () => $.SUBRULE($.value) },
-      ]);
+      $.SUBRULE($.value);
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('mathExpression', () => {
+    $.RULE('mathExpressionSide', () => {
       $.OR([
+        {
+          ALT: () => $.SUBRULE($.functionCall),
+        },
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
         { ALT: () => $.SUBRULE($.number) },
       ]);
+    });
+
+    $.RULE('mathExpression', () => {
+      $.SUBRULE($.mathExpressionSide);
       $.AT_LEAST_ONE(() => {
         $.SUBRULE($.mathTerm);
       });
@@ -646,10 +654,7 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
         { ALT: () => $.CONSUME(tokenVocabulary.Slash) },
       ]);
-      $.OR2([
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        { ALT: () => $.SUBRULE($.number) },
-      ]);
+      $.SUBRULE($.mathExpressionSide);
     });
 
     $.RULE('number', () => {
