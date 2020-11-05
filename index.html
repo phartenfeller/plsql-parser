@@ -2852,53 +2852,15 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "multiLineComment",
-                "idx": 0
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "multiLineComment",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "MultiLineCommentStart",
-        "label": "MultiLineCommentStart",
-        "idx": 0,
-        "pattern": "\\/\\*"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Repetition",
-            "idx": 0,
-            "definition": [
-              {
                 "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
+                "name": "MultiLineComment",
+                "label": "MultiLineComment",
                 "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "pattern": "\\/\\*[^`]*\\*\\/"
               }
             ]
           }
         ]
-      },
-      {
-        "type": "Terminal",
-        "name": "MultiLineCommentEnd",
-        "label": "MultiLineCommentEnd",
-        "idx": 0,
-        "pattern": "\\*\\/"
       }
     ]
   },
