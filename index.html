@@ -1908,6 +1908,16 @@
             "definition": [
               {
                 "type": "NonTerminal",
+                "name": "mathExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
                 "name": "functionCall",
                 "idx": 0
               }
@@ -2904,30 +2914,9 @@
         "pattern": ":="
       },
       {
-        "type": "Alternation",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "mathExpression",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "value",
-                "idx": 0
-              }
-            ]
-          }
-        ]
+        "type": "NonTerminal",
+        "name": "value",
+        "idx": 0
       },
       {
         "type": "NonTerminal",
@@ -2938,13 +2927,23 @@
   },
   {
     "type": "Rule",
-    "name": "mathExpression",
+    "name": "mathExpressionSide",
     "orgText": "",
     "definition": [
       {
         "type": "Alternation",
         "idx": 0,
         "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "functionCall",
+                "idx": 0
+              }
+            ]
+          },
           {
             "type": "Alternative",
             "definition": [
@@ -2968,6 +2967,18 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "mathExpression",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "mathExpressionSide",
+        "idx": 0
       },
       {
         "type": "RepetitionMandatory",
@@ -3042,32 +3053,9 @@
         ]
       },
       {
-        "type": "Alternation",
-        "idx": 2,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
-                "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "number",
-                "idx": 0
-              }
-            ]
-          }
-        ]
+        "type": "NonTerminal",
+        "name": "mathExpressionSide",
+        "idx": 0
       }
     ]
   },
