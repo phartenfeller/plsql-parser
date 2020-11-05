@@ -611,18 +611,8 @@ class SelectParser extends CstParser {
     $.RULE('comment', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.SingleLineComment) },
-        { ALT: () => $.SUBRULE($.multiLineComment) },
+        { ALT: () => $.CONSUME(tokenVocabulary.MultiLineComment) },
       ]);
-    });
-
-    $.RULE('multiLineComment', () => {
-      $.CONSUME(tokenVocabulary.MultiLineCommentStart);
-      $.OPTION(() => {
-        $.MANY(() => {
-          $.CONSUME(tokenVocabulary.Identifier);
-        });
-      });
-      $.CONSUME(tokenVocabulary.MultiLineCommentEnd);
     });
 
     $.RULE('assignment', () => {

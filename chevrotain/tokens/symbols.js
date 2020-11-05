@@ -12,16 +12,10 @@ const SingleLineComment = createToken({
   pattern: /--.+/,
 });
 
-const MultiLineCommentStart = createToken({
-  name: 'MultiLineCommentStart',
-  pattern: /\/\*/,
-  longer_alt: Identifier,
-});
-
-const MultiLineCommentEnd = createToken({
-  name: 'MultiLineCommentEnd',
-  pattern: /\*\//,
-  longer_alt: Identifier,
+const MultiLineComment = createToken({
+  name: 'MultiLineComment',
+  pattern: /\/\*[^`]*\*\//,
+  line_breaks: true,
 });
 
 const Semicolon = createToken({
@@ -99,8 +93,7 @@ const Arrow = createToken({
 module.exports = [
   Assignment,
   SingleLineComment,
-  MultiLineCommentStart,
-  MultiLineCommentEnd,
+  MultiLineComment,
   Semicolon,
   Comma,
   Plus,
