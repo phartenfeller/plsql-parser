@@ -101,9 +101,16 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
+    $.RULE('ifCondition', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.condition) }, // l_var1 > l_var2
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // bool var
+      ]);
+    });
+
     $.RULE('ifStatement', () => {
       $.CONSUME(tokenVocabulary.If); // if
-      $.SUBRULE($.condition); // l_var1 > l_var2
+      $.SUBRULE($.ifCondition);
       $.CONSUME(tokenVocabulary.Then); // Then
       $.MANY(() => {
         $.SUBRULE2($.statement); // ...
@@ -111,7 +118,7 @@ class SelectParser extends CstParser {
       $.OPTION(() => {
         $.MANY2(() => {
           $.CONSUME(tokenVocabulary.Elsif); // elsif
-          $.SUBRULE3($.condition); // l_var1 < l_var2
+          $.SUBRULE2($.ifCondition);
           $.CONSUME2(tokenVocabulary.Then); // then
           $.MANY3(() => {
             $.SUBRULE4($.statement); // ...
