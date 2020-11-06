@@ -18,4 +18,9 @@ as
   , pio_error2 in out nocopy boolean
   );
 
+  procedure test_my_packact (
+    pi_date  date
+  , pi_value number
+  );
+
 end test_pkg;

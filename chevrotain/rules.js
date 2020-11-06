@@ -386,15 +386,17 @@ class SelectParser extends CstParser {
 
     $.RULE('argument', () => {
       $.CONSUME(tokenVocabulary.Identifier); // pi_input
-      $.SUBRULE($.inOut); // in | out | in out
       $.OPTION(() => {
+        $.SUBRULE($.inOut); // in | out | in out
+      });
+      $.OPTION2(() => {
         $.CONSUME2(tokenVocabulary.NocopyKw); // nocopy
       });
       $.OR([
         { ALT: () => $.SUBRULE($.dataType) }, // varchar2 | number ...
         { ALT: () => $.SUBRULE($.typeDef) },
       ]);
-      $.OPTION2(() => {
+      $.OPTION3(() => {
         $.OR2([
           { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
           { ALT: () => $.CONSUME(tokenVocabulary.Assignment) }, // :=
