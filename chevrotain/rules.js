@@ -74,12 +74,53 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
+    $.RULE('caseGlobalExpression', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.WhenKw);
+        $.SUBRULE($.value);
+        $.CONSUME(tokenVocabulary.Then);
+        $.MANY(() => {
+          $.SUBRULE($.statement);
+        });
+      });
+    });
+
+    $.RULE('caseWithoutGlobalExpression', () => {
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.WhenKw);
+        $.SUBRULE($.condition);
+        $.CONSUME(tokenVocabulary.Then);
+        $.MANY(() => {
+          $.SUBRULE($.statement);
+        });
+      });
+    });
+
+    $.RULE('caseStatement', () => {
+      $.CONSUME(tokenVocabulary.CaseKw);
+      $.OR([
+        { ALT: () => $.SUBRULE($.caseGlobalExpression) },
+        { ALT: () => $.SUBRULE($.caseWithoutGlobalExpression) },
+      ]);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Else);
+        $.MANY2(() => {
+          $.SUBRULE2($.statement);
+        });
+      });
+      $.CONSUME(tokenVocabulary.End);
+      $.CONSUME2(tokenVocabulary.CaseKw);
+      $.SUBRULE($.semicolon);
+    });
+
     $.RULE('statement', () => {
       $.OR([
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
         { ALT: () => $.SUBRULE($.comment) },
         { ALT: () => $.SUBRULE($.nullStatement) },
         { ALT: () => $.SUBRULE($.ifStatement) },
+        { ALT: () => $.SUBRULE($.caseStatement) },
         { ALT: () => $.SUBRULE($.queryStatement) },
         { ALT: () => $.SUBRULE($.insertStatement) },
         { ALT: () => $.SUBRULE($.deleteStatement) },

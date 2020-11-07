@@ -103,9 +103,9 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   // "keywords" appear before the Identifier
-  ...ifStatement,
   ...pragma,
   ...exception,
+  ...ifStatement,
   Declare,
   Begin,
   End,

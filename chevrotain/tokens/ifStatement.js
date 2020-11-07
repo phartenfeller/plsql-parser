@@ -1,4 +1,5 @@
 const { createToken } = require('chevrotain');
+const exceptions = require('./exception');
 const Identifier = require('./Identifier');
 
 const If = createToken({
@@ -25,4 +26,10 @@ const Then = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [If, Elsif, Else, Then];
+const CaseKw = createToken({
+  name: 'CaseKw',
+  pattern: /case/i,
+  longer_alt: exceptions.find((e) => e.name === 'CaseNotFoundKw'),
+});
+
+module.exports = [If, Elsif, Else, Then, CaseKw];
