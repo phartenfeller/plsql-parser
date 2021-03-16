@@ -19,4 +19,10 @@ begin
     else
       null;
   end case;
+
+  l_str := case 
+              when l_num = 1 then 'one'
+              when l_num = 2 then 'two'
+              else 'idk'
+           end;
 end;

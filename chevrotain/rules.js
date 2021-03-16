@@ -105,13 +105,50 @@ class SelectParser extends CstParser {
       ]);
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Else);
-        $.MANY2(() => {
+        $.MANY(() => {
           $.SUBRULE2($.statement);
         });
       });
       $.CONSUME(tokenVocabulary.End);
-      $.CONSUME2(tokenVocabulary.CaseKw);
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.CaseKw);
+      });
       $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('sqlCaseGlobalExpression', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.WhenKw);
+        $.SUBRULE($.value);
+        $.CONSUME(tokenVocabulary.Then);
+        $.SUBRULE2($.value);
+      });
+    });
+
+    $.RULE('sqlCaseWithoutGlobalExpression', () => {
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.WhenKw);
+        $.SUBRULE($.condition);
+        $.CONSUME(tokenVocabulary.Then);
+        $.SUBRULE($.value);
+      });
+    });
+
+    $.RULE('sqlCaseStatement', () => {
+      debugger;
+      $.CONSUME(tokenVocabulary.CaseKw);
+      $.OR([
+        { ALT: () => $.SUBRULE($.sqlCaseGlobalExpression) },
+        { ALT: () => $.SUBRULE($.sqlCaseWithoutGlobalExpression) },
+      ]);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Else);
+        $.MANY(() => {
+          $.SUBRULE($.value);
+        });
+      });
+      $.CONSUME(tokenVocabulary.End);
     });
 
     $.RULE('statement', () => {
@@ -372,7 +409,6 @@ class SelectParser extends CstParser {
       });
       $.SUBRULE($.typeDef);
       $.OPTION2(() => {
-        debugger;
         $.CONSUME(tokenVocabulary.Assignment);
         $.SUBRULE($.value);
       });
@@ -472,6 +508,7 @@ class SelectParser extends CstParser {
             ALT: () => $.SUBRULE($.stringExpression),
             IGNORE_AMBIGUITIES: true,
           }, // 'value'
+          { ALT: () => $.SUBRULE($.sqlCaseStatement) },
           { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
           { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
           { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
