@@ -438,7 +438,7 @@
           },
           {
             "type": "Repetition",
-            "idx": 2,
+            "idx": 0,
             "definition": [
               {
                 "type": "NonTerminal",
@@ -457,16 +457,174 @@
         "pattern": "end"
       },
       {
-        "type": "Terminal",
-        "name": "CaseKw",
-        "label": "CaseKw",
+        "type": "Option",
         "idx": 2,
-        "pattern": "case"
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "CaseKw",
+            "label": "CaseKw",
+            "idx": 2,
+            "pattern": "case"
+          }
+        ]
       },
       {
         "type": "NonTerminal",
         "name": "semicolon",
         "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sqlCaseGlobalExpression",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "RepetitionMandatory",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "WhenKw",
+            "label": "WhenKw",
+            "idx": 0,
+            "pattern": "when"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          },
+          {
+            "type": "Terminal",
+            "name": "Then",
+            "label": "Then",
+            "idx": 0,
+            "pattern": "then"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sqlCaseWithoutGlobalExpression",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "RepetitionMandatory",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "WhenKw",
+            "label": "WhenKw",
+            "idx": 0,
+            "pattern": "when"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "condition",
+            "idx": 0
+          },
+          {
+            "type": "Terminal",
+            "name": "Then",
+            "label": "Then",
+            "idx": 0,
+            "pattern": "then"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "sqlCaseStatement",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "CaseKw",
+        "label": "CaseKw",
+        "idx": 0,
+        "pattern": "case"
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sqlCaseGlobalExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sqlCaseWithoutGlobalExpression",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Else",
+            "label": "Else",
+            "idx": 0,
+            "pattern": "else"
+          },
+          {
+            "type": "Repetition",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "value",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "End",
+        "label": "End",
+        "idx": 0,
+        "pattern": "end"
       }
     ]
   },
@@ -2166,6 +2324,16 @@
               {
                 "type": "NonTerminal",
                 "name": "stringExpression",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "sqlCaseStatement",
                 "idx": 0
               }
             ]
