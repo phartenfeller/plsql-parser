@@ -12,15 +12,15 @@
     "generate-parser": "cd jison && npx jison ./plsql.jison && cd .."
   },
   "devDependencies": {
-    "eslint": "^7.12.1",
-    "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.1.2"
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1"
   },
   "dependencies": {
-    "chevrotain": "^7.0.3",
-    "jest": "^26.6.1"
+    "chevrotain": "^8.0.1",
+    "jest": "^26.6.3"
   }
 }
