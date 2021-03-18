@@ -1217,10 +1217,10 @@
       },
       {
         "type": "Terminal",
-        "name": "AsKw",
-        "label": "AsKw",
+        "name": "AsIs",
+        "label": "AsIs",
         "idx": 0,
-        "pattern": "as"
+        "pattern": "NOT_APPLICABLE"
       },
       {
         "type": "Repetition",
@@ -1316,34 +1316,11 @@
         "pattern": "[a-zA-Z]\\w*"
       },
       {
-        "type": "Alternation",
+        "type": "Terminal",
+        "name": "AsIs",
+        "label": "AsIs",
         "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "AsKw",
-                "label": "AsKw",
-                "idx": 0,
-                "pattern": "as"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "IsKw",
-                "label": "IsKw",
-                "idx": 0,
-                "pattern": "is"
-              }
-            ]
-          }
-        ]
+        "pattern": "NOT_APPLICABLE"
       },
       {
         "type": "Repetition",
@@ -1483,10 +1460,10 @@
       },
       {
         "type": "Terminal",
-        "name": "AsKw",
-        "label": "AsKw",
+        "name": "AsIs",
+        "label": "AsIs",
         "idx": 0,
-        "pattern": "as"
+        "pattern": "NOT_APPLICABLE"
       },
       {
         "type": "Repetition",
@@ -1598,10 +1575,10 @@
       },
       {
         "type": "Terminal",
-        "name": "AsKw",
-        "label": "AsKw",
+        "name": "AsIs",
+        "label": "AsIs",
         "idx": 0,
-        "pattern": "as"
+        "pattern": "NOT_APPLICABLE"
       },
       {
         "type": "Repetition",
@@ -3050,11 +3027,9 @@
             "pattern": "\\("
           },
           {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 3,
-            "pattern": "[a-zA-Z]\\w*"
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
           },
           {
             "type": "Terminal",
@@ -3075,7 +3050,7 @@
       {
         "type": "NonTerminal",
         "name": "value",
-        "idx": 0
+        "idx": 2
       },
       {
         "type": "NonTerminal",
