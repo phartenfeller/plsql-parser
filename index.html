@@ -140,6 +140,16 @@
                         "idx": 0
                       }
                     ]
+                  },
+                  {
+                    "type": "Alternative",
+                    "definition": [
+                      {
+                        "type": "NonTerminal",
+                        "name": "comment",
+                        "idx": 0
+                      }
+                    ]
                   }
                 ]
               }
@@ -1243,6 +1253,16 @@
                     "idx": 0
                   }
                 ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "comment",
+                    "idx": 0
+                  }
+                ]
               }
             ]
           }
@@ -1353,6 +1373,16 @@
                   {
                     "type": "NonTerminal",
                     "name": "variableDeclaration",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "comment",
                     "idx": 0
                   }
                 ]
@@ -1467,9 +1497,40 @@
         "idx": 0,
         "definition": [
           {
-            "type": "NonTerminal",
-            "name": "variableDeclaration",
-            "idx": 0
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "variableDeclaration",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "pragmaStatement",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "comment",
+                    "idx": 0
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1551,9 +1612,40 @@
         "idx": 0,
         "definition": [
           {
-            "type": "NonTerminal",
-            "name": "variableDeclaration",
-            "idx": 0
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "variableDeclaration",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "pragmaStatement",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "comment",
+                    "idx": 0
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1619,6 +1711,26 @@
     "orgText": "",
     "definition": [
       {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "ConstantKw",
+            "label": "ConstantKw",
+            "idx": 0,
+            "pattern": "constant"
+          }
+        ]
+      },
+      {
         "type": "Alternation",
         "idx": 0,
         "definition": [
@@ -1656,9 +1768,11 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "boolDeclaration",
-                "idx": 0
+                "type": "Terminal",
+                "name": "DtypeBoolean",
+                "label": "DtypeBoolean",
+                "idx": 0,
+                "pattern": "boolean"
               }
             ]
           },
@@ -1666,9 +1780,11 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "dateDeclaration",
-                "idx": 0
+                "type": "Terminal",
+                "name": "DtypeDate",
+                "label": "DtypeDate",
+                "idx": 0,
+                "pattern": "date"
               }
             ]
           },
@@ -1686,9 +1802,11 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "jsonDtypeDeclaration",
-                "idx": 0
+                "type": "Terminal",
+                "name": "JsonDtypes",
+                "label": "JsonDtypes",
+                "idx": 0,
+                "pattern": "NOT_APPLICABLE"
               }
             ]
           },
@@ -1697,17 +1815,7 @@
             "definition": [
               {
                 "type": "NonTerminal",
-                "name": "pragmaStatement",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "objectTypeDeclaration",
+                "name": "typeDef",
                 "idx": 0
               }
             ]
@@ -1723,27 +1831,24 @@
             ]
           }
         ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "jsonDtypeDeclaration",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
       },
       {
-        "type": "Terminal",
-        "name": "JsonDtypes",
-        "label": "JsonDtypes",
-        "idx": 0,
-        "pattern": "NOT_APPLICABLE"
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Assignment",
+            "label": "Assignment",
+            "idx": 0,
+            "pattern": ":="
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          }
+        ]
       },
       {
         "type": "NonTerminal",
@@ -1906,61 +2011,6 @@
             ]
           }
         ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "objectTypeDeclaration",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "ConstantKw",
-            "label": "ConstantKw",
-            "idx": 0,
-            "pattern": "constant"
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "typeDef",
-        "idx": 0
-      },
-      {
-        "type": "Option",
-        "idx": 2,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "NonTerminal",
-            "name": "value",
-            "idx": 0
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
       }
     ]
   },
@@ -2686,26 +2736,6 @@
     "definition": [
       {
         "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "ConstantKw",
-            "label": "ConstantKw",
-            "idx": 0,
-            "pattern": "constant"
-          }
-        ]
-      },
-      {
-        "type": "Terminal",
         "name": "DtypeNumber",
         "label": "DtypeNumber",
         "idx": 0,
@@ -2757,29 +2787,6 @@
             "pattern": "\\)"
           }
         ]
-      },
-      {
-        "type": "Option",
-        "idx": 3,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "NonTerminal",
-            "name": "numberValue",
-            "idx": 0
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
       }
     ]
   },
@@ -2788,26 +2795,6 @@
     "name": "plsIntegerDeclaration",
     "orgText": "",
     "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 1,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "ConstantKw",
-            "label": "ConstantKw",
-            "idx": 0,
-            "pattern": "constant"
-          }
-        ]
-      },
       {
         "type": "Terminal",
         "name": "DtypePlsIteger",
@@ -2832,11 +2819,6 @@
             "idx": 0
           }
         ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
       }
     ]
   },
@@ -2845,26 +2827,6 @@
     "name": "stringDeclaration",
     "orgText": "",
     "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 1,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "ConstantKw",
-            "label": "ConstantKw",
-            "idx": 0,
-            "pattern": "constant"
-          }
-        ]
-      },
       {
         "type": "Terminal",
         "name": "DtypeVarchar2",
@@ -2911,29 +2873,6 @@
             "pattern": "\\)"
           }
         ]
-      },
-      {
-        "type": "Option",
-        "idx": 3,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "NonTerminal",
-            "name": "stringExpression",
-            "idx": 0
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
       }
     ]
   },
@@ -2999,108 +2938,9 @@
   },
   {
     "type": "Rule",
-    "name": "boolDeclaration",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Terminal",
-        "name": "DtypeBoolean",
-        "label": "DtypeBoolean",
-        "idx": 0,
-        "pattern": "boolean"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "Terminal",
-            "name": "BoolValue",
-            "label": "BoolValue",
-            "idx": 0,
-            "pattern": "NOT_APPLICABLE"
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "dateDeclaration",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Terminal",
-        "name": "DtypeDate",
-        "label": "DtypeDate",
-        "idx": 0,
-        "pattern": "date"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "Terminal",
-            "name": "DateValue",
-            "label": "DateValue",
-            "idx": 0,
-            "pattern": "(sysdate|current_date)"
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
-      }
-    ]
-  },
-  {
-    "type": "Rule",
     "name": "timestampDeclaration",
     "orgText": "",
     "definition": [
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
       {
         "type": "Alternation",
         "idx": 0,
@@ -3130,31 +2970,6 @@
             ]
           }
         ]
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "Terminal",
-            "name": "TsValue",
-            "label": "TsValue",
-            "idx": 0,
-            "pattern": "(systimestamp|current_timestamp)"
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "semicolon",
-        "idx": 0
       }
     ]
   },
@@ -3251,6 +3066,19 @@
     "name": "number",
     "orgText": "",
     "definition": [
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Minus",
+            "label": "Minus",
+            "idx": 0,
+            "pattern": "-"
+          }
+        ]
+      },
       {
         "type": "Alternation",
         "idx": 0,
