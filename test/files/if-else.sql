@@ -15,6 +15,10 @@ begin
     null;
   elsif l_bool then
     null;
+  elsif my_cool_func(0) then 
+    null;
+  elsif my_pkg.my_cool_func('test') then
+    null;
   elsif l_bool and 5 + 2 >= 7 then
     null;
   elsif l_num2 < l_num1 or 1 + 3 >= 0 and l_bool then

@@ -182,11 +182,7 @@ class PlSqlParser extends CstParser {
     $.RULE('ifCondition', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.AndOr,
-        DEF: () =>
-          $.OR([
-            { ALT: () => $.SUBRULE($.condition) }, // l_var1 > l_var2
-            { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // bool var
-          ]),
+        DEF: () => $.SUBRULE($.condition),
       });
     });
 
@@ -233,23 +229,25 @@ class PlSqlParser extends CstParser {
 
     $.RULE('condition', () => {
       $.SUBRULE($.value, { LABEL: 'lhs' });
-      $.OR([
-        {
-          ALT: () => {
-            $.SUBRULE($.relationalOperators);
-            $.SUBRULE2($.value, { LABEL: 'rhs' });
+      $.OPTION(() => {
+        $.OR([
+          {
+            ALT: () => {
+              $.SUBRULE($.relationalOperators);
+              $.SUBRULE2($.value, { LABEL: 'rhs' });
+            },
           },
-        },
-        {
-          ALT: () => {
-            $.CONSUME(tokenVocabulary.IsKw);
-            $.OPTION(() => {
-              $.CONSUME(tokenVocabulary.NotKw);
-            });
-            $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.IsKw);
+              $.OPTION2(() => {
+                $.CONSUME(tokenVocabulary.NotKw);
+              });
+              $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
+            },
           },
-        },
-      ]);
+        ]);
+      });
     });
 
     $.RULE('createPackageStatement', () => {
