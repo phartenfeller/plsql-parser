@@ -1,5 +1,10 @@
-const { createToken } = require('chevrotain');
+const { createToken, Lexer } = require('chevrotain');
 const Identifier = require('./Identifier');
+
+const ValueSeperator = createToken({
+  name: 'ValueSeperator',
+  pattern: Lexer.NA,
+});
 
 const Assignment = createToken({
   name: 'Assignment',
@@ -30,28 +35,44 @@ const Comma = createToken({
   longer_alt: Identifier,
 });
 
+const AdditionOperator = createToken({
+  name: 'AdditionOperator',
+  pattern: Lexer.NA,
+  categories: ValueSeperator,
+});
+
 const Plus = createToken({
   name: 'Plus',
   pattern: /\+/,
   longer_alt: Identifier,
+  categories: AdditionOperator,
 });
 
 const Minus = createToken({
   name: 'Minus',
   pattern: /-/,
   longer_alt: Identifier,
+  categories: AdditionOperator,
+});
+
+const MultiplicationOperator = createToken({
+  name: 'MultiplicationOperator',
+  pattern: Lexer.NA,
+  categories: ValueSeperator,
 });
 
 const Asterisk = createToken({
   name: 'Asterisk',
   pattern: /\*/,
   longer_alt: Identifier,
+  categories: MultiplicationOperator,
 });
 
 const Slash = createToken({
   name: 'Slash',
   pattern: /\//,
   longer_alt: Identifier,
+  categories: MultiplicationOperator,
 });
 
 const OpenBracket = createToken({
@@ -69,7 +90,7 @@ const ClosingBracket = createToken({
 const Concat = createToken({
   name: 'Concat',
   pattern: /\|\|/,
-  longer_alt: Identifier,
+  categories: ValueSeperator,
 });
 
 const Percent = createToken({
@@ -106,4 +127,7 @@ module.exports = [
   Percent,
   Dot,
   Arrow,
+  AdditionOperator,
+  MultiplicationOperator,
+  ValueSeperator,
 ];

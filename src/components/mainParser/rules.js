@@ -1,9 +1,9 @@
 const { CstParser } = require('chevrotain');
-const { tokenVocabulary, lex } = require('./tokens');
+const { tokenVocabulary, lex } = require('../tokenDictionary/tokens');
 
-class SelectParser extends CstParser {
+class PlSqlParser extends CstParser {
   constructor() {
-    super(tokenVocabulary);
+    super(tokenVocabulary, { recoveryEnabled: true });
 
     const $ = this;
 
@@ -136,7 +136,6 @@ class SelectParser extends CstParser {
     });
 
     $.RULE('sqlCaseStatement', () => {
-      debugger;
       $.CONSUME(tokenVocabulary.CaseKw);
       $.OR([
         { ALT: () => $.SUBRULE($.sqlCaseGlobalExpression) },
@@ -376,7 +375,7 @@ class SelectParser extends CstParser {
       $.CONSUME(tokenVocabulary.OpenBracket); // (
       $.OPTION(() => {
         $.OR([
-          { ALT: () => $.SUBRULE($.pointValue), IGNORE_AMBIGUITIES: true }, // myvar.value
+          { ALT: () => $.SUBRULE($.dotValue), IGNORE_AMBIGUITIES: true }, // myvar.value
           { ALT: () => $.SUBRULE($.stringExpression) }, // '{"json": "data"}'
         ]);
       });
@@ -482,7 +481,7 @@ class SelectParser extends CstParser {
       });
     });
 
-    $.RULE('pointValue', () => {
+    $.RULE('dotValue', () => {
       $.CONSUME(tokenVocabulary.Identifier);
       $.AT_LEAST_ONE(() => {
         $.CONSUME(tokenVocabulary.Dot);
@@ -490,34 +489,56 @@ class SelectParser extends CstParser {
       });
     });
 
-    // ignore ambiguities because string can be only a variable -> Identifier as well as a number
     $.RULE('value', () => {
-      $.OR({
-        DEF: [
-          { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-          {
-            GATE: $.BACKTRACK($.mathExpression),
-            ALT: () => $.SUBRULE($.mathExpression),
-          },
-          {
-            GATE: $.BACKTRACK($.functionCall),
-            ALT: () => $.SUBRULE($.functionCall),
-          }, // function call
-          { ALT: () => $.SUBRULE($.pointValue) }, // pkg.fnc or pkg.constant or record.value
-          {
-            ALT: () => $.SUBRULE($.stringExpression),
-            IGNORE_AMBIGUITIES: true,
-          }, // 'value'
-          { ALT: () => $.SUBRULE($.sqlCaseStatement) },
-          { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
-          { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
-          { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
-          { ALT: () => $.CONSUME(tokenVocabulary.TsValue) }, // systimestamp | current_timestamp
-          { ALT: () => $.CONSUME(tokenVocabulary.Null) },
-          // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        ],
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.ValueSeperator,
+        DEF: () => {
+          $.OR([
+            { ALT: () => $.CONSUME(tokenVocabulary.String) },
+            { ALT: () => $.SUBRULE($.number) },
+            { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+            { ALT: () => $.SUBRULE($.dotValue) },
+            {
+              ALT: () => $.SUBRULE($.functionCall),
+              IGNORE_AMBIGUITIES: true, // can be same as dotValue
+            },
+            { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+            { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
+            { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+            { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+          ]);
+        },
       });
     });
+
+    // ignore ambiguities because string can be only a variable -> Identifier as well as a number
+    // $.RULE('value', () => {
+    //   $.OR({
+    //     DEF: [
+    //       {
+    //         GATE: $.BACKTRACK($.stringExpression),
+    //         ALT: () => $.SUBRULE($.stringExpression),
+    //       }, // 'value'
+    //       {
+    //         GATE: $.BACKTRACK($.mathExpression),
+    //         ALT: () => $.SUBRULE($.mathExpression),
+    //       },
+    //       { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+    //       {
+    //         GATE: $.BACKTRACK($.functionCall),
+    //         ALT: () => $.SUBRULE($.functionCall),
+    //       }, // function call
+    //       { ALT: () => $.SUBRULE($.dotValue) }, // pkg.fnc or pkg.constant or record.value
+    //       { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+    //       // { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
+    //       { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
+    //       { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
+    //       { ALT: () => $.CONSUME(tokenVocabulary.TsValue) }, // systimestamp | current_timestamp
+    //       { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+    //       // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+    //     ],
+    //   });
+    // });
 
     $.RULE('argumentList', () => {
       $.CONSUME(tokenVocabulary.OpenBracket); // (
@@ -570,14 +591,16 @@ class SelectParser extends CstParser {
       ]);
     });
 
+    // TODO: remove and replace with mathExpression
     $.RULE('numberValue', () => {
-      $.OR({
-        DEF: [
-          { ALT: () => $.SUBRULE($.number) },
-          { ALT: () => $.SUBRULE($.functionCall), IGNORE_AMBIGUITIES: true },
-          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        ],
-      });
+      $.SUBRULE($.mathExpression);
+      // $.OR({
+      //   DEF: [
+      //     { ALT: () => $.SUBRULE($.number) },
+      //     { ALT: () => $.SUBRULE($.functionCall), IGNORE_AMBIGUITIES: true },
+      //     { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+      //   ],
+      // });
     });
 
     $.RULE('numberDeclaration', () => {
@@ -643,20 +666,14 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon); // ;
     });
 
-    $.RULE('compilationFlag', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.plsqlUnitKw) },
-        { ALT: () => $.CONSUME(tokenVocabulary.plsqlTypeKw) },
-      ]);
-    });
-
     $.RULE('stringExpression', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Concat,
         DEF: () => {
           $.OR([
             { ALT: () => $.CONSUME(tokenVocabulary.String) },
-            { ALT: () => $.SUBRULE($.compilationFlag) },
+            { ALT: () => $.CONSUME(tokenVocabulary.CompilationFlag) },
+            { ALT: () => $.SUBRULE($.functionCall) },
             { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
           ]);
         },
@@ -717,31 +734,10 @@ class SelectParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('mathExpressionSide', () => {
-      $.OR([
-        {
-          ALT: () => $.SUBRULE($.functionCall),
-        },
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-        { ALT: () => $.SUBRULE($.number) },
-      ]);
-    });
-
-    $.RULE('mathExpression', () => {
-      $.SUBRULE($.mathExpressionSide);
-      $.AT_LEAST_ONE(() => {
-        $.SUBRULE($.mathTerm);
-      });
-    });
-
-    $.RULE('mathTerm', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Plus) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Minus) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Slash) },
-      ]);
-      $.SUBRULE($.mathExpressionSide);
+    $.RULE('mathParenthesisExpression', () => {
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.mathExpression);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
     $.RULE('number', () => {
@@ -749,6 +745,40 @@ class SelectParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
         { ALT: () => $.CONSUME(tokenVocabulary.Float) },
       ]);
+    });
+
+    $.RULE('mathAtomicExpression', () => {
+      $.OR([
+        {
+          GATE: $.BACKTRACK($.mathParenthesisExpression),
+          ALT: () => $.SUBRULE($.mathParenthesisExpression),
+        },
+        { ALT: () => $.SUBRULE($.number) },
+        {
+          ALT: () => $.SUBRULE($.functionCall),
+        },
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+      ]);
+    });
+
+    $.RULE('mathMultiplicationExpression', () => {
+      $.SUBRULE($.mathAtomicExpression, { LABEL: 'lhs' });
+      $.MANY(() => {
+        $.CONSUME(tokenVocabulary.MultiplicationOperator);
+        $.SUBRULE2($.mathAtomicExpression, { LABEL: 'rhs' });
+      });
+    });
+
+    $.RULE('mathAdditionExpression', () => {
+      $.SUBRULE($.mathMultiplicationExpression, { LABEL: 'lhs' });
+      $.MANY(() => {
+        $.CONSUME(tokenVocabulary.AdditionOperator);
+        $.SUBRULE2($.mathMultiplicationExpression, { LABEL: 'rhs' });
+      });
+    });
+
+    $.RULE('mathExpression', () => {
+      $.SUBRULE($.mathAdditionExpression);
     });
 
     $.RULE('insertStatement', () => {
@@ -889,6 +919,7 @@ class SelectParser extends CstParser {
     $.RULE('query', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) }, // *
         {
           ALT: () => {
             $.AT_LEAST_ONE_SEP({
@@ -900,7 +931,6 @@ class SelectParser extends CstParser {
             });
           },
         },
-        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) }, // *
       ]);
       $.OPTION(() => {
         $.CONSUME1(tokenVocabulary.IntoKw); // into
@@ -1036,14 +1066,18 @@ class SelectParser extends CstParser {
   }
 }
 
-const parserInstance = new SelectParser();
+const parserInstance = new PlSqlParser();
 
 module.exports = {
   parserInstance,
 
-  SelectParser,
+  PlSqlParser,
 
-  parse(inputText) {
+  lexer(inputText) {
+    return lex(inputText);
+  },
+
+  parse(inputText, log = true) {
     const lexResult = lex(inputText);
 
     // ".input" is a setter which will reset the parser's internal's state.
@@ -1053,21 +1087,20 @@ module.exports = {
     parserInstance.global();
 
     if (parserInstance.errors.length > 0) {
-      const error = parserInstance.errors[0];
-      // console.log(error);
-      throw Error(
-        `${parserInstance.errors}. 
-        RuleStack: ${error.context.ruleStack.join(', ')}
-        Token: "${error.token.image}" Line: "${
-          error.token.startLine
-        }" Column: "${error.token.startColumn}" 
-        Previous Token: ${error.previousToken.image} of type "${
-          error.previousToken.tokenType.name
-        }"`
-      );
-      // throw Error(
-      //   `Sad sad panda, parsing errors detected!\n${parserInstance.errors[0].message}`
-      // );
+      if (log) {
+        parserInstance.errors.forEach((err) => {
+          console.error(`${err.message}. 
+        RuleStack: ${err.context.ruleStack.join(', ')}
+        Token: ${err.token.image} Line: "${err.token.startLine}" Column: "${
+            err.token.startColumn
+          }" 
+        Previous Token: ${err.previousToken.image} of type "${
+            err.previousToken.tokenType.name
+          }"
+        `);
+        });
+      }
+      throw Error(parserInstance.errors);
     }
 
     return { errors: parserInstance.errors };
