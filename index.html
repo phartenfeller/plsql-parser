@@ -836,28 +836,41 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Alternation",
+        "type": "RepetitionMandatoryWithSeparator",
         "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "AndOr",
+          "label": "AndOr",
+          "idx": 1,
+          "pattern": "NOT_APPLICABLE"
+        },
         "definition": [
           {
-            "type": "Alternative",
+            "type": "Alternation",
+            "idx": 0,
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "condition",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "condition",
+                    "idx": 0
+                  }
+                ]
+              },
               {
-                "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
-                "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 0,
+                    "pattern": "[a-zA-Z]\\w*"
+                  }
+                ]
               }
             ]
           }
@@ -3612,34 +3625,11 @@
         "idx": 0,
         "definition": [
           {
-            "type": "Alternation",
+            "type": "Terminal",
+            "name": "AndOr",
+            "label": "AndOr",
             "idx": 0,
-            "definition": [
-              {
-                "type": "Alternative",
-                "definition": [
-                  {
-                    "type": "Terminal",
-                    "name": "AndKw",
-                    "label": "AndKw",
-                    "idx": 0,
-                    "pattern": "and"
-                  }
-                ]
-              },
-              {
-                "type": "Alternative",
-                "definition": [
-                  {
-                    "type": "Terminal",
-                    "name": "OrKw",
-                    "label": "OrKw",
-                    "idx": 0,
-                    "pattern": "or"
-                  }
-                ]
-              }
-            ]
+            "pattern": "NOT_APPLICABLE"
           },
           {
             "type": "NonTerminal",
