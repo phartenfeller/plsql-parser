@@ -34,6 +34,7 @@ class PlSqlParser extends CstParser {
           $.OR([
             { ALT: () => $.SUBRULE($.packageObjSpec) },
             { ALT: () => $.SUBRULE($.variableDeclaration) },
+            { ALT: () => $.SUBRULE($.comment) },
           ]);
         });
       });
@@ -264,6 +265,7 @@ class PlSqlParser extends CstParser {
         $.OR([
           { ALT: () => $.SUBRULE($.objectDeclaration) },
           { ALT: () => $.SUBRULE($.variableDeclaration) },
+          { ALT: () => $.SUBRULE($.comment) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -285,6 +287,7 @@ class PlSqlParser extends CstParser {
         $.OR2([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
+          { ALT: () => $.SUBRULE($.comment) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -312,7 +315,11 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.funcSpec);
       $.CONSUME(tokenVocabulary.AsKw); // as
       $.MANY(() => {
-        $.SUBRULE($.variableDeclaration); // l_num number := 1;
+        $.OR([
+          { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
+          { ALT: () => $.SUBRULE($.pragmaStatement) },
+          { ALT: () => $.SUBRULE($.comment) },
+        ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
       $.MANY2(() => {
@@ -332,7 +339,11 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.procSpec);
       $.CONSUME(tokenVocabulary.AsKw); // as
       $.MANY(() => {
-        $.SUBRULE($.variableDeclaration); // l_num number := 1;
+        $.OR([
+          { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
+          { ALT: () => $.SUBRULE($.pragmaStatement) },
+          { ALT: () => $.SUBRULE($.comment) },
+        ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
       $.MANY2(() => {
@@ -350,23 +361,25 @@ class PlSqlParser extends CstParser {
 
     // TODO make sure return is only called in functions
     $.RULE('variableDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier); // l_row
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.ConstantKw);
+      });
       $.OR([
         { ALT: () => $.SUBRULE($.numberDeclaration) },
         { ALT: () => $.SUBRULE($.stringDeclaration) },
         { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
-        { ALT: () => $.SUBRULE($.boolDeclaration) },
-        { ALT: () => $.SUBRULE($.dateDeclaration) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
-        { ALT: () => $.SUBRULE($.jsonDtypeDeclaration) },
-        { ALT: () => $.SUBRULE($.pragmaStatement) },
-        { ALT: () => $.SUBRULE($.objectTypeDeclaration) },
+        { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
+        { ALT: () => $.SUBRULE($.typeDef) }, // custom types e.g. rowtype
         { ALT: () => $.SUBRULE($.comment) },
       ]);
-    });
-
-    $.RULE('jsonDtypeDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // l_var
-      $.CONSUME(tokenVocabulary.JsonDtypes); // JSON_OBJECT_T / JSON_ARRAY_T ...
+      $.OPTION2(() => {
+        $.CONSUME(tokenVocabulary.Assignment);
+        $.SUBRULE($.value);
+      });
       $.SUBRULE($.semicolon);
     });
 
@@ -399,19 +412,6 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.CONSUME(tokenVocabulary.Type) }, // type
         ]);
       });
-    });
-
-    $.RULE('objectTypeDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // l_row
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.ConstantKw);
-      });
-      $.SUBRULE($.typeDef);
-      $.OPTION2(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.SUBRULE($.value);
-      });
-      $.SUBRULE($.semicolon);
     });
 
     $.RULE('pragmaStatement', () => {
@@ -507,35 +507,6 @@ class PlSqlParser extends CstParser {
       });
     });
 
-    // ignore ambiguities because string can be only a variable -> Identifier as well as a number
-    // $.RULE('value', () => {
-    //   $.OR({
-    //     DEF: [
-    //       {
-    //         GATE: $.BACKTRACK($.stringExpression),
-    //         ALT: () => $.SUBRULE($.stringExpression),
-    //       }, // 'value'
-    //       {
-    //         GATE: $.BACKTRACK($.mathExpression),
-    //         ALT: () => $.SUBRULE($.mathExpression),
-    //       },
-    //       { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-    //       {
-    //         GATE: $.BACKTRACK($.functionCall),
-    //         ALT: () => $.SUBRULE($.functionCall),
-    //       }, // function call
-    //       { ALT: () => $.SUBRULE($.dotValue) }, // pkg.fnc or pkg.constant or record.value
-    //       { ALT: () => $.SUBRULE($.sqlCaseStatement) },
-    //       // { ALT: () => $.SUBRULE($.number), IGNORE_AMBIGUITIES: true }, // 4.2
-    //       { ALT: () => $.CONSUME(tokenVocabulary.BoolValue) }, // true
-    //       { ALT: () => $.CONSUME(tokenVocabulary.DateValue) }, // sysdate | current_date
-    //       { ALT: () => $.CONSUME(tokenVocabulary.TsValue) }, // systimestamp | current_timestamp
-    //       { ALT: () => $.CONSUME(tokenVocabulary.Null) },
-    //       // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-    //     ],
-    //   });
-    // });
-
     $.RULE('argumentList', () => {
       $.CONSUME(tokenVocabulary.OpenBracket); // (
       $.MANY_SEP({
@@ -603,11 +574,6 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('numberDeclaration', () => {
-      // l_num number
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.ConstantKw);
-      });
       $.CONSUME(tokenVocabulary.DtypeNumber);
       // (3,2)
       $.OPTION1(() => {
@@ -619,36 +585,18 @@ class PlSqlParser extends CstParser {
         });
         $.CONSUME(tokenVocabulary.ClosingBracket);
       });
-      // := 3
-      $.OPTION3(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.SUBRULE($.numberValue);
-      });
-      // ;
-      $.SUBRULE($.semicolon);
     });
 
     $.RULE('plsIntegerDeclaration', () => {
-      // l_pls pls_integer
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.OPTION1(() => {
-        $.CONSUME(tokenVocabulary.ConstantKw);
-      });
       $.CONSUME(tokenVocabulary.DtypePlsIteger);
       // := 3
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Assignment);
         $.SUBRULE($.numberValue);
       });
-      // ;
-      $.SUBRULE($.semicolon);
     });
 
     $.RULE('stringDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // l_str
-      $.OPTION1(() => {
-        $.CONSUME(tokenVocabulary.ConstantKw);
-      });
       $.CONSUME(tokenVocabulary.DtypeVarchar2); // varchar2
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.OpenBracket); // (
@@ -658,11 +606,6 @@ class PlSqlParser extends CstParser {
         });
         $.CONSUME(tokenVocabulary.ClosingBracket); // )
       });
-      $.OPTION3(() => {
-        $.CONSUME(tokenVocabulary.Assignment); // :=
-        $.SUBRULE($.stringExpression);
-      });
-      $.SUBRULE($.semicolon); // ;
     });
 
     $.RULE('stringExpression', () => {
@@ -678,40 +621,11 @@ class PlSqlParser extends CstParser {
       });
     });
 
-    $.RULE('boolDeclaration', () => {
-      // l_bool boolean
-      $.CONSUME(tokenVocabulary.Identifier);
-      $.CONSUME(tokenVocabulary.DtypeBoolean);
-      // := true
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.CONSUME(tokenVocabulary.BoolValue);
-      });
-      // ;
-      $.SUBRULE($.semicolon);
-    });
-
-    $.RULE('dateDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // l_date
-      $.CONSUME(tokenVocabulary.DtypeDate); // date
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Assignment); // :=
-        $.CONSUME(tokenVocabulary.DateValue); // sysdate
-      });
-      $.SUBRULE($.semicolon); // ;
-    });
-
     $.RULE('timestampDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // l_ts
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) }, // timestamp
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) }, // timestamp with timezone
       ]);
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Assignment); // :=
-        $.CONSUME(tokenVocabulary.TsValue); // systimestamp
-      });
-      $.SUBRULE($.semicolon); // ;
     });
 
     $.RULE('comment', () => {
