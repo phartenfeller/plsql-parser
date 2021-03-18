@@ -49,18 +49,6 @@ const Char = createToken({
   longer_alt: Identifier,
 });
 
-const DateValue = createToken({
-  name: 'DateValue',
-  pattern: /(sysdate|current_date)/i,
-  longer_alt: Identifier,
-});
-
-const TsValue = createToken({
-  name: 'TsValue',
-  pattern: /(systimestamp|current_timestamp)/i,
-  longer_alt: Identifier,
-});
-
 const JsonDtypes = createToken({
   name: 'JsonDtypes',
   pattern: Lexer.NA,
@@ -121,8 +109,6 @@ module.exports = [
   DtypeTimestampWTZ,
   DtypeTimestamp,
   Char,
-  DateValue,
-  TsValue,
   JsonDtypes,
   JsonObjectT,
   JsonArrayT,

@@ -11,7 +11,7 @@ const sql = require('./sql');
 const exception = require('./exception');
 const dynSql = require('./dynSql');
 const loops = require('./loops');
-const compilationFlags = require('./compilationFlags');
+const values = require('./values');
 
 // the vocabulary will be exported and used in the Parser definition.
 const tokenVocabulary = {};
@@ -31,26 +31,6 @@ const End = createToken({
   name: 'End',
   pattern: /end/i,
   longer_alt: Identifier,
-});
-
-// TODO: Refactor more things from rules to categories
-const BoolValue = createToken({
-  name: 'BoolValue',
-  pattern: Lexer.NA,
-});
-
-const BoolTrue = createToken({
-  name: 'BoolTrue',
-  pattern: /true/i,
-  longer_alt: Identifier,
-  categories: BoolValue,
-});
-
-const BoolFalse = createToken({
-  name: 'BoolTrue',
-  pattern: /false/i,
-  longer_alt: Identifier,
-  categories: BoolValue,
 });
 
 const Null = createToken({
@@ -110,9 +90,7 @@ const allTokens = [
   Begin,
   End,
   ...dataTypes,
-  BoolValue,
-  BoolTrue,
-  BoolFalse,
+  ...values,
   Null,
   ...sql,
   ...dynSql,
@@ -125,7 +103,6 @@ const allTokens = [
   ...subprograms,
   ...symbols,
   ...relationalOperators,
-  ...compilationFlags,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
   Float,

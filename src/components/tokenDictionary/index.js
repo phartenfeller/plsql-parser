@@ -1,4 +1,4 @@
-const readFile = require('../util/readFile');
+const readFile = require('../../util/readFile');
 const SelectLexer = require('./tokens');
 // const parser = require('./rules');
 
