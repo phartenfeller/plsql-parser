@@ -1049,15 +1049,15 @@ module.exports = {
     if (parserInstance.errors.length > 0) {
       if (log) {
         parserInstance.errors.forEach((err) => {
-          console.error(`${err.message}. 
-        RuleStack: ${err.context.ruleStack.join(', ')}
-        Token: ${err.token.image} Line: "${err.token.startLine}" Column: "${
-            err.token.startColumn
-          }" 
-        Previous Token: ${err.previousToken.image} of type "${
-            err.previousToken.tokenType.name
-          }"
-        `);
+          let errMsg = '';
+          errMsg += `${err.message}.\n`;
+          errMsg += `  RuleStack: ${err.context.ruleStack.join(', ')}\n`;
+          errMsg += `  PreviousToken: ${err.token.image} | Line: "${err.token.startLine}"} | " Column: "${err.token.startColumn}"`;
+          if (err.previousToken) {
+            errMsg += `  Previous Token: ${err.previousToken.image} of type "${err.previousToken.tokenType.name}"\n\n`;
+          }
+
+          console.error(errMsg);
         });
       }
       throw Error(parserInstance.errors);
