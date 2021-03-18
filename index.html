@@ -1784,7 +1784,7 @@
                 "definition": [
                   {
                     "type": "NonTerminal",
-                    "name": "pointValue",
+                    "name": "functionCall",
                     "idx": 0
                   }
                 ]
@@ -2237,35 +2237,27 @@
   },
   {
     "type": "Rule",
-    "name": "pointValue",
+    "name": "valueInBrackets",
     "orgText": "",
     "definition": [
       {
         "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
+        "name": "OpenBracket",
+        "label": "OpenBracket",
         "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
+        "pattern": "\\("
       },
       {
-        "type": "RepetitionMandatory",
+        "type": "NonTerminal",
+        "name": "value",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "ClosingBracket",
+        "label": "ClosingBracket",
         "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Dot",
-            "label": "Dot",
-            "idx": 0,
-            "pattern": "\\."
-          },
-          {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 2,
-            "pattern": "[a-zA-Z]\\w*"
-          }
-        ]
+        "pattern": "\\)"
       }
     ]
   },
@@ -2275,124 +2267,105 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Alternation",
+        "type": "RepetitionMandatoryWithSeparator",
         "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "ValueSeperator",
+          "label": "ValueSeperator",
+          "idx": 1,
+          "pattern": "NOT_APPLICABLE"
+        },
         "definition": [
           {
-            "type": "Alternative",
+            "type": "Alternation",
+            "idx": 0,
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "jsonDtypeValue",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "String",
+                    "label": "String",
+                    "idx": 0,
+                    "pattern": "'((?:''|[^'])*)'"
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "mathExpression",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "number",
+                    "idx": 0
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "functionCall",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "functionCall",
+                    "idx": 0
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "pointValue",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "valueInBrackets",
+                    "idx": 0
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "stringExpression",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "sqlCaseStatement",
+                    "idx": 0
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "sqlCaseStatement",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Null",
+                    "label": "Null",
+                    "idx": 0,
+                    "pattern": "null"
+                  }
+                ]
+              },
               {
-                "type": "NonTerminal",
-                "name": "number",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "ValueKeyword",
+                    "label": "ValueKeyword",
+                    "idx": 0,
+                    "pattern": "NOT_APPLICABLE"
+                  }
+                ]
+              },
               {
-                "type": "Terminal",
-                "name": "BoolValue",
-                "label": "BoolValue",
-                "idx": 0,
-                "pattern": "NOT_APPLICABLE"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "DateValue",
-                "label": "DateValue",
-                "idx": 0,
-                "pattern": "(sysdate|current_date)"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "TsValue",
-                "label": "TsValue",
-                "idx": 0,
-                "pattern": "(systimestamp|current_timestamp)"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Null",
-                "label": "Null",
-                "idx": 0,
-                "pattern": "null"
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "jsonDtypeValue",
+                    "idx": 0
+                  }
+                ]
               }
             ]
           }
@@ -2694,16 +2667,6 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "functionCall",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
                 "type": "Terminal",
                 "name": "Identifier",
                 "label": "Identifier",
@@ -2976,43 +2939,6 @@
   },
   {
     "type": "Rule",
-    "name": "compilationFlag",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Alternation",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "plsqlUnitKw",
-                "label": "plsqlUnitKw",
-                "idx": 0,
-                "pattern": "\\$\\$plsql_unit"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "plsqlTypeKw",
-                "label": "plsqlTypeKw",
-                "idx": 0,
-                "pattern": "\\$\\$plsql_type"
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
     "name": "stringExpression",
     "orgText": "",
     "definition": [
@@ -3047,9 +2973,11 @@
                 "type": "Alternative",
                 "definition": [
                   {
-                    "type": "NonTerminal",
-                    "name": "compilationFlag",
-                    "idx": 0
+                    "type": "Terminal",
+                    "name": "CompilationFlag",
+                    "label": "CompilationFlag",
+                    "idx": 0,
+                    "pattern": "\\$\\$plsql_unit|\\$\\$plsql_type"
                   }
                 ]
               },
@@ -3057,11 +2985,9 @@
                 "type": "Alternative",
                 "definition": [
                   {
-                    "type": "Terminal",
-                    "name": "Identifier",
-                    "label": "Identifier",
-                    "idx": 0,
-                    "pattern": "[a-zA-Z]\\w*"
+                    "type": "NonTerminal",
+                    "name": "functionCall",
+                    "idx": 0
                   }
                 ]
               }
@@ -3316,140 +3242,6 @@
       {
         "type": "NonTerminal",
         "name": "semicolon",
-        "idx": 0
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "mathExpressionSide",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Alternation",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "functionCall",
-                "idx": 0
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Identifier",
-                "label": "Identifier",
-                "idx": 0,
-                "pattern": "[a-zA-Z]\\w*"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "NonTerminal",
-                "name": "number",
-                "idx": 0
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "mathExpression",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "NonTerminal",
-        "name": "mathExpressionSide",
-        "idx": 0
-      },
-      {
-        "type": "RepetitionMandatory",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "NonTerminal",
-            "name": "mathTerm",
-            "idx": 0
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "mathTerm",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Alternation",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Plus",
-                "label": "Plus",
-                "idx": 0,
-                "pattern": "\\+"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Minus",
-                "label": "Minus",
-                "idx": 0,
-                "pattern": "-"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Asterisk",
-                "label": "Asterisk",
-                "idx": 0,
-                "pattern": "\\*"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Slash",
-                "label": "Slash",
-                "idx": 0,
-                "pattern": "\\/"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "NonTerminal",
-        "name": "mathExpressionSide",
         "idx": 0
       }
     ]
@@ -3888,62 +3680,68 @@
         ]
       },
       {
-        "type": "Terminal",
-        "name": "OpenBracket",
-        "label": "OpenBracket",
-        "idx": 0,
-        "pattern": "\\("
-      },
-      {
         "type": "Option",
-        "idx": 4,
+        "idx": 3,
         "definition": [
           {
-            "type": "RepetitionWithSeparator",
+            "type": "Terminal",
+            "name": "OpenBracket",
+            "label": "OpenBracket",
             "idx": 0,
-            "separator": {
-              "type": "Terminal",
-              "name": "Comma",
-              "label": "Comma",
-              "idx": 1,
-              "pattern": ","
-            },
+            "pattern": "\\("
+          },
+          {
+            "type": "Option",
+            "idx": 4,
             "definition": [
               {
-                "type": "Option",
-                "idx": 5,
+                "type": "RepetitionWithSeparator",
+                "idx": 0,
+                "separator": {
+                  "type": "Terminal",
+                  "name": "Comma",
+                  "label": "Comma",
+                  "idx": 1,
+                  "pattern": ","
+                },
                 "definition": [
                   {
-                    "type": "Terminal",
-                    "name": "Identifier",
-                    "label": "Identifier",
-                    "idx": 4,
-                    "pattern": "[a-zA-Z]\\w*"
+                    "type": "Option",
+                    "idx": 5,
+                    "definition": [
+                      {
+                        "type": "Terminal",
+                        "name": "Identifier",
+                        "label": "Identifier",
+                        "idx": 4,
+                        "pattern": "[a-zA-Z]\\w*"
+                      },
+                      {
+                        "type": "Terminal",
+                        "name": "Arrow",
+                        "label": "Arrow",
+                        "idx": 0,
+                        "pattern": "=>"
+                      }
+                    ]
                   },
                   {
-                    "type": "Terminal",
-                    "name": "Arrow",
-                    "label": "Arrow",
-                    "idx": 0,
-                    "pattern": "=>"
+                    "type": "NonTerminal",
+                    "name": "value",
+                    "idx": 0
                   }
                 ]
-              },
-              {
-                "type": "NonTerminal",
-                "name": "value",
-                "idx": 0
               }
             ]
+          },
+          {
+            "type": "Terminal",
+            "name": "ClosingBracket",
+            "label": "ClosingBracket",
+            "idx": 0,
+            "pattern": "\\)"
           }
         ]
-      },
-      {
-        "type": "Terminal",
-        "name": "ClosingBracket",
-        "label": "ClosingBracket",
-        "idx": 0,
-        "pattern": "\\)"
       }
     ]
   },
@@ -4044,6 +3842,18 @@
             "type": "Alternative",
             "definition": [
               {
+                "type": "Terminal",
+                "name": "Asterisk",
+                "label": "Asterisk",
+                "idx": 0,
+                "pattern": "\\*"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
                 "type": "RepetitionMandatoryWithSeparator",
                 "idx": 0,
                 "separator": {
@@ -4060,18 +3870,6 @@
                     "idx": 0
                   }
                 ]
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Asterisk",
-                "label": "Asterisk",
-                "idx": 0,
-                "pattern": "\\*"
               }
             ]
           }
