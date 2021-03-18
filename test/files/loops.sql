@@ -13,6 +13,11 @@ begin
     null;
   end loop;
 
+  for i in get_i() .. myvar.count
+  loop
+    null;
+  end loop;
+
   for l_rec in (
     select * 
       from dual

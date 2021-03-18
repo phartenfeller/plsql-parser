@@ -910,9 +910,9 @@ class PlSqlParser extends CstParser {
       $.OR([
         {
           ALT: () => {
-            $.SUBRULE($.numberValue); // l_num1
+            $.SUBRULE($.value); // l_num1
             $.CONSUME(tokenVocabulary.DoubleDot); // ..
-            $.SUBRULE2($.numberValue); // 3
+            $.SUBRULE2($.value); // 3
           },
         },
         {
