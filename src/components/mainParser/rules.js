@@ -262,7 +262,7 @@ class PlSqlParser extends CstParser {
     $.RULE('createPackageSpec', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.Identifier); // pkg_name
-      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.objectDeclaration) },
@@ -281,10 +281,7 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.BodyKw); // body
       $.CONSUME(tokenVocabulary.Identifier); // pkg_name
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // as
-        { ALT: () => $.CONSUME(tokenVocabulary.IsKw) }, // is
-      ]);
+      $.CONSUME(tokenVocabulary.AsIs);
       $.MANY(() => {
         $.OR2([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
@@ -315,7 +312,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('funcBody', () => {
       $.SUBRULE($.funcSpec);
-      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
@@ -339,7 +336,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('procBody', () => {
       $.SUBRULE($.procSpec);
-      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;

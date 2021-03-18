@@ -51,10 +51,23 @@ const ReplaceKw = createToken({
   longer_alt: Identifier,
 });
 
+const AsIs = createToken({
+  name: 'AsIs',
+  pattern: Lexer.NA,
+});
+
 const AsKw = createToken({
   name: 'AsKw',
   pattern: /as/i,
   longer_alt: Identifier,
+  categories: AsIs,
+});
+
+const IsKw = createToken({
+  name: 'IsKw',
+  pattern: /is/i,
+  longer_alt: Identifier,
+  categories: AsIs,
 });
 
 const Float = createToken({
@@ -92,7 +105,9 @@ const allTokens = [
   ...loops,
   CreateKw,
   ReplaceKw,
+  AsIs,
   AsKw,
+  IsKw,
   ...subprograms,
   ...symbols,
   ...relationalOperators,
