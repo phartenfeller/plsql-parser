@@ -646,11 +646,11 @@ class PlSqlParser extends CstParser {
       $.OPTION2(() => {
         // (i) on objects thart are indexed
         $.CONSUME(tokenVocabulary.OpenBracket);
-        $.CONSUME3(tokenVocabulary.Identifier);
+        $.SUBRULE($.value);
         $.CONSUME(tokenVocabulary.ClosingBracket);
       });
       $.CONSUME(tokenVocabulary.Assignment);
-      $.SUBRULE($.value);
+      $.SUBRULE2($.value);
       $.SUBRULE($.semicolon);
     });
 

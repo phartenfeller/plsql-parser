@@ -24,4 +24,5 @@ declare
   
 begin
   my_object.value(index) := 'test';
+  my_object.value(NVL(p_string, '')) := t_cnt;
 end;
