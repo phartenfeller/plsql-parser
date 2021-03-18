@@ -20,6 +20,8 @@ declare
   l_str5 varchar2(12 char) := $$plsql_type;
 
   l_complex_string varchar2(100 char) := chr(64 + trunc ((p_col - 27) / 676)) || chr (65 + mod (trunc ( (p_col - 1) / 26) - 1, 26));
+
+  
 begin
-  -- empty
+  my_object.value(index) := 'test';
 end;
