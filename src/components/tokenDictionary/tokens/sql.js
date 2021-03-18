@@ -1,4 +1,4 @@
-const { createToken } = require('chevrotain');
+const { createToken, Lexer } = require('chevrotain');
 const Identifier = require('./Identifier');
 
 const SelectKw = createToken({
@@ -37,10 +37,23 @@ const OrderByKw = createToken({
   longer_alt: Identifier,
 });
 
+const AndOr = createToken({
+  name: 'AndOr',
+  pattern: Lexer.NA,
+});
+
 const AndKw = createToken({
   name: 'AndKw',
   pattern: /and/i,
   longer_alt: Identifier,
+  categories: AndOr,
+});
+
+const OrKw = createToken({
+  name: 'OrKw',
+  pattern: /or/i,
+  longer_alt: Identifier,
+  categories: AndOr,
 });
 
 const InsertKw = createToken({
@@ -80,7 +93,9 @@ module.exports = [
   WhereKw,
   GroupByKw,
   OrderByKw,
+  AndOr,
   AndKw,
+  OrKw,
   InsertKw,
   ValuesKw,
   DeleteKw,

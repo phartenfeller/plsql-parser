@@ -45,12 +45,6 @@ const CreateKw = createToken({
   longer_alt: Identifier,
 });
 
-const OrKw = createToken({
-  name: 'OrKw',
-  pattern: /or/i,
-  longer_alt: Identifier,
-});
-
 const ReplaceKw = createToken({
   name: 'ReplaceKw',
   pattern: /replace/i,
@@ -97,7 +91,6 @@ const allTokens = [
   ...transaction,
   ...loops,
   CreateKw,
-  OrKw,
   ReplaceKw,
   AsKw,
   ...subprograms,

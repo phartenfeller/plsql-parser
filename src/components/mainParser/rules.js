@@ -180,10 +180,14 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('ifCondition', () => {
-      $.OR([
-        { ALT: () => $.SUBRULE($.condition) }, // l_var1 > l_var2
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // bool var
-      ]);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.AndOr,
+        DEF: () =>
+          $.OR([
+            { ALT: () => $.SUBRULE($.condition) }, // l_var1 > l_var2
+            { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // bool var
+          ]),
+      });
     });
 
     $.RULE('ifStatement', () => {
@@ -777,10 +781,7 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.WhereKw);
       $.SUBRULE($.condition);
       $.MANY(() => {
-        $.OR([
-          { ALT: () => $.CONSUME(tokenVocabulary.AndKw) },
-          { ALT: () => $.CONSUME(tokenVocabulary.OrKw) },
-        ]);
+        $.CONSUME(tokenVocabulary.AndOr);
         $.SUBRULE2($.condition);
       });
     });
