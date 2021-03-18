@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const chevrotain = require('chevrotain');
-const { parserInstance } = require('../chevrotain/rules');
+const { parserInstance } = require('../src/components/mainParser/rules');
 
 const serializedGrammar = parserInstance.getSerializedGastProductions();
 
