@@ -647,6 +647,9 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('number', () => {
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Minus);
+      });
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
         { ALT: () => $.CONSUME(tokenVocabulary.Float) },

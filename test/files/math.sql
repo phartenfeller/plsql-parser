@@ -6,6 +6,8 @@ begin
   l_num := 1222 / 8;
   l_num := 1.4 * 9;
   l_num := l_num + l_num / l_num * 2;
+  l_num := -1 + 2;
+  l_num := -1 - -2;
 
   l_num := get_random_number(64 + get_random_number(12 / 2));
 
