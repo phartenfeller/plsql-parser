@@ -19,4 +19,10 @@ const DoubleDot = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [ForKw, LoopKw, DoubleDot];
+const WhileKw = createToken({
+  name: 'WhileKw',
+  pattern: /while/i,
+  longer_alt: Identifier,
+});
+
+module.exports = [ForKw, LoopKw, DoubleDot, WhileKw];

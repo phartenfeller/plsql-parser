@@ -164,6 +164,7 @@ class PlSqlParser extends CstParser {
         { ALT: () => $.SUBRULE($.updateStatement) },
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.forLoop) },
+        { ALT: () => $.SUBRULE($.whileLoop) },
         {
           ALT: () => $.SUBRULE($.functionCallSemicolon),
         },
@@ -749,11 +750,18 @@ class PlSqlParser extends CstParser {
       $.MANY(() => {
         // .subname
         $.CONSUME(tokenVocabulary.Dot);
-        $.CONSUME2(tokenVocabulary.Identifier);
-        $.OPTION(() => {
-          // (3) for arrays
-          $.SUBRULE($.valueInBrackets);
-        });
+        $.OR([
+          {
+            ALT: () => {
+              $.CONSUME2(tokenVocabulary.Identifier);
+              $.OPTION(() => {
+                // (3) for arrays
+                $.SUBRULE($.valueInBrackets);
+              });
+            },
+          },
+          { ALT: () => $.CONSUME(tokenVocabulary.DeleteKw) }, // delete on an table array
+        ]);
       });
       $.OPTION5(() => {
         $.CONSUME(tokenVocabulary.OpenBracket); // (
@@ -903,6 +911,18 @@ class PlSqlParser extends CstParser {
           ]);
         });
       });
+    });
+
+    $.RULE('whileLoop', () => {
+      $.CONSUME(tokenVocabulary.WhileKw); // for
+      $.SUBRULE($.condition);
+      $.CONSUME(tokenVocabulary.LoopKw);
+      $.MANY(() => {
+        $.SUBRULE($.statement);
+      });
+      $.CONSUME(tokenVocabulary.End);
+      $.CONSUME2(tokenVocabulary.LoopKw);
+      $.SUBRULE($.semicolon);
     });
 
     $.RULE('forLoop', () => {

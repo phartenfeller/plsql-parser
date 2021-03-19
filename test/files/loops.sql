@@ -26,4 +26,9 @@ begin
   loop
     null;
   end loop;
+
+  while t_row_ind is not null
+  loop
+    null;
+  end loop;
 end;
