@@ -15,6 +15,7 @@ const Assignment = createToken({
 const SingleLineComment = createToken({
   name: 'SingleLineComment',
   pattern: /--.*/,
+  group: Lexer.SKIPPED,
 });
 
 const MultiLineComment = createToken({
