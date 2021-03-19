@@ -1447,9 +1447,15 @@
         "pattern": "return"
       },
       {
-        "type": "NonTerminal",
-        "name": "value",
-        "idx": 0
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          }
+        ]
       },
       {
         "type": "NonTerminal",
@@ -3425,11 +3431,34 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
+        "type": "Alternation",
         "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ReplaceKw",
+                "label": "ReplaceKw",
+                "idx": 0,
+                "pattern": "replace"
+              }
+            ]
+          }
+        ]
       },
       {
         "type": "Repetition",
@@ -3444,7 +3473,7 @@
           },
           {
             "type": "Alternation",
-            "idx": 0,
+            "idx": 2,
             "definition": [
               {
                 "type": "Alternative",
