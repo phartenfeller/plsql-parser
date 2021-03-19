@@ -743,24 +743,26 @@ class PlSqlParser extends CstParser {
     });
 
     // function or procedure call acutally or schema.pkg.constant
+    // or some array velues like myval.arr(2)
     $.RULE('functionCall', () => {
       $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
-      $.OPTION(() => {
+      $.MANY(() => {
+        // .subname
         $.CONSUME(tokenVocabulary.Dot);
         $.CONSUME2(tokenVocabulary.Identifier);
+        $.OPTION(() => {
+          // (3) for arrays
+          $.SUBRULE($.valueInBrackets);
+        });
       });
-      $.OPTION2(() => {
-        $.CONSUME2(tokenVocabulary.Dot);
-        $.CONSUME3(tokenVocabulary.Identifier);
-      });
-      $.OPTION3(() => {
+      $.OPTION5(() => {
         $.CONSUME(tokenVocabulary.OpenBracket); // (
         // function without params can be called like fct()
-        $.OPTION4(() => {
+        $.OPTION6(() => {
           $.MANY_SEP({
             SEP: tokenVocabulary.Comma,
             DEF: () => {
-              $.OPTION5(() => {
+              $.OPTION7(() => {
                 $.CONSUME4(tokenVocabulary.Identifier); // pi_param
                 $.CONSUME(tokenVocabulary.Arrow); // =>
               });

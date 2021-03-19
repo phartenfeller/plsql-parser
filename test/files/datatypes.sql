@@ -25,4 +25,5 @@ declare
 begin
   my_object.value(index) := 'test';
   my_object.value(NVL(p_string, '')) := t_cnt;
+  t_row_ind := workbook.sheets_tab(s).sheet_rows_tab.FIRST;
 end;
