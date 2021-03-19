@@ -627,17 +627,17 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('assignment', () => {
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Identifier); // l_obj
-        $.CONSUME(tokenVocabulary.Dot); // .
+      $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
+      $.MANY(() => {
+        // .subname
+        $.CONSUME(tokenVocabulary.Dot);
+        $.CONSUME2(tokenVocabulary.Identifier);
+        $.OPTION(() => {
+          // (3) for arrays
+          $.SUBRULE($.valueInBrackets);
+        });
       });
-      $.CONSUME2(tokenVocabulary.Identifier);
-      $.OPTION2(() => {
-        // (i) on objects thart are indexed
-        $.CONSUME(tokenVocabulary.OpenBracket);
-        $.SUBRULE($.value);
-        $.CONSUME(tokenVocabulary.ClosingBracket);
-      });
+
       $.CONSUME(tokenVocabulary.Assignment);
       $.SUBRULE2($.value);
       $.SUBRULE($.semicolon);
