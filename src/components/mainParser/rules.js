@@ -368,7 +368,7 @@ class PlSqlParser extends CstParser {
       $.OR([
         { ALT: () => $.SUBRULE($.numberDeclaration) },
         { ALT: () => $.SUBRULE($.stringDeclaration) },
-        { ALT: () => $.SUBRULE($.plsIntegerDeclaration) },
+        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
         { ALT: () => $.SUBRULE($.timestampDeclaration) },
@@ -584,15 +584,6 @@ class PlSqlParser extends CstParser {
           $.CONSUME2(tokenVocabulary.Integer);
         });
         $.CONSUME(tokenVocabulary.ClosingBracket);
-      });
-    });
-
-    $.RULE('plsIntegerDeclaration', () => {
-      $.CONSUME(tokenVocabulary.DtypePlsIteger);
-      // := 3
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
-        $.SUBRULE($.numberValue);
       });
     });
 
