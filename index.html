@@ -2969,54 +2969,40 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Option",
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 0,
+        "pattern": "[a-zA-Z]\\w*"
+      },
+      {
+        "type": "Repetition",
         "idx": 0,
         "definition": [
-          {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 0,
-            "pattern": "[a-zA-Z]\\w*"
-          },
           {
             "type": "Terminal",
             "name": "Dot",
             "label": "Dot",
             "idx": 0,
             "pattern": "\\."
-          }
-        ]
-      },
-      {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
-        "idx": 2,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Option",
-        "idx": 2,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "OpenBracket",
-            "label": "OpenBracket",
-            "idx": 0,
-            "pattern": "\\("
-          },
-          {
-            "type": "NonTerminal",
-            "name": "value",
-            "idx": 0
           },
           {
             "type": "Terminal",
-            "name": "ClosingBracket",
-            "label": "ClosingBracket",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 2,
+            "pattern": "[a-zA-Z]\\w*"
+          },
+          {
+            "type": "Option",
             "idx": 0,
-            "pattern": "\\)"
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "valueInBrackets",
+                "idx": 0
+              }
+            ]
           }
         ]
       },
