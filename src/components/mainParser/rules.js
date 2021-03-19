@@ -307,7 +307,9 @@ class PlSqlParser extends CstParser {
 
     $.RULE('returnStatement', () => {
       $.CONSUME(tokenVocabulary.ReturnKw); // return
-      $.SUBRULE($.value); // 3, l_var ...
+      $.OPTION(() => {
+        $.SUBRULE($.value); // 3, l_var ...
+      });
       $.SUBRULE($.semicolon); // ;
     });
 
@@ -737,11 +739,14 @@ class PlSqlParser extends CstParser {
     // function or procedure call acutally or schema.pkg.constant
     // or some array velues like myval.arr(2)
     $.RULE('functionCall', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // fct_name (or schema or pkg)
+        { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) },
+      ]);
       $.MANY(() => {
         // .subname
         $.CONSUME(tokenVocabulary.Dot);
-        $.OR([
+        $.OR2([
           {
             ALT: () => {
               $.CONSUME2(tokenVocabulary.Identifier);
