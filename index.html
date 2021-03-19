@@ -762,6 +762,16 @@
             "definition": [
               {
                 "type": "NonTerminal",
+                "name": "whileLoop",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
                 "name": "functionCallSemicolon",
                 "idx": 0
               }
@@ -3477,20 +3487,43 @@
             "pattern": "\\."
           },
           {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 2,
-            "pattern": "[a-zA-Z]\\w*"
-          },
-          {
-            "type": "Option",
+            "type": "Alternation",
             "idx": 0,
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "valueInBrackets",
-                "idx": 0
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 2,
+                    "pattern": "[a-zA-Z]\\w*"
+                  },
+                  {
+                    "type": "Option",
+                    "idx": 0,
+                    "definition": [
+                      {
+                        "type": "NonTerminal",
+                        "name": "valueInBrackets",
+                        "idx": 0
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "DeleteKw",
+                    "label": "DeleteKw",
+                    "idx": 0,
+                    "pattern": "delete"
+                  }
+                ]
               }
             ]
           }
@@ -4035,6 +4068,62 @@
             ]
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "whileLoop",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "WhileKw",
+        "label": "WhileKw",
+        "idx": 0,
+        "pattern": "while"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "condition",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "LoopKw",
+        "label": "LoopKw",
+        "idx": 0,
+        "pattern": "loop"
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "statement",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "End",
+        "label": "End",
+        "idx": 0,
+        "pattern": "end"
+      },
+      {
+        "type": "Terminal",
+        "name": "LoopKw",
+        "label": "LoopKw",
+        "idx": 2,
+        "pattern": "loop"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "semicolon",
+        "idx": 0
       }
     ]
   },
