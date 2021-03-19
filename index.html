@@ -1741,9 +1741,11 @@
             "type": "Alternative",
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "plsIntegerDeclaration",
-                "idx": 0
+                "type": "Terminal",
+                "name": "DtypePlsIteger",
+                "label": "DtypePlsIteger",
+                "idx": 0,
+                "pattern": "pls_integer"
               }
             ]
           },
@@ -2768,38 +2770,6 @@
             "label": "ClosingBracket",
             "idx": 0,
             "pattern": "\\)"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "Rule",
-    "name": "plsIntegerDeclaration",
-    "orgText": "",
-    "definition": [
-      {
-        "type": "Terminal",
-        "name": "DtypePlsIteger",
-        "label": "DtypePlsIteger",
-        "idx": 0,
-        "pattern": "pls_integer"
-      },
-      {
-        "type": "Option",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "Assignment",
-            "label": "Assignment",
-            "idx": 0,
-            "pattern": ":="
-          },
-          {
-            "type": "NonTerminal",
-            "name": "numberValue",
-            "idx": 0
           }
         ]
       }
