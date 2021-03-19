@@ -6,4 +6,5 @@ begin
     comment
   */
   -- comment two
+  --
 end;

@@ -14,7 +14,7 @@ const Assignment = createToken({
 
 const SingleLineComment = createToken({
   name: 'SingleLineComment',
-  pattern: /--.+/,
+  pattern: /--.*/,
 });
 
 const MultiLineComment = createToken({
@@ -51,7 +51,7 @@ const Plus = createToken({
 const Minus = createToken({
   name: 'Minus',
   pattern: /-/,
-  longer_alt: Identifier,
+  longer_alt: SingleLineComment,
   categories: AdditionOperator,
 });
 
