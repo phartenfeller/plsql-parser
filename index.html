@@ -772,6 +772,16 @@
             "definition": [
               {
                 "type": "NonTerminal",
+                "name": "exitLoop",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
                 "name": "functionCallSemicolon",
                 "idx": 0
               }
@@ -4307,6 +4317,102 @@
             "type": "NonTerminal",
             "name": "statement",
             "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "End",
+        "label": "End",
+        "idx": 0,
+        "pattern": "end"
+      },
+      {
+        "type": "Terminal",
+        "name": "LoopKw",
+        "label": "LoopKw",
+        "idx": 2,
+        "pattern": "loop"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "semicolon",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "exitStatement",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "ExitKw",
+        "label": "ExitKw",
+        "idx": 0,
+        "pattern": "exit"
+      },
+      {
+        "type": "Terminal",
+        "name": "WhenKw",
+        "label": "WhenKw",
+        "idx": 0,
+        "pattern": "when"
+      },
+      {
+        "type": "NonTerminal",
+        "name": "chainedConditions",
+        "idx": 0
+      },
+      {
+        "type": "NonTerminal",
+        "name": "semicolon",
+        "idx": 0
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "exitLoop",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "LoopKw",
+        "label": "LoopKw",
+        "idx": 0,
+        "pattern": "loop"
+      },
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "statement",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "exitStatement",
+                    "idx": 0
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
