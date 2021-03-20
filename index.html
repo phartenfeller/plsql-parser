@@ -842,7 +842,7 @@
   },
   {
     "type": "Rule",
-    "name": "ifCondition",
+    "name": "chainedConditions",
     "orgText": "",
     "definition": [
       {
@@ -862,6 +862,18 @@
             "idx": 0
           }
         ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "ifCondition",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "NonTerminal",
+        "name": "chainedConditions",
+        "idx": 0
       },
       {
         "type": "Terminal",
@@ -4160,7 +4172,7 @@
       },
       {
         "type": "NonTerminal",
-        "name": "condition",
+        "name": "chainedConditions",
         "idx": 0
       },
       {
