@@ -510,9 +510,12 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('valueInBrackets', () => {
-      $.CONSUME(tokenVocabulary.OpenBracket);
-      $.SUBRULE($.value);
-      $.CONSUME(tokenVocabulary.ClosingBracket);
+      // more possible in multi dimensional arrays
+      $.AT_LEAST_ONE(() => {
+        $.CONSUME(tokenVocabulary.OpenBracket);
+        $.SUBRULE($.value);
+        $.CONSUME(tokenVocabulary.ClosingBracket);
+      });
     });
 
     $.RULE('value', () => {
