@@ -29,4 +29,5 @@ begin
   t_row_ind := workbook.sheets_tab(s).sheet_rows_tab.first;
   workbook.sheets_tab(s).sheet_rows_tab(t_row_ind).delete; -- delete function on table arrays
   workbook.sheets_tab(t_sheet).sheet_rows_tab(p_row)(p_col).nn_value_id := p_value;
+  gv_authors_tab(workbook.sheets_tab(s).comments_tab(c).vc_author) := 0;
 end;

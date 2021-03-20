@@ -659,15 +659,15 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('assignment', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // fct_name (or schema or pkg)
-      $.MANY(() => {
-        // .subname
-        $.CONSUME(tokenVocabulary.Dot);
-        $.CONSUME2(tokenVocabulary.Identifier);
-        $.OPTION(() => {
-          // (3) for arrays
-          $.SUBRULE($.valueInBrackets);
-        });
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Dot,
+        DEF: () => {
+          $.CONSUME1(tokenVocabulary.Identifier);
+          $.OPTION(() => {
+            // (3) for arrays
+            $.SUBRULE($.valueInBrackets);
+          });
+        },
       });
 
       $.CONSUME(tokenVocabulary.Assignment);
