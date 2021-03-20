@@ -2360,23 +2360,29 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Terminal",
-        "name": "OpenBracket",
-        "label": "OpenBracket",
+        "type": "RepetitionMandatory",
         "idx": 0,
-        "pattern": "\\("
-      },
-      {
-        "type": "NonTerminal",
-        "name": "value",
-        "idx": 0
-      },
-      {
-        "type": "Terminal",
-        "name": "ClosingBracket",
-        "label": "ClosingBracket",
-        "idx": 0,
-        "pattern": "\\)"
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "OpenBracket",
+            "label": "OpenBracket",
+            "idx": 0,
+            "pattern": "\\("
+          },
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          },
+          {
+            "type": "Terminal",
+            "name": "ClosingBracket",
+            "label": "ClosingBracket",
+            "idx": 0,
+            "pattern": "\\)"
+          }
+        ]
       }
     ]
   },
