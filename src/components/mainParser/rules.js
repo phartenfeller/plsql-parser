@@ -228,6 +228,7 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('conditionsInBrackets', () => {
+      $.OPTION(() => $.CONSUME(tokenVocabulary.NotKw));
       $.CONSUME(tokenVocabulary.OpenBracket);
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.AndOr,

@@ -29,6 +29,12 @@ begin
     null;
   elsif ( 1 + 1 = 2 and 3 - 2 * 0 = 0) or 1 = 1 then
     null;
+  elsif t_numfmtid IS NULL
+         AND NOT (    workbook.sheets_tab (t_sheet).col_fmts_tab.EXISTS (p_col)
+                  AND workbook.sheets_tab (t_sheet).col_fmts_tab (p_col).pi_numfmtid IS NOT NULL
+                  )
+              then
+    null;
   else
     null;
   end if;
