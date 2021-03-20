@@ -3072,28 +3072,21 @@
     "orgText": "",
     "definition": [
       {
-        "type": "Terminal",
-        "name": "Identifier",
-        "label": "Identifier",
+        "type": "RepetitionMandatoryWithSeparator",
         "idx": 0,
-        "pattern": "[a-zA-Z]\\w*"
-      },
-      {
-        "type": "Repetition",
-        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Dot",
+          "label": "Dot",
+          "idx": 1,
+          "pattern": "\\."
+        },
         "definition": [
-          {
-            "type": "Terminal",
-            "name": "Dot",
-            "label": "Dot",
-            "idx": 0,
-            "pattern": "\\."
-          },
           {
             "type": "Terminal",
             "name": "Identifier",
             "label": "Identifier",
-            "idx": 2,
+            "idx": 1,
             "pattern": "[a-zA-Z]\\w*"
           },
           {
