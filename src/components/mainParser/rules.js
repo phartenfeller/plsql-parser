@@ -185,12 +185,12 @@ class PlSqlParser extends CstParser {
         SEP: tokenVocabulary.AndOr,
         DEF: () => $.SUBRULE($.condition),
       });
+      $.CONSUME(tokenVocabulary.Then); // Then
     });
 
     $.RULE('ifStatement', () => {
       $.CONSUME(tokenVocabulary.If); // if
       $.SUBRULE($.ifCondition);
-      $.CONSUME(tokenVocabulary.Then); // Then
       $.MANY(() => {
         $.SUBRULE2($.statement); // ...
       });
@@ -198,7 +198,6 @@ class PlSqlParser extends CstParser {
         $.MANY2(() => {
           $.CONSUME(tokenVocabulary.Elsif); // elsif
           $.SUBRULE2($.ifCondition);
-          $.CONSUME2(tokenVocabulary.Then); // then
           $.MANY3(() => {
             $.SUBRULE4($.statement); // ...
           });
@@ -228,9 +227,24 @@ class PlSqlParser extends CstParser {
       ]);
     });
 
-    $.RULE('condition', () => {
-      $.SUBRULE($.value, { LABEL: 'lhs' });
+    $.RULE('conditionsInBrackets', () => {
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.AndOr,
+        DEF: () => {
+          $.SUBRULE($.condition);
+        },
+      });
+      debugger;
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
+    $.RULE('singleCondition', () => {
       $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.NotKw);
+      });
+      $.SUBRULE($.value, { LABEL: 'lhs' });
+      $.OPTION2(() => {
         $.OR([
           {
             ALT: () => {
@@ -241,13 +255,25 @@ class PlSqlParser extends CstParser {
           {
             ALT: () => {
               $.CONSUME(tokenVocabulary.IsKw);
-              $.OPTION2(() => {
-                $.CONSUME(tokenVocabulary.NotKw);
+              $.OPTION3(() => {
+                $.CONSUME2(tokenVocabulary.NotKw);
               });
               $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
             },
           },
         ]);
+      });
+    });
+
+    $.RULE('condition', () => {
+      $.OR({
+        DEF: [
+          {
+            GATE: $.BACKTRACK($.conditionsInBrackets),
+            ALT: () => $.SUBRULE($.conditionsInBrackets),
+          },
+          { ALT: () => $.SUBRULE($.singleCondition) },
+        ],
       });
     });
 

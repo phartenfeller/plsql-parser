@@ -23,6 +23,12 @@ begin
     null;
   elsif l_num2 < l_num1 or 1 + 3 >= 0 and l_bool then
     null;
+  elsif not my_pkg.my_cool_func('test') then
+    null;
+  elsif ((1 + 2 = 3 and false) or  0 + 1 * 0  = 0) then
+    null;
+  elsif ( 1 + 1 = 2 and 3 - 2 * 0 = 0) or 1 = 1 then
+    null;
   else
     null;
   end if;
