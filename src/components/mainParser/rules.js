@@ -180,11 +180,15 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
-    $.RULE('ifCondition', () => {
+    $.RULE('chainedConditions', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.AndOr,
         DEF: () => $.SUBRULE($.condition),
       });
+    });
+
+    $.RULE('ifCondition', () => {
+      $.SUBRULE($.chainedConditions);
       $.CONSUME(tokenVocabulary.Then); // Then
     });
 
@@ -941,7 +945,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('whileLoop', () => {
       $.CONSUME(tokenVocabulary.WhileKw); // for
-      $.SUBRULE($.condition);
+      $.SUBRULE($.chainedConditions);
       $.CONSUME(tokenVocabulary.LoopKw);
       $.MANY(() => {
         $.SUBRULE($.statement);

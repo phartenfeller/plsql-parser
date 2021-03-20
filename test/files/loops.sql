@@ -31,4 +31,10 @@ begin
   loop
     null;
   end loop;
+
+  while my_val is not null or gv_authors_tab.next (author_ind) is not null
+  loop
+    null;
+  end loop;
+
 end;
