@@ -165,6 +165,7 @@ class PlSqlParser extends CstParser {
         { ALT: () => $.SUBRULE($.transactionStatement) },
         { ALT: () => $.SUBRULE($.forLoop) },
         { ALT: () => $.SUBRULE($.whileLoop) },
+        { ALT: () => $.SUBRULE($.exitLoop) },
         {
           ALT: () => $.SUBRULE($.functionCallSemicolon),
         },
@@ -978,6 +979,26 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.LoopKw);
       $.MANY(() => {
         $.SUBRULE($.statement);
+      });
+      $.CONSUME(tokenVocabulary.End);
+      $.CONSUME2(tokenVocabulary.LoopKw);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('exitStatement', () => {
+      $.CONSUME(tokenVocabulary.ExitKw);
+      $.CONSUME(tokenVocabulary.WhenKw);
+      $.SUBRULE($.chainedConditions);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('exitLoop', () => {
+      $.CONSUME(tokenVocabulary.LoopKw);
+      $.MANY(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.statement) },
+          { ALT: () => $.SUBRULE($.exitStatement) },
+        ]);
       });
       $.CONSUME(tokenVocabulary.End);
       $.CONSUME2(tokenVocabulary.LoopKw);

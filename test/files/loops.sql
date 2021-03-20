@@ -37,4 +37,12 @@ begin
     null;
   end loop;
 
+  loop
+    null;
+    null;  
+
+    exit when 1 + 1 < 2 and true;
+    null;
+  end loop;
+
 end;
