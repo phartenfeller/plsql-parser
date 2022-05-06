@@ -785,8 +785,16 @@ class PlSqlParser extends CstParser {
     // or some array velues like myval.arr(2)
     $.RULE('functionCall', () => {
       $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // fct_name (or schema or pkg)
-        { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) },
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.Identifier);
+            $.OPTION(() => {
+              // (3) for arrays
+              $.SUBRULE($.valueInBrackets);
+            });
+          },
+        }, // fct_name (or schema or pkg)
+        { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // replace function
       ]);
       $.MANY(() => {
         // .subname
@@ -795,9 +803,9 @@ class PlSqlParser extends CstParser {
           {
             ALT: () => {
               $.CONSUME2(tokenVocabulary.Identifier);
-              $.OPTION(() => {
+              $.OPTION2(() => {
                 // (3) for arrays
-                $.SUBRULE($.valueInBrackets);
+                $.SUBRULE2($.valueInBrackets);
               });
             },
           },

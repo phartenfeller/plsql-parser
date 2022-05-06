@@ -18,8 +18,9 @@ const logLexer = (file) => {
 
 const main = async () => {
   try {
+    // const file = await readFile('./test/plsql/test.sql');
     const file = await readFile('./test/plsql/current-error.sql');
-    logLexer(file);
+    // logLexer(file);
     parse(file);
   } catch (err) {
     console.log(err);
