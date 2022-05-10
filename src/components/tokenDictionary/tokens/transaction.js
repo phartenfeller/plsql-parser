@@ -1,5 +1,5 @@
 const { createToken } = require('chevrotain');
-const Identifier = require('./Identifier');
+const {Identifier} = require('./Identifier');
 
 const StartTransactionKw = createToken({
   name: 'StartTransactionKw',

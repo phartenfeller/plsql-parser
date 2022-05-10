@@ -251,7 +251,6 @@ class PlSqlParser extends CstParser {
           $.SUBRULE($.condition);
         },
       });
-      debugger;
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
@@ -529,29 +528,55 @@ class PlSqlParser extends CstParser {
       // more possible in multi dimensional arrays
       $.AT_LEAST_ONE(() => {
         $.CONSUME(tokenVocabulary.OpenBracket);
+        // $.CONSUME(tokenVocabulary.Identifier);
         $.SUBRULE($.value);
         $.CONSUME(tokenVocabulary.ClosingBracket);
       });
     });
 
     $.RULE('value', () => {
-      $.AT_LEAST_ONE_SEP({
-        SEP: tokenVocabulary.ValueSeperator,
-        DEF: () => {
-          $.OR([
-            { ALT: () => $.CONSUME(tokenVocabulary.String) },
-            { ALT: () => $.SUBRULE($.number) },
-            {
-              ALT: () => $.SUBRULE($.functionCall),
-            },
-            { ALT: () => $.SUBRULE($.valueInBrackets) },
-            { ALT: () => $.SUBRULE($.sqlCaseStatement) },
-            { ALT: () => $.CONSUME(tokenVocabulary.Null) },
-            { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
-            { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-          ]);
-        },
+      // $.AT_LEAST_ONE(() => {
+      //   $.CONSUME(tokenVocabulary.AnyValue);
+      // });
+      $.AT_LEAST_ONE(() => {
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
+          { ALT: () => $.CONSUME(tokenVocabulary.String) },
+          { ALT: () => $.SUBRULE($.number) },
+          // {
+          //   ALT: () => $.SUBRULE($.functionCall),
+          // },
+          // { ALT: () => $.SUBRULE($.valueInBrackets) },
+          { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+          { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
+          { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+          { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
+          { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Comma) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+        ]);
       });
+      debugger;
+      // $.AT_LEAST_ONE_SEP({
+      //   SEP: tokenVocabulary.ValueSeperator,
+      //   DEF: () => {
+      //     $.OR([
+      //       { ALT: () => $.CONSUME(tokenVocabulary.String) },
+      //       { ALT: () => $.SUBRULE($.number) },
+      //       {
+      //         ALT: () => $.SUBRULE($.functionCall),
+      //       },
+      //       { ALT: () => $.SUBRULE($.valueInBrackets) },
+      //       { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+      //       { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+      //       { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
+      //       { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+      //     ]);
+      //   },
+      // });
     });
 
     $.RULE('argumentList', () => {
@@ -673,14 +698,30 @@ class PlSqlParser extends CstParser {
       ]);
     });
 
+    // $.RULE('variableName', () => {
+    //   $.OR([
+    //     { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+    //     { ALT: () => $.CONSUME(tokenVocabulary.AnyValue) },
+    //   ]);
+    // });
+
+    $.RULE('numberInBrackets', () => {
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.OR([
+        { ALT: () => $.SUBRULE($.number) },
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+      ]);
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
+    });
+
     $.RULE('assignment', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Dot,
         DEF: () => {
-          $.CONSUME1(tokenVocabulary.Identifier);
+          $.CONSUME(tokenVocabulary.Identifier);
           $.OPTION(() => {
             // (3) for arrays
-            $.SUBRULE($.valueInBrackets);
+            $.SUBRULE($.numberInBrackets);
           });
         },
       });
@@ -786,7 +827,7 @@ class PlSqlParser extends CstParser {
     $.RULE('functionCall', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // fct_name (or schema or pkg)
-        { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // replace is keyword and function name
       ]);
       $.MANY(() => {
         // .subname
@@ -797,10 +838,11 @@ class PlSqlParser extends CstParser {
               $.CONSUME2(tokenVocabulary.Identifier);
               $.OPTION(() => {
                 // (3) for arrays
-                $.SUBRULE($.valueInBrackets);
+                $.SUBRULE($.numberInBrackets);
               });
             },
           },
+          // TODO: Delete this?!
           { ALT: () => $.CONSUME(tokenVocabulary.DeleteKw) }, // delete on an table array
         ]);
       });
@@ -819,7 +861,10 @@ class PlSqlParser extends CstParser {
             },
           });
         });
-        $.CONSUME(tokenVocabulary.ClosingBracket); // )
+        // optional because will be taken care of in value parser
+        $.OPTION8(() => {
+          $.CONSUME(tokenVocabulary.ClosingBracket); // )
+        });
       });
     });
 
@@ -848,20 +893,14 @@ class PlSqlParser extends CstParser {
     // TODO distinct
     $.RULE('query', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Asterisk) }, // *
-        {
-          ALT: () => {
-            $.AT_LEAST_ONE_SEP({
-              // col1, col2, fct1(3)
-              SEP: tokenVocabulary.Comma,
-              DEF: () => {
-                $.SUBRULE($.value); // direct value / function call / variable
-              },
-            });
-          },
+      $.AT_LEAST_ONE_SEP({
+        // col1, col2, fct1(3)
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          // also includes just >> * <<
+          $.SUBRULE($.value); // direct value / function call / variable
         },
-      ]);
+      });
       $.OPTION(() => {
         $.CONSUME1(tokenVocabulary.IntoKw); // into
         $.AT_LEAST_ONE_SEP2({

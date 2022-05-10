@@ -1,5 +1,5 @@
 const { createToken, Lexer } = require('chevrotain');
-const Identifier = require('./Identifier');
+const {Identifier} = require('./Identifier');
 
 const SelectKw = createToken({
   name: 'SelectKw',

@@ -1,5 +1,5 @@
 const { createToken, Lexer } = require('chevrotain');
-const Identifier = require('./Identifier');
+const { Identifier } = require('./Identifier');
 const relationalOperators = require('./relationalOperators');
 const ifStatement = require('./ifStatement');
 const subprograms = require('./subprograms');

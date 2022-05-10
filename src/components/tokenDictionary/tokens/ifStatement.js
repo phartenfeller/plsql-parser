@@ -1,6 +1,6 @@
 const { createToken } = require('chevrotain');
 const exceptions = require('./exception');
-const Identifier = require('./Identifier');
+const {Identifier} = require('./Identifier');
 
 const If = createToken({
   name: 'If',
