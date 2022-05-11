@@ -526,12 +526,15 @@ class PlSqlParser extends CstParser {
 
     $.RULE('valueInBrackets', () => {
       // more possible in multi dimensional arrays
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      // $.CONSUME(tokenVocabulary.Identifier);
       $.AT_LEAST_ONE(() => {
-        $.CONSUME(tokenVocabulary.OpenBracket);
-        // $.CONSUME(tokenVocabulary.Identifier);
-        $.SUBRULE($.value);
-        $.CONSUME(tokenVocabulary.ClosingBracket);
+        $.OR([
+          { ALT: () => $.SUBRULE($.value) },
+          { ALT: () => $.CONSUME(tokenVocabulary.Comma) },
+        ]);
       });
+      $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
     $.RULE('value', () => {
@@ -546,15 +549,14 @@ class PlSqlParser extends CstParser {
           // {
           //   ALT: () => $.SUBRULE($.functionCall),
           // },
-          // { ALT: () => $.SUBRULE($.valueInBrackets) },
+          { ALT: () => $.SUBRULE($.valueInBrackets) },
           { ALT: () => $.SUBRULE($.sqlCaseStatement) },
           { ALT: () => $.CONSUME(tokenVocabulary.Null) },
           { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
           { ALT: () => $.SUBRULE($.jsonDtypeValue) },
           { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-          { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
-          { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
-          { ALT: () => $.CONSUME(tokenVocabulary.Comma) },
+          // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
+          // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
           { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
           { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
         ]);
