@@ -528,7 +528,7 @@ class PlSqlParser extends CstParser {
       // more possible in multi dimensional arrays
       $.CONSUME(tokenVocabulary.OpenBracket);
       // $.CONSUME(tokenVocabulary.Identifier);
-      $.AT_LEAST_ONE(() => {
+      $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.value) },
           { ALT: () => $.CONSUME(tokenVocabulary.Comma) },
