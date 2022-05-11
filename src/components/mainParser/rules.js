@@ -721,9 +721,11 @@ class PlSqlParser extends CstParser {
         SEP: tokenVocabulary.Dot,
         DEF: () => {
           $.CONSUME(tokenVocabulary.Identifier);
+          // associative arrays e. g. l_2d_array(1)(2)
           $.OPTION(() => {
-            // (3) for arrays
-            $.SUBRULE($.valueInBrackets);
+            $.MANY(() => {
+              $.SUBRULE($.valueInBrackets);
+            });
           });
         },
       });
