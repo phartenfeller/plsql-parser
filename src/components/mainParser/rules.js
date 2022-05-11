@@ -723,7 +723,7 @@ class PlSqlParser extends CstParser {
           $.CONSUME(tokenVocabulary.Identifier);
           $.OPTION(() => {
             // (3) for arrays
-            $.SUBRULE($.numberInBrackets);
+            $.SUBRULE($.valueInBrackets);
           });
         },
       });
