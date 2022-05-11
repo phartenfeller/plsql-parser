@@ -2445,29 +2445,52 @@
     "orgText": "",
     "definition": [
       {
-        "type": "RepetitionMandatory",
+        "type": "Terminal",
+        "name": "OpenBracket",
+        "label": "OpenBracket",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "Repetition",
         "idx": 0,
         "definition": [
           {
-            "type": "Terminal",
-            "name": "OpenBracket",
-            "label": "OpenBracket",
+            "type": "Alternation",
             "idx": 0,
-            "pattern": "\\("
-          },
-          {
-            "type": "NonTerminal",
-            "name": "value",
-            "idx": 0
-          },
-          {
-            "type": "Terminal",
-            "name": "ClosingBracket",
-            "label": "ClosingBracket",
-            "idx": 0,
-            "pattern": "\\)"
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "value",
+                    "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Comma",
+                    "label": "Comma",
+                    "idx": 0,
+                    "pattern": ","
+                  }
+                ]
+              }
+            ]
           }
         ]
+      },
+      {
+        "type": "Terminal",
+        "name": "ClosingBracket",
+        "label": "ClosingBracket",
+        "idx": 0,
+        "pattern": "\\)"
       }
     ]
   },
@@ -2477,20 +2500,25 @@
     "orgText": "",
     "definition": [
       {
-        "type": "RepetitionMandatoryWithSeparator",
+        "type": "RepetitionMandatory",
         "idx": 0,
-        "separator": {
-          "type": "Terminal",
-          "name": "ValueSeperator",
-          "label": "ValueSeperator",
-          "idx": 1,
-          "pattern": "NOT_APPLICABLE"
-        },
         "definition": [
           {
             "type": "Alternation",
             "idx": 0,
             "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "ValueSeperator",
+                    "label": "ValueSeperator",
+                    "idx": 0,
+                    "pattern": "NOT_APPLICABLE"
+                  }
+                ]
+              },
               {
                 "type": "Alternative",
                 "definition": [
@@ -2509,16 +2537,6 @@
                   {
                     "type": "NonTerminal",
                     "name": "number",
-                    "idx": 0
-                  }
-                ]
-              },
-              {
-                "type": "Alternative",
-                "definition": [
-                  {
-                    "type": "NonTerminal",
-                    "name": "functionCall",
                     "idx": 0
                   }
                 ]
@@ -2574,6 +2592,42 @@
                     "type": "NonTerminal",
                     "name": "jsonDtypeValue",
                     "idx": 0
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Identifier",
+                    "label": "Identifier",
+                    "idx": 0,
+                    "pattern": "[a-zA-Z]\\w*"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Arrow",
+                    "label": "Arrow",
+                    "idx": 0,
+                    "pattern": "=>"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Dot",
+                    "label": "Dot",
+                    "idx": 0,
+                    "pattern": "\\."
                   }
                 ]
               }
@@ -3140,6 +3194,55 @@
   },
   {
     "type": "Rule",
+    "name": "numberInBrackets",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "OpenBracket",
+        "label": "OpenBracket",
+        "idx": 0,
+        "pattern": "\\("
+      },
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "number",
+                "idx": 0
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "ClosingBracket",
+        "label": "ClosingBracket",
+        "idx": 0,
+        "pattern": "\\)"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "assignment",
     "orgText": "",
     "definition": [
@@ -3158,7 +3261,7 @@
             "type": "Terminal",
             "name": "Identifier",
             "label": "Identifier",
-            "idx": 1,
+            "idx": 0,
             "pattern": "[a-zA-Z]\\w*"
           },
           {
@@ -3166,9 +3269,15 @@
             "idx": 0,
             "definition": [
               {
-                "type": "NonTerminal",
-                "name": "valueInBrackets",
-                "idx": 0
+                "type": "Repetition",
+                "idx": 0,
+                "definition": [
+                  {
+                    "type": "NonTerminal",
+                    "name": "valueInBrackets",
+                    "idx": 0
+                  }
+                ]
               }
             ]
           }
@@ -3653,7 +3762,7 @@
                     "definition": [
                       {
                         "type": "NonTerminal",
-                        "name": "valueInBrackets",
+                        "name": "numberInBrackets",
                         "idx": 0
                       }
                     ]
@@ -3732,11 +3841,17 @@
             ]
           },
           {
-            "type": "Terminal",
-            "name": "ClosingBracket",
-            "label": "ClosingBracket",
-            "idx": 0,
-            "pattern": "\\)"
+            "type": "Option",
+            "idx": 8,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "ClosingBracket",
+                "label": "ClosingBracket",
+                "idx": 0,
+                "pattern": "\\)"
+              }
+            ]
           }
         ]
       }
@@ -3809,43 +3924,20 @@
         "pattern": "select"
       },
       {
-        "type": "Alternation",
+        "type": "RepetitionMandatoryWithSeparator",
         "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
         "definition": [
           {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "Terminal",
-                "name": "Asterisk",
-                "label": "Asterisk",
-                "idx": 0,
-                "pattern": "\\*"
-              }
-            ]
-          },
-          {
-            "type": "Alternative",
-            "definition": [
-              {
-                "type": "RepetitionMandatoryWithSeparator",
-                "idx": 0,
-                "separator": {
-                  "type": "Terminal",
-                  "name": "Comma",
-                  "label": "Comma",
-                  "idx": 1,
-                  "pattern": ","
-                },
-                "definition": [
-                  {
-                    "type": "NonTerminal",
-                    "name": "value",
-                    "idx": 0
-                  }
-                ]
-              }
-            ]
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
           }
         ]
       },
