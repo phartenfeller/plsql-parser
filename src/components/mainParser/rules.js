@@ -276,6 +276,24 @@ class PlSqlParser extends CstParser {
               $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
             },
           },
+          {
+            ALT: () => {
+              $.OPTION4(() => {
+                $.CONSUME3(tokenVocabulary.NotKw);
+              });
+              $.CONSUME(tokenVocabulary.InKw);
+              $.OR2([
+                { ALT: () => $.SUBRULE($.valueInBrackets, { LABEL: 'rhs' }) },
+                {
+                  ALT: () => {
+                    $.CONSUME(tokenVocabulary.OpenBracket);
+                    $.SUBRULE($.query);
+                    $.CONSUME(tokenVocabulary.ClosingBracket);
+                  },
+                },
+              ]);
+            },
+          },
         ]);
       });
     });
@@ -887,13 +905,27 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('querySource', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        {
+          // array to table
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.TableKw);
+            $.CONSUME(tokenVocabulary.OpenBracket);
+            $.CONSUME2(tokenVocabulary.Identifier);
+            $.CONSUME(tokenVocabulary.ClosingBracket);
+          },
+        },
+      ]);
+    });
+
     // TODO with clause
     // TODO join
     // TODO order by
     // TODO group by
     // TODO having
     // TODO union, minus, intersect
-    // TODO subquery
     // TODO distinct
     $.RULE('query', () => {
       $.CONSUME(tokenVocabulary.SelectKw); // select
@@ -920,7 +952,7 @@ class PlSqlParser extends CstParser {
         // table 1, table 2
         SEP: tokenVocabulary.Comma,
         DEF: () => {
-          $.CONSUME3(tokenVocabulary.Identifier);
+          $.SUBRULE($.querySource);
         },
       });
       $.OPTION2(() => {

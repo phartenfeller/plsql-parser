@@ -76,6 +76,12 @@ const ExitKw = createToken({
   longer_alt: Identifier,
 });
 
+const TableKw = createToken({
+  name: 'TableKw',
+  pattern: /table/i,
+  longer_alt: Identifier,
+});
+
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
@@ -115,6 +121,7 @@ const allTokens = [
   AsKw,
   IsKw,
   ExitKw,
+  TableKw,
   ...subprograms,
   ...symbols,
   ...relationalOperators,
