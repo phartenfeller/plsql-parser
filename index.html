@@ -1290,6 +1290,72 @@
                     "pattern": "null"
                   }
                 ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Option",
+                    "idx": 4,
+                    "definition": [
+                      {
+                        "type": "Terminal",
+                        "name": "NotKw",
+                        "label": "NotKw",
+                        "idx": 3,
+                        "pattern": "not"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Terminal",
+                    "name": "InKw",
+                    "label": "InKw",
+                    "idx": 0,
+                    "pattern": "in"
+                  },
+                  {
+                    "type": "Alternation",
+                    "idx": 2,
+                    "definition": [
+                      {
+                        "type": "Alternative",
+                        "definition": [
+                          {
+                            "type": "NonTerminal",
+                            "name": "valueInBrackets",
+                            "idx": 0,
+                            "label": "rhs"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "Alternative",
+                        "definition": [
+                          {
+                            "type": "Terminal",
+                            "name": "OpenBracket",
+                            "label": "OpenBracket",
+                            "idx": 0,
+                            "pattern": "\\("
+                          },
+                          {
+                            "type": "NonTerminal",
+                            "name": "query",
+                            "idx": 0
+                          },
+                          {
+                            "type": "Terminal",
+                            "name": "ClosingBracket",
+                            "label": "ClosingBracket",
+                            "idx": 0,
+                            "pattern": "\\)"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -3913,6 +3979,64 @@
   },
   {
     "type": "Rule",
+    "name": "querySource",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "TableKw",
+                "label": "TableKw",
+                "idx": 0,
+                "pattern": "table"
+              },
+              {
+                "type": "Terminal",
+                "name": "OpenBracket",
+                "label": "OpenBracket",
+                "idx": 0,
+                "pattern": "\\("
+              },
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 2,
+                "pattern": "[a-zA-Z]\\w*"
+              },
+              {
+                "type": "Terminal",
+                "name": "ClosingBracket",
+                "label": "ClosingBracket",
+                "idx": 0,
+                "pattern": "\\)"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "query",
     "orgText": "",
     "definition": [
@@ -3993,11 +4117,9 @@
         },
         "definition": [
           {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 3,
-            "pattern": "[a-zA-Z]\\w*"
+            "type": "NonTerminal",
+            "name": "querySource",
+            "idx": 0
           }
         ]
       },
