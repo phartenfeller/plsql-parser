@@ -3954,26 +3954,8 @@
       },
       {
         "type": "NonTerminal",
-        "name": "condition",
+        "name": "chainedConditions",
         "idx": 0
-      },
-      {
-        "type": "Repetition",
-        "idx": 0,
-        "definition": [
-          {
-            "type": "Terminal",
-            "name": "AndOr",
-            "label": "AndOr",
-            "idx": 0,
-            "pattern": "NOT_APPLICABLE"
-          },
-          {
-            "type": "NonTerminal",
-            "name": "condition",
-            "idx": 2
-          }
-        ]
       }
     ]
   },
@@ -4028,6 +4010,64 @@
                 "label": "ClosingBracket",
                 "idx": 0,
                 "pattern": "\\)"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "tableJoin",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Repetition",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Option",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "JoinDirection",
+                "label": "JoinDirection",
+                "idx": 0,
+                "pattern": "NOT_APPLICABLE"
+              }
+            ]
+          },
+          {
+            "type": "Terminal",
+            "name": "JoinKw",
+            "label": "JoinKw",
+            "idx": 0,
+            "pattern": "join"
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 0,
+            "pattern": "[a-zA-Z]\\w*"
+          },
+          {
+            "type": "Option",
+            "idx": 1,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "OnKw",
+                "label": "OnKw",
+                "idx": 0,
+                "pattern": "on"
+              },
+              {
+                "type": "NonTerminal",
+                "name": "chainedConditions",
+                "idx": 0
               }
             ]
           }
@@ -4122,6 +4162,11 @@
             "idx": 0
           }
         ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "tableJoin",
+        "idx": 0
       },
       {
         "type": "Option",
