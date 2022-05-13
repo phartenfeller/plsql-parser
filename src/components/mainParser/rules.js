@@ -898,11 +898,7 @@ class PlSqlParser extends CstParser {
     $.RULE('whereClause', () => {
       // where 1 = 1 and col2 = 5
       $.CONSUME(tokenVocabulary.WhereKw);
-      $.SUBRULE($.condition);
-      $.MANY(() => {
-        $.CONSUME(tokenVocabulary.AndOr);
-        $.SUBRULE2($.condition);
-      });
+      $.SUBRULE($.chainedConditions);
     });
 
     $.RULE('querySource', () => {
@@ -920,8 +916,21 @@ class PlSqlParser extends CstParser {
       ]);
     });
 
+    $.RULE('tableJoin', () => {
+      $.MANY(() => {
+        $.OPTION(() => {
+          $.CONSUME(tokenVocabulary.JoinDirection); // left / right / inner / outer
+        });
+        $.CONSUME(tokenVocabulary.JoinKw);
+        $.CONSUME(tokenVocabulary.Identifier); // table / object
+        $.OPTION1(() => {
+          $.CONSUME(tokenVocabulary.OnKw);
+          $.SUBRULE($.chainedConditions);
+        });
+      });
+    });
+
     // TODO with clause
-    // TODO join
     // TODO order by
     // TODO group by
     // TODO having
@@ -955,6 +964,7 @@ class PlSqlParser extends CstParser {
           $.SUBRULE($.querySource);
         },
       });
+      $.SUBRULE($.tableJoin);
       $.OPTION2(() => {
         $.SUBRULE($.whereClause);
       });

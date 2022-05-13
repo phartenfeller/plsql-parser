@@ -1,5 +1,5 @@
 const { createToken, Lexer } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+const { Identifier } = require('./Identifier');
 
 const SelectKw = createToken({
   name: 'SelectKw',
@@ -56,6 +56,58 @@ const OrKw = createToken({
   categories: AndOr,
 });
 
+const JoinKw = createToken({
+  name: 'JoinKw',
+  pattern: /join/i,
+  longer_alt: Identifier,
+});
+
+const JoinDirection = createToken({
+  name: 'JoinDirection',
+  pattern: Lexer.NA,
+});
+
+const LeftKw = createToken({
+  name: 'LeftKw',
+  pattern: /left/i,
+  longer_alt: Identifier,
+  categories: JoinDirection,
+});
+
+const RightKw = createToken({
+  name: 'RightKw',
+  pattern: /right/i,
+  longer_alt: Identifier,
+  categories: JoinDirection,
+});
+
+const InnerKw = createToken({
+  name: 'InnerKw',
+  pattern: /inner/i,
+  longer_alt: Identifier,
+  categories: JoinDirection,
+});
+
+const OuterKw = createToken({
+  name: 'OuterKw',
+  pattern: /outer/i,
+  longer_alt: Identifier,
+  categories: JoinDirection,
+});
+
+const CrossKw = createToken({
+  name: 'CrossKw',
+  pattern: /cross/i,
+  longer_alt: Identifier,
+  categories: JoinDirection,
+});
+
+const OnKw = createToken({
+  name: 'OnKw',
+  pattern: /on/i,
+  longer_alt: Identifier,
+});
+
 const InsertKw = createToken({
   name: 'InsertKw',
   pattern: /insert/i,
@@ -96,6 +148,14 @@ module.exports = [
   AndOr,
   AndKw,
   OrKw,
+  JoinKw,
+  JoinDirection,
+  LeftKw,
+  RightKw,
+  InnerKw,
+  OuterKw,
+  CrossKw,
+  OnKw,
   InsertKw,
   ValuesKw,
   DeleteKw,

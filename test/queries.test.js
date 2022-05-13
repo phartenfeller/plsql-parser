@@ -11,8 +11,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Like Concat', () => {
@@ -27,8 +26,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In constants', () => {
@@ -41,8 +39,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Not in constants', () => {
@@ -55,8 +52,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In subquery', () => {
@@ -69,8 +65,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In table on array', () => {
@@ -83,8 +78,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Bulk collect', () => {
@@ -100,7 +94,120 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    const { errors } = result;
-    expect(errors).toStrictEqual([]);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          join football_leauges
+            on football_clubs.league_id = football_leauges.league_id;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('Left Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          left join football_leauges
+            on football_clubs.league_id = football_leauges.league_id;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('Right Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          right join football_leauges
+            on football_clubs.league_id = football_leauges.league_id;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('Inner Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          inner join football_leauges
+            on football_clubs.league_id = football_leauges.league_id;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('outer Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          outer join football_leauges
+            on football_clubs.league_id = football_leauges.league_id;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('cross Join', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          cross join dual;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('multiple Joins', () => {
+    const code = `
+      declare
+        l_id_arr apex_t_number;
+      begin
+        select club_name
+          from football_clubs
+          join football_leauges
+            on football_clubs.league_id = football_leauges.league_id
+          left join countries
+            on football_leauges.country_id = countries.country_id
+          cross join dual;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
   });
 });
