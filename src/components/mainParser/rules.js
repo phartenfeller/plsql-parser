@@ -944,15 +944,19 @@ class PlSqlParser extends CstParser {
         DEF: () => {
           // also includes just >> * <<
           $.SUBRULE($.value); // direct value / function call / variable
+          $.OPTION(() => {
+            $.CONSUME(tokenVocabulary.AsKw);
+            $.CONSUME2(tokenVocabulary.Identifier); // alias
+          });
         },
       });
-      $.OPTION(() => {
+      $.OPTION1(() => {
         $.CONSUME1(tokenVocabulary.IntoKw); // into
         $.AT_LEAST_ONE_SEP2({
           // into l_val1, l_val2
           SEP: tokenVocabulary.Comma,
           DEF: () => {
-            $.CONSUME2(tokenVocabulary.Identifier);
+            $.CONSUME3(tokenVocabulary.Identifier);
           },
         });
       });

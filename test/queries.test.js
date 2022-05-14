@@ -99,8 +99,6 @@ describe('Queries', () => {
 
   test('Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -115,8 +113,6 @@ describe('Queries', () => {
 
   test('Left Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -131,8 +127,6 @@ describe('Queries', () => {
 
   test('Right Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -147,8 +141,6 @@ describe('Queries', () => {
 
   test('Inner Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -163,8 +155,6 @@ describe('Queries', () => {
 
   test('outer Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -179,8 +169,6 @@ describe('Queries', () => {
 
   test('cross Join', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -194,8 +182,6 @@ describe('Queries', () => {
 
   test('multiple Joins', () => {
     const code = `
-      declare
-        l_id_arr apex_t_number;
       begin
         select club_name
           from football_clubs
@@ -204,6 +190,34 @@ describe('Queries', () => {
           left join countries
             on football_leauges.country_id = countries.country_id
           cross join dual;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('column alias as', () => {
+    const code = `
+      begin
+        select club_name as name
+             , club_id as id
+          from football_clubs
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('column alias no as', () => {
+    const code = `
+      begin
+        select club_name name
+             , club_id id
+          from football_clubs
+        ;
       end;
     `;
 
