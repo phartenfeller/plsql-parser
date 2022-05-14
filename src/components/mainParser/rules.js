@@ -230,16 +230,19 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('relationalOperators', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Equals) },
-        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals1) },
-        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals2) },
-        { ALT: () => $.CONSUME(tokenVocabulary.UnEquals3) },
-        { ALT: () => $.CONSUME(tokenVocabulary.BiggerEquals) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Bigger) },
-        { ALT: () => $.CONSUME(tokenVocabulary.SmallerEquals) },
-        { ALT: () => $.CONSUME(tokenVocabulary.Smaller) },
-      ]);
+      $.OR(
+        $.XrelOpOr ??
+          ($.XrelOpOr = [
+            { ALT: () => $.CONSUME(tokenVocabulary.Equals) },
+            { ALT: () => $.CONSUME(tokenVocabulary.UnEquals1) },
+            { ALT: () => $.CONSUME(tokenVocabulary.UnEquals2) },
+            { ALT: () => $.CONSUME(tokenVocabulary.UnEquals3) },
+            { ALT: () => $.CONSUME(tokenVocabulary.BiggerEquals) },
+            { ALT: () => $.CONSUME(tokenVocabulary.Bigger) },
+            { ALT: () => $.CONSUME(tokenVocabulary.SmallerEquals) },
+            { ALT: () => $.CONSUME(tokenVocabulary.Smaller) },
+          ])
+      );
     });
 
     $.RULE('conditionsInBrackets', () => {
@@ -426,17 +429,20 @@ class PlSqlParser extends CstParser {
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.ConstantKw);
       });
-      $.OR([
-        { ALT: () => $.SUBRULE($.numberDeclaration) },
-        { ALT: () => $.SUBRULE($.stringDeclaration) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
-        { ALT: () => $.SUBRULE($.timestampDeclaration) },
-        { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
-        { ALT: () => $.SUBRULE($.typeDef) }, // custom types e.g. rowtype
-        { ALT: () => $.SUBRULE($.comment) },
-      ]);
+      $.OR(
+        $.XvarDeclarationOr ??
+          ($.XvarDeclarationOr = [
+            { ALT: () => $.SUBRULE($.numberDeclaration) },
+            { ALT: () => $.SUBRULE($.stringDeclaration) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
+            { ALT: () => $.SUBRULE($.timestampDeclaration) },
+            { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
+            { ALT: () => $.SUBRULE($.typeDef) }, // custom types e.g. rowtype
+            { ALT: () => $.SUBRULE($.comment) },
+          ])
+      );
       $.OPTION2(() => {
         $.CONSUME(tokenVocabulary.Assignment);
         $.SUBRULE($.value);
@@ -560,24 +566,27 @@ class PlSqlParser extends CstParser {
       //   $.CONSUME(tokenVocabulary.AnyValue);
       // });
       $.AT_LEAST_ONE(() => {
-        $.OR([
-          { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
-          { ALT: () => $.CONSUME(tokenVocabulary.String) },
-          { ALT: () => $.SUBRULE($.number) },
-          // {
-          //   ALT: () => $.SUBRULE($.functionCall),
-          // },
-          { ALT: () => $.SUBRULE($.valueInBrackets) },
-          { ALT: () => $.SUBRULE($.sqlCaseStatement) },
-          { ALT: () => $.CONSUME(tokenVocabulary.Null) },
-          { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
-          { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
-          // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
-          // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
-          { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
-          { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
-        ]);
+        $.OR(
+          $.XvalueOr ??
+            ($.XvalueOr = [
+              { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
+              { ALT: () => $.CONSUME(tokenVocabulary.String) },
+              { ALT: () => $.SUBRULE($.number) },
+              // {
+              //   ALT: () => $.SUBRULE($.functionCall),
+              // },
+              { ALT: () => $.SUBRULE($.valueInBrackets) },
+              { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+              { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
+              { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+            ])
+        );
       });
       debugger;
       // $.AT_LEAST_ONE_SEP({
@@ -638,16 +647,19 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('dataType', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeNumber) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
-        { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
-      ]);
+      $.OR(
+        $.XdataTypeOr ??
+          ($.XdataTypeOr = [
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeNumber) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
+            { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
+          ])
+      );
     });
 
     // TODO: remove and replace with mathExpression
