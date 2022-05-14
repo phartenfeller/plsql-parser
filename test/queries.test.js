@@ -240,4 +240,21 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('order by', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leauges fl
+            on fc.league_id = fl.league_id
+         order by 1, fl.league_name
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

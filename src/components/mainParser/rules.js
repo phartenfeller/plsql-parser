@@ -901,6 +901,16 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.chainedConditions);
     });
 
+    $.RULE('orderClause', () => {
+      $.CONSUME(tokenVocabulary.OrderByKw);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.SUBRULE($.value); // value to support fc + alias.col
+        },
+      });
+    });
+
     $.RULE('querySource', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
@@ -974,6 +984,9 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.tableJoin);
       $.OPTION2(() => {
         $.SUBRULE($.whereClause);
+      });
+      $.OPTION3(() => {
+        $.SUBRULE($.orderClause);
       });
     });
 
