@@ -3961,6 +3961,110 @@
   },
   {
     "type": "Rule",
+    "name": "groupClause",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "GroupByKw",
+        "label": "GroupByKw",
+        "idx": 0,
+        "pattern": "group by"
+      },
+      {
+        "type": "RepetitionMandatoryWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "Option",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 0,
+                "pattern": "[a-zA-Z]\\w*"
+              },
+              {
+                "type": "Terminal",
+                "name": "Dot",
+                "label": "Dot",
+                "idx": 0,
+                "pattern": "\\."
+              }
+            ]
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 1,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "HavingKw",
+            "label": "HavingKw",
+            "idx": 0,
+            "pattern": "having"
+          },
+          {
+            "type": "NonTerminal",
+            "name": "chainedConditions",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "orderClause",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "OrderByKw",
+        "label": "OrderByKw",
+        "idx": 0,
+        "pattern": "order by"
+      },
+      {
+        "type": "RepetitionMandatoryWithSeparator",
+        "idx": 0,
+        "separator": {
+          "type": "Terminal",
+          "name": "Comma",
+          "label": "Comma",
+          "idx": 1,
+          "pattern": ","
+        },
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "value",
+            "idx": 0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
     "name": "querySource",
     "orgText": "",
     "definition": [
@@ -4014,6 +4118,19 @@
             ]
           }
         ]
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 3,
+            "pattern": "[a-zA-Z]\\w*"
+          }
+        ]
       }
     ]
   },
@@ -4047,11 +4164,9 @@
             "pattern": "join"
           },
           {
-            "type": "Terminal",
-            "name": "Identifier",
-            "label": "Identifier",
-            "idx": 0,
-            "pattern": "[a-zA-Z]\\w*"
+            "type": "NonTerminal",
+            "name": "querySource",
+            "idx": 0
           },
           {
             "type": "Option",
@@ -4102,12 +4217,32 @@
             "type": "NonTerminal",
             "name": "value",
             "idx": 0
+          },
+          {
+            "type": "Option",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "AsKw",
+                "label": "AsKw",
+                "idx": 0,
+                "pattern": "as"
+              },
+              {
+                "type": "Terminal",
+                "name": "Identifier",
+                "label": "Identifier",
+                "idx": 2,
+                "pattern": "[a-zA-Z]\\w*"
+              }
+            ]
           }
         ]
       },
       {
         "type": "Option",
-        "idx": 0,
+        "idx": 1,
         "definition": [
           {
             "type": "Terminal",
@@ -4131,7 +4266,7 @@
                 "type": "Terminal",
                 "name": "Identifier",
                 "label": "Identifier",
-                "idx": 2,
+                "idx": 3,
                 "pattern": "[a-zA-Z]\\w*"
               }
             ]
@@ -4175,6 +4310,28 @@
           {
             "type": "NonTerminal",
             "name": "whereClause",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 3,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "groupClause",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 4,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "orderClause",
             "idx": 0
           }
         ]
