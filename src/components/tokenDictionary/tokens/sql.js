@@ -138,6 +138,12 @@ const SetKw = createToken({
   longer_alt: Identifier,
 });
 
+const HavingKw = createToken({
+  name: 'HavingKw',
+  pattern: /having/i,
+  longer_alt: Identifier,
+});
+
 module.exports = [
   SelectKw,
   IntoKw,
@@ -161,4 +167,5 @@ module.exports = [
   DeleteKw,
   UpdateKw,
   SetKw,
+  HavingKw,
 ];

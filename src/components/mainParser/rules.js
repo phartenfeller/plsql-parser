@@ -901,6 +901,24 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.chainedConditions);
     });
 
+    $.RULE('groupClause', () => {
+      $.CONSUME(tokenVocabulary.GroupByKw);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.OPTION(() => {
+            $.CONSUME(tokenVocabulary.Identifier);
+            $.CONSUME(tokenVocabulary.Dot);
+          });
+          $.CONSUME1(tokenVocabulary.Identifier);
+        },
+      });
+      $.OPTION1(() => {
+        $.CONSUME(tokenVocabulary.HavingKw);
+        $.SUBRULE($.chainedConditions);
+      });
+    });
+
     $.RULE('orderClause', () => {
       $.CONSUME(tokenVocabulary.OrderByKw);
       $.AT_LEAST_ONE_SEP({
@@ -944,9 +962,6 @@ class PlSqlParser extends CstParser {
     });
 
     // TODO with clause
-    // TODO order by
-    // TODO group by
-    // TODO having
     // TODO union, minus, intersect
     // TODO distinct
     $.RULE('query', () => {
@@ -986,6 +1001,9 @@ class PlSqlParser extends CstParser {
         $.SUBRULE($.whereClause);
       });
       $.OPTION3(() => {
+        $.SUBRULE($.groupClause);
+      });
+      $.OPTION4(() => {
         $.SUBRULE($.orderClause);
       });
     });

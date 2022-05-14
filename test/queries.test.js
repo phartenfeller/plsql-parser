@@ -102,8 +102,8 @@ describe('Queries', () => {
       begin
         select club_name
           from football_clubs
-          join football_leauges
-            on football_clubs.league_id = football_leauges.league_id;
+          join football_leagues
+            on football_clubs.league_id = football_leagues.league_id;
       end;
     `;
 
@@ -116,8 +116,8 @@ describe('Queries', () => {
       begin
         select club_name
           from football_clubs
-          left join football_leauges
-            on football_clubs.league_id = football_leauges.league_id;
+          left join football_leagues
+            on football_clubs.league_id = football_leagues.league_id;
       end;
     `;
 
@@ -130,8 +130,8 @@ describe('Queries', () => {
       begin
         select club_name
           from football_clubs
-          right join football_leauges
-            on football_clubs.league_id = football_leauges.league_id;
+          right join football_leagues
+            on football_clubs.league_id = football_leagues.league_id;
       end;
     `;
 
@@ -144,8 +144,8 @@ describe('Queries', () => {
       begin
         select club_name
           from football_clubs
-          inner join football_leauges
-            on football_clubs.league_id = football_leauges.league_id;
+          inner join football_leagues
+            on football_clubs.league_id = football_leagues.league_id;
       end;
     `;
 
@@ -158,8 +158,8 @@ describe('Queries', () => {
       begin
         select club_name
           from football_clubs
-          outer join football_leauges
-            on football_clubs.league_id = football_leauges.league_id;
+          outer join football_leagues
+            on football_clubs.league_id = football_leagues.league_id;
       end;
     `;
 
@@ -183,13 +183,13 @@ describe('Queries', () => {
   test('multiple Joins', () => {
     const code = `
       begin
-        select club_name
+        select club_name, league_name, country_name, dummy
           from football_clubs
-          join football_leauges
-            on football_clubs.league_id = football_leauges.league_id
+          join football_leagues
+            on football_clubs.club_league_id = football_leagues.league_id
           left join countries
-            on football_leauges.country_id = countries.country_id
-          cross join dual;
+            on football_leagues.league_country_id = countries.country_id
+         cross join dual;
       end;
     `;
 
@@ -231,8 +231,43 @@ describe('Queries', () => {
         select fc.club_name
              , fl.league_name
           from football_clubs fc
-          join football_leauges fl
+          join football_leagues fl
             on fc.league_id = fl.league_id
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('group by', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.club_league_id = fl.league_id
+         group by fc.club_name, league_name
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('group by having', () => {
+    const code = `
+      begin
+        select count(*) as count
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.club_league_id = fl.league_id
+         group by fc.club_name, league_name
+        having count(*) > 1 and 1 = 1
         ;
       end;
     `;
@@ -247,7 +282,7 @@ describe('Queries', () => {
         select fc.club_name
              , fl.league_name
           from football_clubs fc
-          join football_leauges fl
+          join football_leagues fl
             on fc.league_id = fl.league_id
          order by 1, fl.league_name
         ;
@@ -257,4 +292,39 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('order by fc_call', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.league_id = fl.league_id
+         order by get_num(), fl.league_name
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+});
+
+test('group by + order by', () => {
+  const code = `
+    begin
+      select count(*) as cnt
+           , fl.league_name
+        from football_clubs fc
+        join football_leagues fl
+          on fc.club_league_id = fl.league_id
+       group by LEAGUE_NAME
+      having count(*) > 0
+       order by LEAGUE_NAME;
+    end;
+  `;
+
+  const result = parse(code, false);
+  expect(result.errors).toStrictEqual([]);
 });
