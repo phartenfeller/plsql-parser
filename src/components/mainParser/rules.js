@@ -914,6 +914,9 @@ class PlSqlParser extends CstParser {
           },
         },
       ]);
+      $.OPTION(() => {
+        $.CONSUME3(tokenVocabulary.Identifier); // table alias
+      });
     });
 
     $.RULE('tableJoin', () => {
@@ -922,7 +925,7 @@ class PlSqlParser extends CstParser {
           $.CONSUME(tokenVocabulary.JoinDirection); // left / right / inner / outer
         });
         $.CONSUME(tokenVocabulary.JoinKw);
-        $.CONSUME(tokenVocabulary.Identifier); // table / object
+        $.SUBRULE($.querySource); // table / object
         $.OPTION1(() => {
           $.CONSUME(tokenVocabulary.OnKw);
           $.SUBRULE($.chainedConditions);
