@@ -428,6 +428,13 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.Semicolon); // ;
     });
 
+    $.RULE('rawDeclaration', () => {
+      $.CONSUME(tokenVocabulary.DtypeRaw); // varchar2
+      $.CONSUME(tokenVocabulary.OpenBracket); // (
+      $.CONSUME(tokenVocabulary.Integer); // 32
+      $.CONSUME(tokenVocabulary.ClosingBracket); // )
+    });
+
     // TODO make sure return is only called in functions
     $.RULE('variableDeclaration', () => {
       $.CONSUME(tokenVocabulary.Identifier); // l_row
@@ -439,6 +446,7 @@ class PlSqlParser extends CstParser {
           ($.XvarDeclarationOr = [
             { ALT: () => $.SUBRULE($.numberDeclaration) },
             { ALT: () => $.SUBRULE($.stringDeclaration) },
+            { ALT: () => $.SUBRULE($.rawDeclaration) },
             { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
             { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
             { ALT: () => $.CONSUME(tokenVocabulary.DtypeDate) },
@@ -662,6 +670,7 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.CONSUME(tokenVocabulary.DtypeBoolean) },
             { ALT: () => $.CONSUME(tokenVocabulary.DtypeVarchar2) },
             { ALT: () => $.CONSUME(tokenVocabulary.DtypePlsIteger) },
+            { ALT: () => $.CONSUME(tokenVocabulary.DtypeRaw) },
             { ALT: () => $.CONSUME(tokenVocabulary.JsonDtypes) },
           ])
       );

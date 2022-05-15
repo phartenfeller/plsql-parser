@@ -13,11 +13,8 @@ function parse(input, log = false) {
   // No semantic actions so this won't return anything yet.
   parserInstance.global();
 
-  if (parserInstance.errors.length > 0) {
-    if (log) {
-      logParserErrors(parserInstance.errors);
-    }
-    throw Error(parserInstance.errors);
+  if (parserInstance.errors.length > 0 && log) {
+    logParserErrors(parserInstance.errors);
   }
 
   return { errors: parserInstance.errors };

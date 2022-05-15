@@ -1,5 +1,5 @@
 const { createToken, Lexer } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+const { Identifier } = require('./Identifier');
 
 const DtypeNumber = createToken({
   name: 'DtypeNumber',
@@ -41,6 +41,12 @@ const DtypeTimestamp = createToken({
   name: 'DtypeTimestamp',
   pattern: /timestamp/i,
   longer_alt: DtypeTimestampWTZ,
+});
+
+const DtypeRaw = createToken({
+  name: 'DtypeRaw',
+  pattern: /raw/i,
+  longer_alt: Identifier,
 });
 
 const Char = createToken({
@@ -108,6 +114,7 @@ module.exports = [
   DtypeDate,
   DtypeTimestampWTZ,
   DtypeTimestamp,
+  DtypeRaw,
   Char,
   JsonDtypes,
   JsonObjectT,
