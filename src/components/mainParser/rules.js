@@ -732,7 +732,16 @@ class PlSqlParser extends CstParser {
 
     $.RULE('timestampDeclaration', () => {
       $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestamp) }, // timestamp
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.DtypeTimestamp); // timestamp
+            $.OPTION(() => {
+              $.CONSUME(tokenVocabulary.OpenBracket); // (
+              $.CONSUME(tokenVocabulary.Integer); // 6
+              $.CONSUME(tokenVocabulary.ClosingBracket); // )
+            });
+          },
+        },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) }, // timestamp with timezone
       ]);
     });
