@@ -1,4 +1,4 @@
-const { parse } = require('../src/components/mainParser/rules');
+const parse = require('../src/components/mainParser/recoveryParser');
 
 describe('Queries', () => {
   test('from table on array', () => {

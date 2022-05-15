@@ -4,21 +4,18 @@ on:
   push:
     branches:
       - master
+      - dev
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x]
-
     steps:
       - uses: actions/checkout@master
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@master
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: lts/*
       - uses: actions/cache@master
         id: cacheNodeModules
         with:

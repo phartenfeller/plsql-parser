@@ -1,10 +1,11 @@
 const readFile = require('./src/util/readFile');
-const { parse, lexer } = require('./src/components/mainParser/rules');
+const { lex } = require('./src/components/tokenDictionary/tokens');
+const parse = require('./src/components/mainParser/noRecoveryParser');
 
 // const yellowLog = (text) => `\x1b[33m${text}\x1b[0m`;
 
 const logLexer = (file) => {
-  const lexRes = lexer(file);
+  const lexRes = lex(file);
 
   const arr = [];
 
@@ -20,6 +21,7 @@ const logLexer = (file) => {
         token.tokenType.name === 'MultiLineComment' ? '/* ... */' : token.image,
       token: token.tokenType.name,
       longerAlt: token.tokenType?.LONGER_ALT?.name,
+      position: `${token.startLine}:${token.startColumn} - ${token.endLine}:${token.endColumn}`,
     });
   });
 
@@ -30,7 +32,7 @@ const main = async () => {
   try {
     const file = await readFile('./test/plsql/current-error.sql');
     logLexer(file);
-    parse(file);
+    parse(file, true);
   } catch (err) {
     console.log(err);
   }

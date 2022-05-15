@@ -1,9 +1,9 @@
 const { CstParser } = require('chevrotain');
-const { tokenVocabulary, lex } = require('../tokenDictionary/tokens');
+const { tokenVocabulary } = require('../tokenDictionary/tokens');
 
 class PlSqlParser extends CstParser {
-  constructor() {
-    super(tokenVocabulary, { recoveryEnabled: true });
+  constructor({ recover }) {
+    super(tokenVocabulary, { recoveryEnabled: recover });
 
     const $ = this;
 
@@ -29,12 +29,13 @@ class PlSqlParser extends CstParser {
 
     $.RULE('block', () => {
       $.OPTION(() => {
-        $.SUBRULE($.declareClause);
+        $.CONSUME(tokenVocabulary.Declare);
         $.MANY(() => {
           $.OR([
             { ALT: () => $.SUBRULE($.packageObjSpec) },
             { ALT: () => $.SUBRULE($.variableDeclaration) },
             { ALT: () => $.SUBRULE($.comment) },
+            { ALT: () => $.SUBRULE($.cursorDeclaration) },
           ]);
         });
       });
@@ -47,10 +48,6 @@ class PlSqlParser extends CstParser {
       });
       $.SUBRULE($.endClause);
       $.SUBRULE($.semicolon);
-    });
-
-    $.RULE('declareClause', () => {
-      $.CONSUME(tokenVocabulary.Declare);
     });
 
     $.RULE('beginClause', () => {
@@ -421,6 +418,14 @@ class PlSqlParser extends CstParser {
         $.CONSUME2(tokenVocabulary.Identifier); // my_pkg
       });
       $.SUBRULE2($.semicolon); // ;
+    });
+
+    $.RULE('cursorDeclaration', () => {
+      $.CONSUME(tokenVocabulary.CursorKw); // cursor
+      $.CONSUME(tokenVocabulary.Identifier); // my_cursor
+      $.CONSUME(tokenVocabulary.IsKw); // is
+      $.SUBRULE($.query);
+      $.CONSUME(tokenVocabulary.Semicolon); // ;
     });
 
     // TODO make sure return is only called in functions
@@ -1120,6 +1125,11 @@ class PlSqlParser extends CstParser {
             $.CONSUME3(tokenVocabulary.ClosingBracket); // )
           },
         },
+        {
+          ALT: () => {
+            $.CONSUME2(tokenVocabulary.Identifier); // cursor_name
+          },
+        },
       ]);
       $.CONSUME(tokenVocabulary.LoopKw);
       $.MANY(() => {
@@ -1152,44 +1162,4 @@ class PlSqlParser extends CstParser {
     this.performSelfAnalysis();
   }
 }
-
-const parserInstance = new PlSqlParser();
-
-module.exports = {
-  parserInstance,
-
-  PlSqlParser,
-
-  lexer(inputText) {
-    return lex(inputText);
-  },
-
-  parse(inputText, log = true) {
-    const lexResult = lex(inputText);
-
-    // ".input" is a setter which will reset the parser's internal's state.
-    parserInstance.input = lexResult.tokens;
-
-    // No semantic actions so this won't return anything yet.
-    parserInstance.global();
-
-    if (parserInstance.errors.length > 0) {
-      if (log) {
-        parserInstance.errors.forEach((err) => {
-          let errMsg = '';
-          errMsg += `${err.message}.\n`;
-          errMsg += `  RuleStack: ${err.context.ruleStack.join(', ')}\n`;
-          errMsg += `  PreviousToken: ${err.token.image} | Line: "${err.token.startLine}"} | " Column: "${err.token.startColumn}"`;
-          if (err.previousToken) {
-            errMsg += `  Previous Token: ${err.previousToken.image} of type "${err.previousToken.tokenType.name}"\n\n`;
-          }
-
-          console.error(errMsg);
-        });
-      }
-      throw Error(parserInstance.errors);
-    }
-
-    return { errors: parserInstance.errors };
-  },
-};
+module.exports = PlSqlParser;

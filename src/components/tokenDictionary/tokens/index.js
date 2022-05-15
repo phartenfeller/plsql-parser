@@ -82,6 +82,12 @@ const TableKw = createToken({
   longer_alt: Identifier,
 });
 
+const CursorKw = createToken({
+  name: 'CursorKw',
+  pattern: /cursor/i,
+  longer_alt: Identifier,
+});
+
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
@@ -122,6 +128,7 @@ const allTokens = [
   IsKw,
   ExitKw,
   TableKw,
+  CursorKw,
   ...subprograms,
   ...symbols,
   ...relationalOperators,

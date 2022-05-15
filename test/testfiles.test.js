@@ -1,6 +1,6 @@
 const path = require('path');
 const { readdirSync, readFileSync } = require('fs');
-const { parse } = require('../src/components/mainParser/rules');
+const parse = require('../src/components/mainParser/recoveryParser');
 
 const directoryPath = path.join(__dirname, 'files');
 

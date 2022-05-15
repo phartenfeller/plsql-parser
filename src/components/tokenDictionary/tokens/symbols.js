@@ -1,5 +1,5 @@
 const { createToken, Lexer } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+const { Identifier } = require('./Identifier');
 
 const ValueSeperator = createToken({
   name: 'ValueSeperator',
@@ -20,7 +20,7 @@ const SingleLineComment = createToken({
 
 const MultiLineComment = createToken({
   name: 'MultiLineComment',
-  pattern: /\/\*[^`]*\*\//,
+  pattern: /\/\*[^`]*?\*\//,
   line_breaks: true,
 });
 
