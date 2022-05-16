@@ -48,6 +48,11 @@ const PipelinedKw = createToken({
   longer_alt: Identifier,
 });
 
+const PipeRowKw = createToken({
+  name: 'PipeRowKw',
+  pattern: /pipe row/i,
+});
+
 const ProcedureKw = createToken({
   name: 'ProcedureKw',
   pattern: /procedure/i,
@@ -87,6 +92,7 @@ module.exports = [
   ResultCacheKw,
   DeterministicKw,
   PipelinedKw,
+  PipeRowKw,
   ProcedureKw,
   InKw,
   OutKw,

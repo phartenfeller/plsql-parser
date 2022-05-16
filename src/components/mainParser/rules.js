@@ -149,6 +149,16 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.End);
     });
 
+    $.RULE('pipeRowStatement', () => {
+      $.CONSUME(tokenVocabulary.PipeRowKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.value);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.ClosingBracket);
+      });
+      $.SUBRULE($.semicolon);
+    });
+
     $.RULE('statement', () => {
       $.OR([
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
@@ -172,6 +182,7 @@ class PlSqlParser extends CstParser {
         { ALT: () => $.SUBRULE($.block) },
         { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
         { ALT: () => $.SUBRULE($.throwException) },
+        { ALT: () => $.SUBRULE($.pipeRowStatement) },
       ]);
     });
 
