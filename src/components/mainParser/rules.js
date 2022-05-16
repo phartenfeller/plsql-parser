@@ -35,7 +35,6 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.SUBRULE($.packageObjSpec) },
             { ALT: () => $.SUBRULE($.variableDeclaration) },
             { ALT: () => $.SUBRULE($.comment) },
-            { ALT: () => $.SUBRULE($.cursorDeclaration) },
           ]);
         });
       });
@@ -60,14 +59,16 @@ class PlSqlParser extends CstParser {
 
     $.RULE('throwException', () => {
       $.CONSUME(tokenVocabulary.RaiseKw); // raise
-      $.CONSUME(tokenVocabulary.Identifier); // my_exception
       $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Dot);
-        $.CONSUME2(tokenVocabulary.Identifier);
-      });
-      $.OPTION2(() => {
-        $.CONSUME2(tokenVocabulary.Dot);
-        $.CONSUME3(tokenVocabulary.Identifier);
+        $.CONSUME(tokenVocabulary.Identifier); // my_exception
+        $.OPTION1(() => {
+          $.CONSUME(tokenVocabulary.Dot);
+          $.CONSUME2(tokenVocabulary.Identifier);
+        });
+        $.OPTION2(() => {
+          $.CONSUME2(tokenVocabulary.Dot);
+          $.CONSUME3(tokenVocabulary.Identifier);
+        });
       });
       $.SUBRULE($.semicolon);
     });
@@ -325,9 +326,9 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
-          { ALT: () => $.SUBRULE($.objectDeclaration) },
           { ALT: () => $.SUBRULE($.variableDeclaration) },
           { ALT: () => $.SUBRULE($.comment) },
+          { ALT: () => $.SUBRULE($.objectDeclaration) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -435,8 +436,15 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket); // )
     });
 
+    $.RULE('exceptionDeclaration', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.ExceptionKw);
+      $.CONSUME(tokenVocabulary.Semicolon);
+    });
+
     // TODO make sure return is only called in functions
-    $.RULE('variableDeclaration', () => {
+    $.RULE('standardVariableDeclaration', () => {
+      // follow pattern ident (constant) type...
       $.CONSUME(tokenVocabulary.Identifier); // l_row
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.ConstantKw);
@@ -473,6 +481,15 @@ class PlSqlParser extends CstParser {
         ]);
       });
       $.CONSUME(tokenVocabulary.ClosingBracket); // )
+    });
+
+    $.RULE('variableDeclaration', () => {
+      $.OR([
+        { ALT: () => $.SUBRULE($.standardVariableDeclaration) },
+        // { ALT: () => $.SUBRULE($.objectDeclaration) },
+        { ALT: () => $.SUBRULE($.cursorDeclaration) },
+        { ALT: () => $.SUBRULE($.exceptionDeclaration) },
+      ]);
     });
 
     $.RULE('typeDef', () => {
@@ -1101,15 +1118,7 @@ class PlSqlParser extends CstParser {
         ]);
         $.CONSUME(tokenVocabulary.Then); // then
         $.MANY2(() => {
-          $.OR2([
-            { ALT: () => $.SUBRULE($.statement) },
-            {
-              ALT: () => {
-                $.CONSUME(tokenVocabulary.RaiseKw);
-                $.SUBRULE($.semicolon);
-              },
-            },
-          ]);
+          $.SUBRULE($.statement);
         });
       });
     });
