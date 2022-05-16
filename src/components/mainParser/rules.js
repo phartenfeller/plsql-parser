@@ -668,6 +668,9 @@ class PlSqlParser extends CstParser {
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.ResultCacheKw); // result_cache
       });
+      $.OPTION4(() => {
+        $.CONSUME(tokenVocabulary.PipelinedKw); // pipelined
+      });
     });
 
     $.RULE('procSpec', () => {

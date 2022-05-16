@@ -1,5 +1,5 @@
 const { createToken } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+const { Identifier } = require('./Identifier');
 
 const PackageKw = createToken({
   name: 'PackageKw',
@@ -42,6 +42,12 @@ const DeterministicKw = createToken({
   longer_alt: Identifier,
 });
 
+const PipelinedKw = createToken({
+  name: 'PipelinedKw',
+  pattern: /pipelined/i,
+  longer_alt: Identifier,
+});
+
 const ProcedureKw = createToken({
   name: 'ProcedureKw',
   pattern: /procedure/i,
@@ -80,6 +86,7 @@ module.exports = [
   ReturnKw,
   ResultCacheKw,
   DeterministicKw,
+  PipelinedKw,
   ProcedureKw,
   InKw,
   OutKw,
