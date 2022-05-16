@@ -81,6 +81,19 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('In table with fc', () => {
+    const code = `
+      begin
+        select extractValue(value(t), '*/Name', l_this_holds_xml) as wow_a_value
+          from table(xmlsequence(l_xml.extract('//Parse/My/PLSQL', l_this_holds_xml))
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('Bulk collect', () => {
     const code = `
       declare

@@ -991,12 +991,14 @@ class PlSqlParser extends CstParser {
           ALT: () => {
             $.CONSUME(tokenVocabulary.TableKw);
             $.CONSUME(tokenVocabulary.OpenBracket);
-            $.CONSUME2(tokenVocabulary.Identifier);
-            $.CONSUME(tokenVocabulary.ClosingBracket);
+            $.SUBRULE($.value);
+            $.OPTION(() => {
+              $.CONSUME(tokenVocabulary.ClosingBracket); // gets eaten from value rule
+            });
           },
         },
       ]);
-      $.OPTION(() => {
+      $.OPTION1(() => {
         $.CONSUME3(tokenVocabulary.Identifier); // table alias
       });
     });
