@@ -250,6 +250,14 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.CONSUME(tokenVocabulary.Bigger) },
             { ALT: () => $.CONSUME(tokenVocabulary.SmallerEquals) },
             { ALT: () => $.CONSUME(tokenVocabulary.Smaller) },
+            {
+              ALT: () => {
+                $.OPTION(() => {
+                  $.CONSUME(tokenVocabulary.NotKw);
+                });
+                $.CONSUME(tokenVocabulary.LikeKw);
+              },
+            },
           ])
       );
     });

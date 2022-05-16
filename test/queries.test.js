@@ -14,6 +14,21 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('Not like', () => {
+    const code = `
+      declare
+        l_num pls_integer := 14;
+      begin
+        select test_id
+          from test_table
+         where test_table_name not like 'ham%';
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('Like Concat', () => {
     const code = `
       declare

@@ -4,6 +4,18 @@ const parse = require('./src/components/mainParser/noRecoveryParser');
 
 // const yellowLog = (text) => `\x1b[33m${text}\x1b[0m`;
 
+function getText(token) {
+  if (token.tokenType.name === 'MultiLineComment') {
+    return '/* ... */';
+  }
+
+  if (token.image.length > 35) {
+    return `${token.image.substr(0, 32)}...`;
+  }
+
+  return token.image;
+}
+
 const logLexer = (file) => {
   const lexRes = lex(file);
 
@@ -17,9 +29,11 @@ const logLexer = (file) => {
     // }
     // console.log(logText);
     arr.push({
-      text:
-        token.tokenType.name === 'MultiLineComment' ? '/* ... */' : token.image,
-      token: token.tokenType.name,
+      text: getText(token),
+      token:
+        token.tokenType.name.length > 35
+          ? `${token.tokenType.name.substr(0, 32)}...`
+          : token.tokenType.name,
       longerAlt: token.tokenType?.LONGER_ALT?.name,
       position: `${token.startLine}:${token.startColumn} - ${token.endLine}:${token.endColumn}`,
     });
