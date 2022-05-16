@@ -162,27 +162,30 @@ class PlSqlParser extends CstParser {
     $.RULE('statement', () => {
       $.OR([
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
-        { ALT: () => $.SUBRULE($.comment) },
-        { ALT: () => $.SUBRULE($.nullStatement) },
-        { ALT: () => $.SUBRULE($.exitStatement) },
-        { ALT: () => $.SUBRULE($.ifStatement) },
-        { ALT: () => $.SUBRULE($.caseStatement) },
-        { ALT: () => $.SUBRULE($.queryStatement) },
-        { ALT: () => $.SUBRULE($.insertStatement) },
-        { ALT: () => $.SUBRULE($.deleteStatement) },
-        { ALT: () => $.SUBRULE($.updateStatement) },
-        { ALT: () => $.SUBRULE($.transactionStatement) },
-        { ALT: () => $.SUBRULE($.forLoop) },
-        { ALT: () => $.SUBRULE($.whileLoop) },
-        { ALT: () => $.SUBRULE($.exitLoop) },
-        {
-          ALT: () => $.SUBRULE($.functionCallSemicolon),
-        },
-        { ALT: () => $.SUBRULE($.returnStatement) },
-        { ALT: () => $.SUBRULE($.block) },
-        { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
-        { ALT: () => $.SUBRULE($.throwException) },
-        { ALT: () => $.SUBRULE($.pipeRowStatement) },
+        ...($.XstatementOr ?? // because of the gate we cannot cache whole array
+          ($.XstatementOr = [
+            { ALT: () => $.SUBRULE($.comment) },
+            { ALT: () => $.SUBRULE($.nullStatement) },
+            { ALT: () => $.SUBRULE($.exitStatement) },
+            { ALT: () => $.SUBRULE($.ifStatement) },
+            { ALT: () => $.SUBRULE($.caseStatement) },
+            { ALT: () => $.SUBRULE($.queryStatement) },
+            { ALT: () => $.SUBRULE($.insertStatement) },
+            { ALT: () => $.SUBRULE($.deleteStatement) },
+            { ALT: () => $.SUBRULE($.updateStatement) },
+            { ALT: () => $.SUBRULE($.transactionStatement) },
+            { ALT: () => $.SUBRULE($.forLoop) },
+            { ALT: () => $.SUBRULE($.whileLoop) },
+            { ALT: () => $.SUBRULE($.exitLoop) },
+            {
+              ALT: () => $.SUBRULE($.functionCallSemicolon),
+            },
+            { ALT: () => $.SUBRULE($.returnStatement) },
+            { ALT: () => $.SUBRULE($.block) },
+            { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
+            { ALT: () => $.SUBRULE($.throwException) },
+            { ALT: () => $.SUBRULE($.pipeRowStatement) },
+          ])),
       ]);
     });
 
