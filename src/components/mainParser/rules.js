@@ -636,6 +636,7 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // cast(l_xy as number)
               { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
             ])
         );
       });
