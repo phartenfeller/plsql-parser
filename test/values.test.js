@@ -11,7 +11,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('boolean from equals', () => {
@@ -24,6 +24,6 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 });

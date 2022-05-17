@@ -159,6 +159,20 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.semicolon);
     });
 
+    $.RULE('gotoLabelDefinitionStatement', () => {
+      $.CONSUME(tokenVocabulary.Smaller); // <
+      $.CONSUME1(tokenVocabulary.Smaller); // <
+      $.CONSUME(tokenVocabulary.Identifier); // my_goto_label
+      $.CONSUME(tokenVocabulary.Bigger); // >
+      $.CONSUME1(tokenVocabulary.Bigger); // >
+    });
+
+    $.RULE('gotoStatement', () => {
+      $.CONSUME(tokenVocabulary.GotoKw);
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.semicolon);
+    });
+
     $.RULE('statement', () => {
       $.OR([
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
@@ -185,6 +199,8 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.SUBRULE($.dynamicSqlStatement) },
             { ALT: () => $.SUBRULE($.throwException) },
             { ALT: () => $.SUBRULE($.pipeRowStatement) },
+            { ALT: () => $.SUBRULE($.gotoLabelDefinitionStatement) },
+            { ALT: () => $.SUBRULE($.gotoStatement) },
           ])),
       ]);
     });

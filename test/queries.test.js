@@ -11,7 +11,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Not like', () => {
@@ -26,7 +26,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Like Concat', () => {
@@ -41,7 +41,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('In constants', () => {
@@ -54,7 +54,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Not in constants', () => {
@@ -67,7 +67,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('In subquery', () => {
@@ -80,7 +80,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('In table on array', () => {
@@ -93,7 +93,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('In table with fc', () => {
@@ -106,7 +106,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Bulk collect', () => {
@@ -122,7 +122,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Join', () => {
@@ -136,7 +136,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Left Join', () => {
@@ -150,7 +150,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Right Join', () => {
@@ -164,7 +164,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('Inner Join', () => {
@@ -178,7 +178,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('outer Join', () => {
@@ -192,7 +192,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('cross Join', () => {
@@ -205,7 +205,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('multiple Joins', () => {
@@ -222,7 +222,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('column alias as', () => {
@@ -236,7 +236,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('column alias no as', () => {
@@ -250,7 +250,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('table alias', () => {
@@ -266,7 +266,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('group by', () => {
@@ -283,7 +283,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('group by having', () => {
@@ -301,7 +301,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('order by', () => {
@@ -318,7 +318,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 
   test('order by fc_call', () => {
@@ -335,7 +335,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors).toStrictEqual([]);
+    expect(result.errors.length).toBe(0);
   });
 });
 
@@ -354,5 +354,5 @@ test('group by + order by', () => {
   `;
 
   const result = parse(code, false);
-  expect(result.errors).toStrictEqual([]);
+  expect(result.errors.length).toBe(0);
 });
