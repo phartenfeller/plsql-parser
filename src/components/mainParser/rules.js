@@ -403,6 +403,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
           { ALT: () => $.SUBRULE($.pragmaStatement) },
           { ALT: () => $.SUBRULE($.comment) },
+          { ALT: () => $.SUBRULE($.packageObjSpec) },
         ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
@@ -427,6 +428,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
           { ALT: () => $.SUBRULE($.pragmaStatement) },
           { ALT: () => $.SUBRULE($.comment) },
+          { ALT: () => $.SUBRULE($.packageObjSpec) },
         ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin

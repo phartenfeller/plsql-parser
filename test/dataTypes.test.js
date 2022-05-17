@@ -41,7 +41,92 @@ describe('Data Types', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('inline procedure', () => {
+    const code = `
+      declare
+        procedure delete_log(p_log_id in number)
+        as
+        begin
+          null;
+        end delete_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
+
+  test('inline function', () => {
+    const code = `
+      declare
+        function get_log(p_log_id in number)
+          return varchar2
+        as
+        begin
+          return 'ok';
+        end get_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
+
+  test('inline procedure IN FUNCTION', () => {
+    const code = `
+      declare
+        function get_log(p_log_id in number)
+            return varchar2
+          as
+              procedure delete_log(p_log_id in number)
+              as
+              begin
+                null;
+              end delete_log;
+          begin
+            return 'ok';
+          end get_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
+
+  test('inline function IN PROCEDURE', () => {
+    const code = `
+      declare
+        procedure delete_log(p_log_id in number)
+        as
+            function get_log(p_log_id in number)
+              return varchar2
+            as          
+            begin
+              return 'ok';
+            end get_log;
+        begin
+          null;
+        end delete_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
 });
+
+/*
+  Fail
+*/
 
 describe('Data Types Fails', () => {
   test('raw with char', () => {
