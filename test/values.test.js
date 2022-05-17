@@ -6,7 +6,20 @@ describe('values', () => {
       declare 
         l_my_str varchar2(255 char);
       begin
-      l_my_str := 'hello' || sql%rowcount;
+        l_my_str := 'hello' || sql%rowcount;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('boolean from equals', () => {
+    const code = `
+      declare 
+        l_bool boolean;
+      begin
+        l_bool := 1 = 2;
       end;
     `;
 
