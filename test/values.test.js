@@ -26,4 +26,17 @@ describe('values', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
+
+  test('replace (keyword used as function)', () => {
+    const code = `
+      declare 
+        l_str varchar2(255 char);
+      begin
+        l_str := replace('hello', 'o', 'i');
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });
