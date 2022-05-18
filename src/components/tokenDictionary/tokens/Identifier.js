@@ -10,7 +10,7 @@ const { createToken } = require('chevrotain');
 // The Lexer's output will contain an array of token Objects created by metadat
 const Identifier = createToken({
   name: 'Identifier',
-  pattern: /[a-zA-Z]\w*/,
+  pattern: /[a-zA-Z][a-zA-Z0-9_$]*/, // first must be a letter than also numbers, "_" and "$"
   // longer_alt: AnyValue,
 });
 
