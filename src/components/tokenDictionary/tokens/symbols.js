@@ -100,6 +100,11 @@ const Percent = createToken({
   longer_alt: Identifier,
 });
 
+const Dollar = createToken({
+  name: 'Dollar',
+  pattern: /\$/,
+});
+
 const Dot = createToken({
   name: 'Dot',
   pattern: /\./,
@@ -126,6 +131,7 @@ module.exports = [
   ClosingBracket,
   Concat,
   Percent,
+  Dollar,
   Dot,
   Arrow,
   AdditionOperator,

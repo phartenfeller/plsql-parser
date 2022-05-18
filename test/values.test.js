@@ -39,4 +39,17 @@ describe('values', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
+
+  test('constant with dollar in name', () => {
+    const code = `
+      declare 
+        l_str varchar2(255 char);
+      begin
+        l_str := dbms_datapump.ku$_file_type_log_file;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });

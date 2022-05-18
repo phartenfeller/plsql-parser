@@ -658,6 +658,7 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
+              { ALT: () => $.CONSUME(tokenVocabulary.Dollar) }, // for e. g. dbms_datapump.ku$_file_type_log_file
               { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
             ])
