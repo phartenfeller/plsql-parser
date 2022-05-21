@@ -425,6 +425,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
           { ALT: () => $.SUBRULE($.comment) },
+          { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
