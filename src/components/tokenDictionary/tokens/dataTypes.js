@@ -100,6 +100,30 @@ const Type = createToken({
   longer_alt: Identifier,
 });
 
+const OfKw = createToken({
+  name: 'OfKw',
+  pattern: /of/i,
+  longer_alt: Identifier,
+});
+
+const IndexKw = createToken({
+  name: 'IndexKw',
+  pattern: /index/i,
+  longer_alt: Identifier,
+});
+
+const ByKw = createToken({
+  name: 'ByKw',
+  pattern: /by/i,
+  longer_alt: Identifier,
+});
+
+const RecordKw = createToken({
+  name: 'RecordKw',
+  pattern: /record/i,
+  longer_alt: Identifier,
+});
+
 const ConstantKw = createToken({
   name: 'ConstantKw',
   pattern: /constant/i,
@@ -123,5 +147,9 @@ module.exports = [
   JsonScalarT,
   Rowtype,
   Type,
+  OfKw,
+  IndexKw,
+  ByKw,
+  RecordKw,
   ConstantKw,
 ];

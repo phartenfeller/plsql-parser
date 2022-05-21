@@ -23,7 +23,7 @@ declare
 
   
 begin
-  my_object.value(index) := 'test';
+  my_object.value(l_index) := 'test';
   my_object.value(NVL(p_string, '')) := t_cnt;
   workbook.sheets_tab(t_nr).vc_sheet_name := 'test';
   t_row_ind := workbook.sheets_tab(s).sheet_rows_tab.first;
