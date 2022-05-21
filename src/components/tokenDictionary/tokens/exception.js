@@ -153,6 +153,13 @@ const ZeroDevideKw = createToken({
   categories: DefinedException,
 });
 
+const HttpEndOfBodyKw = createToken({
+  name: 'HttpEndOfBodyKw',
+  pattern: /utl_http\.end_of_body/i,
+  longer_alt: Identifier,
+  categories: DefinedException,
+});
+
 const OthersKw = createToken({
   name: 'OthersKw',
   pattern: /others/i,
@@ -200,6 +207,7 @@ module.exports = [
   TooManyRowsKw,
   ValueErrorKw,
   ZeroDevideKw,
+  HttpEndOfBodyKw,
   OthersKw,
   ExceptionKw,
   WhenKw,
