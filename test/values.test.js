@@ -52,4 +52,17 @@ describe('values', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
+
+  test('declare var with default', () => {
+    const code = `
+      declare 
+        l_str varchar2(255 char) default 'hello';
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });

@@ -505,7 +505,11 @@ class PlSqlParser extends CstParser {
           ])
       );
       $.OPTION2(() => {
-        $.CONSUME(tokenVocabulary.Assignment);
+        $.OR1([
+          { ALT: () => $.CONSUME(tokenVocabulary.Assignment) }, // :=
+          { ALT: () => $.CONSUME(tokenVocabulary.DefaultKw) }, // default
+        ]);
+
         $.SUBRULE($.value);
       });
       $.SUBRULE($.semicolon);

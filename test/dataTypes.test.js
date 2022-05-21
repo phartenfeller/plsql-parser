@@ -100,6 +100,42 @@ describe('Data Types', () => {
     expect(result.errors.length).toEqual(0);
   });
 
+  test('inline function with default', () => {
+    const code = `
+      declare
+        function get_log(p_log_id in number default 2)
+          return varchar2
+        as
+        begin
+          return 'ok';
+        end get_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
+
+  test('inline function with :=', () => {
+    const code = `
+      declare
+        function get_log(p_log_id in number := 2)
+          return varchar2
+        as
+        begin
+          return 'ok';
+        end get_log;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toEqual(0);
+  });
+
   test('inline function IN PROCEDURE', () => {
     const code = `
       declare
