@@ -27,6 +27,19 @@ describe('values', () => {
     expect(result.errors.length).toBe(0);
   });
 
+  test('boolean from in', () => {
+    const code = `
+      declare 
+        l_bool boolean;
+      begin
+        l_bool := color_type in ( 0, 4 );
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
+
   test('replace (keyword used as function)', () => {
     const code = `
       declare 

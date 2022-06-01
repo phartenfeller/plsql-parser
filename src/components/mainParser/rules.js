@@ -7,6 +7,19 @@ class PlSqlParser extends CstParser {
 
     const $ = this;
 
+    $.logStack = (stack = $.CST_STACK) => {
+      const msg = [];
+      stack.forEach((item) => {
+        const obj = {
+          name: item.name,
+          children: JSON.stringify(item.children),
+        };
+        msg.push(obj);
+      });
+
+      return msg;
+    };
+
     $.RULE('global', () => {
       $.OR([
         { ALT: () => $.SUBRULE($.block) },
@@ -336,7 +349,7 @@ class PlSqlParser extends CstParser {
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.NotKw);
       });
-      $.SUBRULE($.value, { LABEL: 'lhs' });
+      $.SUBRULE($.valueWithoutIn, { LABEL: 'lhs' });
       $.OPTION2(() => {
         $.OR([
           {
@@ -355,6 +368,7 @@ class PlSqlParser extends CstParser {
             },
           },
           {
+            // in (...)
             ALT: () => {
               $.OPTION4(() => {
                 $.CONSUME3(tokenVocabulary.NotKw);
@@ -460,6 +474,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.pragmaStatement) },
           { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.packageObjSpec) },
+          { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
@@ -485,6 +500,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.pragmaStatement) },
           { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.packageObjSpec) },
+          { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
       });
       $.CONSUME(tokenVocabulary.Begin); // begin
@@ -679,9 +695,6 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('value', () => {
-      // $.AT_LEAST_ONE(() => {
-      //   $.CONSUME(tokenVocabulary.AnyValue);
-      // });
       $.AT_LEAST_ONE(() => {
         $.OR(
           $.XvalueOr ??
@@ -706,11 +719,15 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
               { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
+
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
+              {
+                ALT: () => $.CONSUME(tokenVocabulary.InKw), // bool := 1 in (1, 2)
+              },
             ])
         );
       });
-      debugger;
+
       // $.AT_LEAST_ONE_SEP({
       //   SEP: tokenVocabulary.ValueSeperator,
       //   DEF: () => {
@@ -728,6 +745,38 @@ class PlSqlParser extends CstParser {
       //     ]);
       //   },
       // });
+    });
+
+    $.RULE('valueWithoutIn', () => {
+      $.AT_LEAST_ONE(() => {
+        $.OR(
+          $.XvalueOrWithoutIn ??
+            ($.XvalueOrWithoutIn = [
+              { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
+              { ALT: () => $.CONSUME(tokenVocabulary.String) },
+              { ALT: () => $.SUBRULE($.number) },
+              // {
+              //   ALT: () => $.SUBRULE($.functionCall),
+              // },
+              { ALT: () => $.SUBRULE($.valueInBrackets) },
+              { ALT: () => $.SUBRULE($.sqlCaseStatement) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Null) },
+              { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
+              { ALT: () => $.SUBRULE($.jsonDtypeValue) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
+              { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // cast(l_xy as number)
+              { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
+              { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+              { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
+              { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
+
+              { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
+            ])
+        );
+      });
     });
 
     $.RULE('argumentList', () => {
