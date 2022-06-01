@@ -17,9 +17,6 @@ function parse(input, log = false) {
     logParserErrors(parserInstance.errors);
   }
 
-  console.log(cst);
-  debugger;
-
   return { errors: parserInstance.errors, cst };
 }
 
