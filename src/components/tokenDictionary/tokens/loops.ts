@@ -1,5 +1,5 @@
-const { createToken } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken } from 'chevrotain';
+import Identifier from './Identifier';
 
 const ForKw = createToken({
   name: 'ForKw',
@@ -31,4 +31,4 @@ const GotoKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [ForKw, LoopKw, DoubleDot, WhileKw, GotoKw];
+export default [ForKw, LoopKw, DoubleDot, WhileKw, GotoKw];

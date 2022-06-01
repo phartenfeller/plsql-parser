@@ -1,4 +1,4 @@
-const parse = require('../src/components/mainParser/recoveryParser');
+import parse from '../src/components/mainParser/recoveryParser';
 
 describe('Cursors', () => {
   test('cursor declaration', () => {

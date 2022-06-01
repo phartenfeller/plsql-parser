@@ -1,5 +1,5 @@
-const { createToken, Lexer } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken, Lexer } from 'chevrotain';
+import Identifier from './Identifier';
 
 const ValueSeperator = createToken({
   name: 'ValueSeperator',
@@ -117,7 +117,7 @@ const Arrow = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   Assignment,
   SingleLineComment,
   MultiLineComment,

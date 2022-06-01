@@ -1,5 +1,5 @@
-const { createToken, Lexer } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken, Lexer } from 'chevrotain';
+import Identifier from './Identifier';
 
 const DtypeNumber = createToken({
   name: 'DtypeNumber',
@@ -130,7 +130,7 @@ const ConstantKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   DtypeNumber,
   DtypePlsIteger,
   DtypeVarchar2,

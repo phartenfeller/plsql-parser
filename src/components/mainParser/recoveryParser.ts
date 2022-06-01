@@ -1,10 +1,10 @@
-const { lex } = require('../tokenDictionary/tokens');
-const PlSqlParser = require('./rules');
-const logParserErrors = require('./util/logParserErrors');
+import { lex } from '../tokenDictionary/tokens';
+import PlSqlParser from './rules';
+import logParserErrors from './util/logParserErrors';
 
 const parserInstance = new PlSqlParser({ recover: true });
 
-function parse(input, log = false) {
+function parse(input: string, log = false) {
   const lexResult = lex(input);
 
   // ".input" is a setter which will reset the parser's internal's state.
@@ -20,4 +20,4 @@ function parse(input, log = false) {
   return { errors: parserInstance.errors, cst };
 }
 
-module.exports = parse;
+export default parse;

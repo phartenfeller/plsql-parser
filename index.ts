@@ -1,6 +1,6 @@
-const readFile = require('./src/util/readFile');
-const { lex } = require('./src/components/tokenDictionary/tokens');
-const parse = require('./src/components/mainParser/noRecoveryParser');
+import readFile from './src/util/readFile';
+import { lex } from './src/components/tokenDictionary/tokens';
+import parse from './src/components/mainParser/noRecoveryParser';
 
 // const yellowLog = (text) => `\x1b[33m${text}\x1b[0m`;
 

@@ -1,20 +1,17 @@
-const { createToken, Lexer } = require('chevrotain');
-const { Identifier } = require('./Identifier');
-const relationalOperators = require('./relationalOperators');
-const ifStatement = require('./ifStatement');
-const subprograms = require('./subprograms');
-const dataTypes = require('./dataTypes');
-const symbols = require('./symbols');
-const pragma = require('./pragma');
-const transaction = require('./transaction');
-const sql = require('./sql');
-const exception = require('./exception');
-const dynSql = require('./dynSql');
-const loops = require('./loops');
-const values = require('./values');
-
-// the vocabulary will be exported and used in the Parser definition.
-const tokenVocabulary = {};
+import { createToken, Lexer, TokenType } from 'chevrotain';
+import dataTypes from './dataTypes';
+import dynSql from './dynSql';
+import exception from './exception';
+import Identifier from './Identifier';
+import ifStatement from './ifStatement';
+import loops from './loops';
+import pragma from './pragma';
+import relationalOperators from './relationalOperators';
+import sql from './sql';
+import subprograms from './subprograms';
+import symbols from './symbols';
+import transaction from './transaction';
+import values from './values';
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -141,21 +138,20 @@ const allTokens = [
 
 const SelectLexer = new Lexer(allTokens, { positionTracking: 'full' });
 
+// the vocabulary will be exported and used in the Parser definition.
+export const tokenVocabulary: { [key: string]: TokenType } = {};
+
 allTokens.forEach((tokenType) => {
   tokenVocabulary[tokenType.name] = tokenType;
 });
 
-module.exports = {
-  tokenVocabulary,
+export function lex(inputText: string) {
+  const lexingResult = SelectLexer.tokenize(inputText);
 
-  lex(inputText) {
-    const lexingResult = SelectLexer.tokenize(inputText);
+  if (lexingResult.errors && lexingResult.errors.length > 0) {
+    console.log('errors: ', lexingResult.errors);
+    // throw Error('Sad Sad Panda, lexing errors detected');
+  }
 
-    if (lexingResult.errors && lexingResult.errors.length > 0) {
-      console.log('errors: ', lexingResult.errors);
-      // throw Error('Sad Sad Panda, lexing errors detected');
-    }
-
-    return lexingResult;
-  },
-};
+  return lexingResult;
+}

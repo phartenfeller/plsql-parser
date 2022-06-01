@@ -1,5 +1,5 @@
-const { createToken } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+import { createToken } from 'chevrotain';
+import Identifier from './Identifier';
 
 const ExecuteImmediateKw = createToken({
   name: 'ExecuteImmediateKw',
@@ -19,4 +19,4 @@ const ReturningKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [ExecuteImmediateKw, UsingKw, ReturningKw];
+export default [ExecuteImmediateKw, UsingKw, ReturningKw];

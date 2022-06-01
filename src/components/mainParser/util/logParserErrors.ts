@@ -1,4 +1,4 @@
-function logParserErrors(errors) {
+function logParserErrors(errors: any[]) {
   errors.forEach((err) => {
     let errMsg = '';
     errMsg += `${err.message}.\n`;
@@ -12,4 +12,4 @@ function logParserErrors(errors) {
   });
 }
 
-module.exports = logParserErrors;
+export default logParserErrors;

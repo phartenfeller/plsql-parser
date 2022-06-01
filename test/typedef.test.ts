@@ -1,4 +1,4 @@
-const parse = require('../src/components/mainParser/recoveryParser');
+import parse from '../src/components/mainParser/recoveryParser';
 
 describe('TypeDef', () => {
   test('table type', () => {

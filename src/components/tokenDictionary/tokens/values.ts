@@ -1,5 +1,5 @@
-const { createToken, Lexer } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+import { createToken, Lexer } from 'chevrotain';
+import Identifier from './Identifier';
 
 const ValueKeyword = createToken({
   name: 'ValueKeyword',
@@ -46,7 +46,7 @@ const CompilationFlag = createToken({
   categories: ValueKeyword,
 });
 
-module.exports = [
+export default [
   ValueKeyword,
   DateValue,
   TsValue,

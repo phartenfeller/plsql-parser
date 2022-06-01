@@ -1,15 +1,22 @@
-const { CstParser } = require('chevrotain');
-const { tokenVocabulary } = require('../tokenDictionary/tokens');
+import { CstParser } from 'chevrotain';
+import { tokenVocabulary } from '../tokenDictionary/tokens';
+
+type ParserArgs = {
+  recover: boolean;
+};
 
 class PlSqlParser extends CstParser {
-  constructor({ recover }) {
+  global: any;
+
+  constructor({ recover }: ParserArgs) {
     super(tokenVocabulary, { recoveryEnabled: recover });
 
-    const $ = this;
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const $: any = this;
 
     $.logStack = (stack = $.CST_STACK) => {
-      const msg = [];
-      stack.forEach((item) => {
+      const msg: any[] = [];
+      stack.forEach((item: any) => {
         const obj = {
           name: item.name,
           children: JSON.stringify(item.children),
@@ -1343,4 +1350,4 @@ class PlSqlParser extends CstParser {
     this.performSelfAnalysis();
   }
 }
-module.exports = PlSqlParser;
+export default PlSqlParser;

@@ -1,5 +1,5 @@
-const { createToken } = require('chevrotain');
-const {Identifier} = require('./Identifier');
+import { createToken } from 'chevrotain';
+import Identifier from './Identifier';
 
 const StartTransactionKw = createToken({
   name: 'StartTransactionKw',
@@ -19,4 +19,4 @@ const RollbackKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [StartTransactionKw, CommitKw, RollbackKw];
+export default [StartTransactionKw, CommitKw, RollbackKw];

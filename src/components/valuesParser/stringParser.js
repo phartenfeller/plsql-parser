@@ -1,5 +1,5 @@
-const { CstParser } = require('chevrotain');
-const { tokenVocabulary, lex } = require('../tokenDictionary/tokens');
+const { CstParser } from'chevrotain';
+const { tokenVocabulary, lex } from'../tokenDictionary/tokens');
 
 class PlSqlStringParser extends CstParser {
   constructor() {
@@ -60,7 +60,7 @@ class PlSqlStringParser extends CstParser {
 
 const parserInstance = new PlSqlStringParser();
 
-module.exports = {
+export default{
   parserInstance,
 
   PlSqlStringParser,

@@ -1,5 +1,5 @@
-const { createToken } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken } from 'chevrotain';
+import Identifier from './Identifier';
 
 const PackageKw = createToken({
   name: 'PackageKw',
@@ -83,7 +83,7 @@ const DefaultKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   PackageKw,
   CreatePackageKw,
   BodyKw,

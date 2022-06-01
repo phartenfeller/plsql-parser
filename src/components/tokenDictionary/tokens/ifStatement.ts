@@ -1,6 +1,6 @@
-const { createToken } = require('chevrotain');
-const exceptions = require('./exception');
-const {Identifier} = require('./Identifier');
+import { createToken } from 'chevrotain';
+import exceptions from './exception';
+import Identifier from './Identifier';
 
 const If = createToken({
   name: 'If',
@@ -32,4 +32,4 @@ const CaseKw = createToken({
   longer_alt: exceptions.find((e) => e.name === 'CaseNotFoundKw'),
 });
 
-module.exports = [If, Elsif, Else, Then, CaseKw];
+export default [If, Elsif, Else, Then, CaseKw];

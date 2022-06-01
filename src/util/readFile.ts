@@ -1,6 +1,6 @@
-const fs = require('fs');
+import * as fs from 'fs';
 
-const readFile = async (path) =>
+const readFile = async (path: string) =>
   new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
       if (err) {
@@ -11,4 +11,4 @@ const readFile = async (path) =>
     });
   });
 
-module.exports = readFile;
+export default readFile;

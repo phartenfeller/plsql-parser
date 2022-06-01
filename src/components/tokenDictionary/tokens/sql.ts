@@ -1,5 +1,5 @@
-const { createToken, Lexer } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken, Lexer } from 'chevrotain';
+import Identifier from './Identifier';
 
 const SelectKw = createToken({
   name: 'SelectKw',
@@ -144,7 +144,7 @@ const HavingKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   SelectKw,
   IntoKw,
   FromKw,

@@ -1,6 +1,6 @@
-const readFile = require('../../util/readFile');
-const SelectLexer = require('./tokens');
-// const parser = require('./rules');
+import readFile from '../../util/readFile';
+import SelectLexer from './tokens';
+// const parser from'./rules');
 
 const main = async () => {
   const file = await readFile('../test/plsql/test.sql');

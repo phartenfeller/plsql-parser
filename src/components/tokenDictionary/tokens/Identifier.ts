@@ -1,4 +1,4 @@
-const { createToken } = require('chevrotain');
+import { createToken } from 'chevrotain';
 
 // does not work because identifier will always be this token
 // const AnyValue = createToken({
@@ -14,4 +14,4 @@ const Identifier = createToken({
   // longer_alt: AnyValue,
 });
 
-module.exports = { Identifier };
+export default Identifier;

@@ -1,5 +1,5 @@
-const { createToken } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken } from 'chevrotain';
+import Identifier from './Identifier';
 
 const Equals = createToken({
   name: 'Equals',
@@ -61,7 +61,7 @@ const LikeKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   Equals,
   UnEquals1,
   UnEquals2,

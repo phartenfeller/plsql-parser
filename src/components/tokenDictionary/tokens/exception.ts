@@ -1,5 +1,5 @@
-const { createToken, Lexer } = require('chevrotain');
-const { Identifier } = require('./Identifier');
+import { createToken, Lexer } from 'chevrotain';
+import Identifier from './Identifier';
 
 const DefinedException = createToken({
   name: 'DefinedException',
@@ -184,7 +184,7 @@ const RaiseKw = createToken({
   longer_alt: Identifier,
 });
 
-module.exports = [
+export default [
   DefinedException,
   AccessIntoNullKw,
   CaseNotFoundKw,
