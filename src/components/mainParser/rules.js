@@ -699,9 +699,17 @@ class PlSqlParser extends CstParser {
         $.OR(
           $.XvalueOr ??
             ($.XvalueOr = [
-              { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
-              { ALT: () => $.CONSUME(tokenVocabulary.String) },
-              { ALT: () => $.SUBRULE($.number) },
+              {
+                ALT: () =>
+                  $.CONSUME(tokenVocabulary.ValueSeperator, {
+                    LABEL: 'Operator',
+                  }),
+              },
+              {
+                ALT: () =>
+                  $.CONSUME(tokenVocabulary.String, { LABEL: 'String' }),
+              },
+              { ALT: () => $.SUBRULE($.number, { LABEL: 'Number' }) },
               // {
               //   ALT: () => $.SUBRULE($.functionCall),
               // },

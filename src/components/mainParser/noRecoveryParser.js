@@ -11,13 +11,16 @@ function parse(input, log = false) {
   parserInstance.input = lexResult.tokens;
 
   // No semantic actions so this won't return anything yet.
-  parserInstance.global();
+  const cst = parserInstance.global();
 
   if (parserInstance.errors.length > 0 && log) {
     logParserErrors(parserInstance.errors);
   }
 
-  return { errors: parserInstance.errors };
+  console.log(cst);
+  debugger;
+
+  return { errors: parserInstance.errors, cst };
 }
 
 module.exports = parse;
