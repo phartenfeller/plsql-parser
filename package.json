@@ -8,7 +8,8 @@
   "scripts": {
     "start": "ts-node index.ts",
     "test": "jest",
-    "diagram": "node ./diagram/index.js"
+    "diagram": "node ./diagram/index.js",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
