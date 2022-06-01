@@ -6,9 +6,8 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "strict": true,
-    "outDir": "out",
-    "rootDir": "src"
+    "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src", "test", "index.ts"],
   "exclude": ["node_modules"]
 }

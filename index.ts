@@ -1,10 +1,11 @@
 import readFile from './src/util/readFile';
 import { lex } from './src/components/tokenDictionary/tokens';
 import parse from './src/components/mainParser/noRecoveryParser';
+import { IToken } from 'chevrotain';
 
 // const yellowLog = (text) => `\x1b[33m${text}\x1b[0m`;
 
-function getText(token) {
+function getText(token: IToken) {
   if (token.tokenType.name === 'MultiLineComment') {
     return '/* ... */';
   }
@@ -16,10 +17,10 @@ function getText(token) {
   return token.image;
 }
 
-const logLexer = (file) => {
+const logLexer = (file: string) => {
   const lexRes = lex(file);
 
-  const arr = [];
+  const arr: any[] = [];
 
   lexRes.tokens.forEach((token) => {
     // let logText = `${yellowLog(token.image)}`;
@@ -34,7 +35,7 @@ const logLexer = (file) => {
         token.tokenType.name.length > 35
           ? `${token.tokenType.name.substr(0, 32)}...`
           : token.tokenType.name,
-      longerAlt: token.tokenType?.LONGER_ALT?.name,
+      longerAlt: (token.tokenType?.LONGER_ALT as any)?.name,
       position: `${token.startLine}:${token.startColumn} - ${token.endLine}:${token.endColumn}`,
     });
   });
@@ -45,6 +46,9 @@ const logLexer = (file) => {
 const main = async () => {
   try {
     const file = await readFile('./test/plsql/current-error.sql');
+    if (typeof file !== 'string') {
+      throw new Error('File is not a string');
+    }
     logLexer(file);
     parse(file, true);
   } catch (err) {
