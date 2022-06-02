@@ -1,12 +1,14 @@
 {
-  "name": "node-js-template",
+  "name": "plsql-parser",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/phartenfeller/node-js-template.git",
-  "author": "phartenfeller <pharti@hotmail.de>",
-  "license": "MIT",
+  "repository": "https://github.com/phartenfeller/plsql-parser.git",
+  "website": "https://github.com/phartenfeller/plsql-parser",
+  "author": "Philipp Hartenfeller",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node ./src/dev-test-file.ts",
     "test": "jest",
     "diagram": "node ./diagram/index.js",
     "build": "tsc"
