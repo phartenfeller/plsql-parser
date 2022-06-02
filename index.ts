@@ -5,7 +5,8 @@ function parsePlSql(code: string) {
     if (!code || typeof code !== 'string') {
       throw new Error('Code is empty or not a string');
     }
-    parse(code, true);
+    const result = parse(code, true);
+    return result;
   } catch (err) {
     throw new Error(`Parsing error occured: ${err}`);
   }
