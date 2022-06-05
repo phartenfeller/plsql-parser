@@ -9,7 +9,9 @@
       "request": "launch",
       "name": "Launch index",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/index.js"
+      "program": "${workspaceFolder}/index.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     },
     {
       "type": "node",
