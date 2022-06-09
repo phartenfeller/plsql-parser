@@ -1,17 +1,22 @@
 {
   "name": "plsql-parser",
-  "version": "1.0.0",
+  "description": "Parser for Oracle PL/SQL",
+  "version": "0.1.0",
   "repository": "https://github.com/phartenfeller/plsql-parser.git",
   "website": "https://github.com/phartenfeller/plsql-parser",
   "author": "Philipp Hartenfeller",
   "license": "Apache-2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "ts-node ./src/dev-test-file.ts",
     "test": "jest",
     "diagram": "node ./diagram/index.js",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
