@@ -4,6 +4,7 @@ import { TokenType } from 'chevrotain';
 export enum SyntaxCategory {
   Keyword = 1,
   DataType,
+  Operator,
 }
 
 export type SyntaxToken = {
@@ -13,17 +14,33 @@ export type SyntaxToken = {
 
 const syntaxCategoryMap: Map<SyntaxCategory, SyntaxToken[]> = new Map();
 
+function checkDuplicates(tokenName: string, tokens: SyntaxToken[]): void {
+  const tokenNames = tokens.map((token) => token.name);
+  const duplicates = tokenNames.filter(
+    (name) => tokenNames.filter((name2) => name === name2).length > 1
+  );
+  if (duplicates.length > 0) {
+    throw new Error(`Duplicate token names found: ${duplicates.join(', ')}`);
+  }
+}
+
 export function categorizeSyntaxToken(
   category: SyntaxCategory,
   token: TokenType
 ) {
-  console.log('add', token.name);
   if (syntaxCategoryMap.has(category)) {
     const tokens = syntaxCategoryMap.get(category);
     if (!tokens) {
       throw new Error(`Category ${category} is not defined`);
     }
-    console.log('tokens', tokens.length);
+
+    checkDuplicates(token.name, tokens);
+
+    const src = (token.PATTERN as RegExp).source;
+    if (src && src === 'NOT_APPLICABLE') {
+      throw new Error(`Token ${token.name} has no pattern`);
+    }
+
     tokens.push({ name: token.name, pattern: token.PATTERN as RegExp });
     syntaxCategoryMap.set(category, tokens);
   } else {

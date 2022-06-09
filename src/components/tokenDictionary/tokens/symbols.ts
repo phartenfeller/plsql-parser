@@ -1,4 +1,5 @@
 import { createToken, Lexer } from 'chevrotain';
+import { categorizeSyntaxToken, SyntaxCategory } from '../syntaxHelper';
 import Identifier from './Identifier';
 
 const ValueSeperator = createToken({
@@ -11,6 +12,7 @@ const Assignment = createToken({
   pattern: /:=/,
   longer_alt: Identifier,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Assignment);
 
 const SingleLineComment = createToken({
   name: 'SingleLineComment',
@@ -48,6 +50,7 @@ const Plus = createToken({
   longer_alt: Identifier,
   categories: AdditionOperator,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Plus);
 
 const Minus = createToken({
   name: 'Minus',
@@ -55,6 +58,7 @@ const Minus = createToken({
   longer_alt: SingleLineComment,
   categories: AdditionOperator,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Minus);
 
 const MultiplicationOperator = createToken({
   name: 'MultiplicationOperator',
@@ -68,6 +72,7 @@ const Asterisk = createToken({
   longer_alt: Identifier,
   categories: MultiplicationOperator,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Asterisk);
 
 const Slash = createToken({
   name: 'Slash',
@@ -75,6 +80,7 @@ const Slash = createToken({
   longer_alt: Identifier,
   categories: MultiplicationOperator,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Slash);
 
 const OpenBracket = createToken({
   name: 'OpenBracket',
@@ -93,6 +99,7 @@ const Concat = createToken({
   pattern: /\|\|/,
   categories: ValueSeperator,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, Concat);
 
 const Percent = createToken({
   name: 'Percent',

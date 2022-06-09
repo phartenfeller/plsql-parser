@@ -1,4 +1,5 @@
 import { createToken, Lexer } from 'chevrotain';
+import { categorizeSyntaxToken, SyntaxCategory } from '../syntaxHelper';
 import Identifier from './Identifier';
 
 const SelectKw = createToken({
@@ -48,6 +49,7 @@ const AndKw = createToken({
   longer_alt: Identifier,
   categories: AndOr,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, AndKw);
 
 const OrKw = createToken({
   name: 'OrKw',
@@ -55,6 +57,7 @@ const OrKw = createToken({
   longer_alt: Identifier,
   categories: AndOr,
 });
+categorizeSyntaxToken(SyntaxCategory.Operator, OrKw);
 
 const JoinKw = createToken({
   name: 'JoinKw',
