@@ -1,5 +1,4 @@
 import { createToken, Lexer } from 'chevrotain';
-import { categorizeSyntaxToken, SyntaxCategory } from '../syntaxHelper';
 import Identifier from './Identifier';
 
 const DtypeNumber = createToken({
@@ -7,56 +6,48 @@ const DtypeNumber = createToken({
   pattern: /number/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeNumber);
 
 const DtypePlsIteger = createToken({
   name: 'DtypePlsIteger',
   pattern: /pls_integer/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypePlsIteger);
 
 const DtypeVarchar2 = createToken({
   name: 'DtypeVarchar2',
   pattern: /varchar2/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeVarchar2);
 
 const DtypeBoolean = createToken({
   name: 'DtypeBoolean',
   pattern: /boolean/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeBoolean);
 
 const DtypeDate = createToken({
   name: 'DtypeDate',
   pattern: /date/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeDate);
 
 const DtypeTimestampWTZ = createToken({
   name: 'DtypeTimestampWTZ',
   pattern: /timestamp with time zone/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeTimestampWTZ);
 
 const DtypeTimestamp = createToken({
   name: 'DtypeTimestamp',
   pattern: /timestamp/i,
   longer_alt: DtypeTimestampWTZ,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeTimestamp);
 
 const DtypeRaw = createToken({
   name: 'DtypeRaw',
   pattern: /raw/i,
   longer_alt: Identifier,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, DtypeRaw);
 
 const Char = createToken({
   name: 'Char',
@@ -75,7 +66,6 @@ const JsonObjectT = createToken({
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, JsonObjectT);
 
 const JsonArrayT = createToken({
   name: 'JsonArrayT',
@@ -83,7 +73,6 @@ const JsonArrayT = createToken({
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, JsonArrayT);
 
 const JsonElementT = createToken({
   name: 'JsonElementT',
@@ -91,7 +80,6 @@ const JsonElementT = createToken({
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, JsonElementT);
 
 const JsonScalarT = createToken({
   name: 'JsonScalarT',
@@ -99,7 +87,6 @@ const JsonScalarT = createToken({
   longer_alt: Identifier,
   categories: JsonDtypes,
 });
-categorizeSyntaxToken(SyntaxCategory.DataType, JsonScalarT);
 
 const Rowtype = createToken({
   name: 'Rowtype',
