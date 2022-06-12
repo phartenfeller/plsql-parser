@@ -1,0 +1,5 @@
+dist/**/*.test.*
+dist/test/**/*
+dist/jest.config.*
+test.*
+jest.config.*

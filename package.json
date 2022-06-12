@@ -1,5 +1,5 @@
 {
-  "name": "plsql-parser",
+  "name": "oracle-plsql-parser",
   "description": "Parser for Oracle PL/SQL",
   "version": "0.1.0",
   "repository": "https://github.com/phartenfeller/plsql-parser.git",
@@ -36,5 +36,11 @@
   "dependencies": {
     "chevrotain": "^10.1.2",
     "jest": "^28.1.0"
-  }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README",
+    "LICENSE"
+  ]
 }
