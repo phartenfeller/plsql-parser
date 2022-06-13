@@ -1169,10 +1169,34 @@ class PlSqlParser extends CstParser {
       });
     });
 
-    // TODO with clause
+    $.RULE('withClause', () => {
+      $.CONSUME(tokenVocabulary.WithKw);
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.AsKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.query);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Comma);
+        $.AT_LEAST_ONE_SEP({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME2(tokenVocabulary.Identifier);
+            $.CONSUME2(tokenVocabulary.AsKw);
+            $.CONSUME2(tokenVocabulary.OpenBracket);
+            $.SUBRULE2($.query);
+            $.CONSUME2(tokenVocabulary.ClosingBracket);
+          },
+        });
+      });
+    });
+
     // TODO union, minus, intersect
     // TODO distinct
     $.RULE('query', () => {
+      $.OPTION9(() => {
+        $.SUBRULE($.withClause);
+      });
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.AT_LEAST_ONE_SEP({
         // col1, col2, fct1(3)

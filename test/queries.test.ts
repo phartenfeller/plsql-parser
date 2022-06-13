@@ -337,10 +337,9 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
-});
 
-test('group by + order by', () => {
-  const code = `
+  test('group by + order by', () => {
+    const code = `
     begin
       select count(*) as cnt
            , fl.league_name
@@ -353,6 +352,49 @@ test('group by + order by', () => {
     end;
   `;
 
-  const result = parse(code, false);
-  expect(result.errors.length).toBe(0);
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
+
+  test('with clause', () => {
+    const code = `
+    begin
+      with data as (
+        select club_id, club_name
+          from football_clubs
+      )
+      select * 
+        from data
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
+
+  test('multiple with clause', () => {
+    const code = `
+    begin
+      with clubs as (
+        select club_id, club_name, club_league_id
+          from football_clubs
+      ), leauges as (
+        select * 
+          from clubs
+          join football_leagues
+            on club_league_id = league_id
+      ), data as (
+        select l.* , club_id+1
+          from leauges l
+      )
+      select * 
+        from data
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });
