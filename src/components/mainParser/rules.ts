@@ -119,15 +119,7 @@ class PlSqlParser extends CstParser {
     $.RULE('throwException', () => {
       $.CONSUME(tokenVocabulary.RaiseKw); // raise
       $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Identifier); // my_exception
-        $.OPTION1(() => {
-          $.CONSUME(tokenVocabulary.Dot);
-          $.CONSUME2(tokenVocabulary.Identifier);
-        });
-        $.OPTION2(() => {
-          $.CONSUME2(tokenVocabulary.Dot);
-          $.CONSUME3(tokenVocabulary.Identifier);
-        });
+        $.SUBRULE($.dottedIdentifier); // exception_name or var.exception_type
       });
       $.SUBRULE($.semicolon);
     });
@@ -603,15 +595,7 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('objType', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // schema_name
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Dot); // .
-        $.CONSUME2(tokenVocabulary.Identifier); // table_name
-      });
-      $.OPTION2(() => {
-        $.CONSUME2(tokenVocabulary.Dot); // .
-        $.CONSUME3(tokenVocabulary.Identifier); // column_name
-      });
+      $.SUBRULE($.dottedIdentifier);
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.Percent); // %
         $.OR([
@@ -1174,6 +1158,15 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('dottedIdentifier', () => {
+      $.MANY_SEP({
+        SEP: tokenVocabulary.Dot,
+        DEF: () => {
+          $.CONSUME(tokenVocabulary.Identifier);
+        },
+      });
+    });
+
     // TODO with clause
     // TODO union, minus, intersect
     // TODO distinct
@@ -1197,7 +1190,7 @@ class PlSqlParser extends CstParser {
           // into l_val1, l_val2
           SEP: tokenVocabulary.Comma,
           DEF: () => {
-            $.CONSUME3(tokenVocabulary.Identifier);
+            $.SUBRULE($.dottedIdentifier);
           },
         });
       });
