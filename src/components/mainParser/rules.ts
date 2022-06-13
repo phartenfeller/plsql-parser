@@ -1002,9 +1002,11 @@ class PlSqlParser extends CstParser {
 
     $.RULE('deleteStatement', () => {
       $.CONSUME(tokenVocabulary.DeleteKw); // delte
-      $.CONSUME(tokenVocabulary.FromKw); // from
-      $.CONSUME(tokenVocabulary.Identifier); // table
       $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.FromKw); // from
+      });
+      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.OPTION1(() => {
         // where 1 = 1 ...
         $.SUBRULE($.whereClause);
       });
