@@ -78,4 +78,19 @@ describe('values', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
+
+  test('Calc with vars', () => {
+    const code = `
+      declare
+        l_years       number := 6;
+        l_div_months  number := 3;
+        l_months_back number;
+      begin
+        l_months_back := l_years * 12 / l_div_months;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });
