@@ -16,7 +16,7 @@
     "test": "jest",
     "diagram": "node ./diagram/index.js",
     "build": "tsc",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
