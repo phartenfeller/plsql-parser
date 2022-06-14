@@ -52,4 +52,38 @@ describe('statements', () => {
     const result = parse(code, false);
     expect(result.errors.length).toBe(0);
   });
+
+  test('select into', () => {
+    const code = `
+      declare
+        l_num integer := 0;
+      begin
+        select count(*)
+          into l_num
+          from dual;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
+
+  test('select into type', () => {
+    const code = `
+      declare
+        type t_type is record (
+          num_val integer
+        );
+
+        l_var t_type;
+      begin
+        select count(*)
+          into l_var.num_val
+          from dual;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors.length).toBe(0);
+  });
 });

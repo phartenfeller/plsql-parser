@@ -37,6 +37,12 @@ const OrderByKw = createToken({
   longer_alt: Identifier,
 });
 
+const WithKw = createToken({
+  name: 'WithKw',
+  pattern: /with/i,
+  longer_alt: Identifier,
+});
+
 const AndOr = createToken({
   name: 'AndOr',
   pattern: Lexer.NA,
@@ -151,6 +157,7 @@ export default [
   WhereKw,
   GroupByKw,
   OrderByKw,
+  WithKw,
   AndOr,
   AndKw,
   OrKw,

@@ -119,15 +119,7 @@ class PlSqlParser extends CstParser {
     $.RULE('throwException', () => {
       $.CONSUME(tokenVocabulary.RaiseKw); // raise
       $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Identifier); // my_exception
-        $.OPTION1(() => {
-          $.CONSUME(tokenVocabulary.Dot);
-          $.CONSUME2(tokenVocabulary.Identifier);
-        });
-        $.OPTION2(() => {
-          $.CONSUME2(tokenVocabulary.Dot);
-          $.CONSUME3(tokenVocabulary.Identifier);
-        });
+        $.SUBRULE($.dottedIdentifier); // exception_name or var.exception_type
       });
       $.SUBRULE($.semicolon);
     });
@@ -420,7 +412,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('createPackageSpec', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
-      $.CONSUME(tokenVocabulary.Identifier); // pkg_name
+      $.SUBRULE($.dottedIdentifier); // pkg_name | schema_name.pkg_name
       $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
@@ -439,7 +431,7 @@ class PlSqlParser extends CstParser {
     $.RULE('createPackageBody', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.BodyKw); // body
-      $.CONSUME(tokenVocabulary.Identifier); // pkg_name
+      $.SUBRULE($.dottedIdentifier); // pkg_name | schema_name.pkg_name
       $.CONSUME(tokenVocabulary.AsIs);
       $.MANY(() => {
         $.OR2([
@@ -603,15 +595,7 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('objType', () => {
-      $.CONSUME(tokenVocabulary.Identifier); // schema_name
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Dot); // .
-        $.CONSUME2(tokenVocabulary.Identifier); // table_name
-      });
-      $.OPTION2(() => {
-        $.CONSUME2(tokenVocabulary.Dot); // .
-        $.CONSUME3(tokenVocabulary.Identifier); // column_name
-      });
+      $.SUBRULE($.dottedIdentifier);
       $.OPTION3(() => {
         $.CONSUME(tokenVocabulary.Percent); // %
         $.OR([
@@ -1018,9 +1002,11 @@ class PlSqlParser extends CstParser {
 
     $.RULE('deleteStatement', () => {
       $.CONSUME(tokenVocabulary.DeleteKw); // delte
-      $.CONSUME(tokenVocabulary.FromKw); // from
-      $.CONSUME(tokenVocabulary.Identifier); // table
       $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.FromKw); // from
+      });
+      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.OPTION1(() => {
         // where 1 = 1 ...
         $.SUBRULE($.whereClause);
       });
@@ -1174,10 +1160,43 @@ class PlSqlParser extends CstParser {
       });
     });
 
-    // TODO with clause
+    $.RULE('dottedIdentifier', () => {
+      $.MANY_SEP({
+        SEP: tokenVocabulary.Dot,
+        DEF: () => {
+          $.CONSUME(tokenVocabulary.Identifier);
+        },
+      });
+    });
+
+    $.RULE('withClause', () => {
+      $.CONSUME(tokenVocabulary.WithKw);
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.AsKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.query);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Comma);
+        $.AT_LEAST_ONE_SEP({
+          SEP: tokenVocabulary.Comma,
+          DEF: () => {
+            $.CONSUME2(tokenVocabulary.Identifier);
+            $.CONSUME2(tokenVocabulary.AsKw);
+            $.CONSUME2(tokenVocabulary.OpenBracket);
+            $.SUBRULE2($.query);
+            $.CONSUME2(tokenVocabulary.ClosingBracket);
+          },
+        });
+      });
+    });
+
     // TODO union, minus, intersect
     // TODO distinct
     $.RULE('query', () => {
+      $.OPTION9(() => {
+        $.SUBRULE($.withClause);
+      });
       $.CONSUME(tokenVocabulary.SelectKw); // select
       $.AT_LEAST_ONE_SEP({
         // col1, col2, fct1(3)
@@ -1197,7 +1216,7 @@ class PlSqlParser extends CstParser {
           // into l_val1, l_val2
           SEP: tokenVocabulary.Comma,
           DEF: () => {
-            $.CONSUME3(tokenVocabulary.Identifier);
+            $.SUBRULE($.dottedIdentifier);
           },
         });
       });
