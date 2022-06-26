@@ -1250,16 +1250,14 @@ class PlSqlParser extends CstParser {
 
     $.RULE('querySource', () => {
       $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+        { ALT: () => $.SUBRULE($.dottedIdentifier) },
         {
           // array to table
           ALT: () => {
             $.CONSUME(tokenVocabulary.TableKw);
             $.CONSUME(tokenVocabulary.OpenBracket);
             $.SUBRULE($.value);
-            // $.OPTION(() => {
-            $.CONSUME(tokenVocabulary.ClosingBracket); // gets eaten from value rule
-            //});
+            $.CONSUME(tokenVocabulary.ClosingBracket);
           },
         },
       ]);
@@ -1283,7 +1281,7 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('dottedIdentifier', () => {
-      $.MANY_SEP({
+      $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Dot,
         DEF: () => {
           $.CONSUME(tokenVocabulary.Identifier);

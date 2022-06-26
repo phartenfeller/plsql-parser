@@ -397,4 +397,30 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('select other schema', () => {
+    const code = `
+    begin
+      select *
+        from other_schema.employees e;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('join other schema', () => {
+    const code = `
+    begin
+      select *
+        from employees e
+        join other_schema.departments d
+          on e.detpno = d.deptno;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
