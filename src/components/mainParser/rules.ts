@@ -204,9 +204,9 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.PipeRowKw);
       $.CONSUME(tokenVocabulary.OpenBracket);
       $.SUBRULE($.value);
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.ClosingBracket);
-      });
+      // $.OPTION(() => {
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+      //});
       $.SUBRULE($.semicolon);
     });
 
@@ -684,11 +684,93 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
+    $.RULE('extractValue', () => {
+      $.CONSUME(tokenVocabulary.ExtractKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+
+      $.OR([
+        // extract(hour from systimestamp)
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.Identifier);
+            $.CONSUME(tokenVocabulary.FromKw);
+            $.SUBRULE($.value);
+          },
+        },
+        // xml extract(l_xml, '//xpath', {'namespace'})
+        {
+          ALT: () => {
+            $.CONSUME1(tokenVocabulary.Identifier); // xmltype_instance
+            $.CONSUME1(tokenVocabulary.Comma);
+            $.OR2([
+              {
+                ALT: () => $.CONSUME2(tokenVocabulary.Identifier), // variable
+              },
+              {
+                ALT: () =>
+                  $.CONSUME(tokenVocabulary.String, { LABEL: 'String' }), // xpath
+              },
+            ]);
+
+            // namespace
+            $.OPTION(() => {
+              $.CONSUME2(tokenVocabulary.Comma);
+              $.OR3([
+                {
+                  ALT: () => $.CONSUME3(tokenVocabulary.Identifier), // variable
+                },
+                {
+                  ALT: () =>
+                    $.CONSUME1(tokenVocabulary.String, { LABEL: 'String' }), // namespace
+                },
+              ]);
+            });
+          },
+        },
+      ]);
+
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
+    // needed to be written out because of the prior rule and extract is its own KW
+    $.RULE('xmlExtract', () => {
+      // $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Dot);
+      $.CONSUME(tokenVocabulary.ExtractKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+
+      $.OR2([
+        {
+          ALT: () => $.CONSUME2(tokenVocabulary.Identifier), // variable
+        },
+        {
+          ALT: () => $.CONSUME(tokenVocabulary.String, { LABEL: 'String' }), // xpath
+        },
+      ]);
+
+      // namespace
+      $.OPTION(() => {
+        $.CONSUME2(tokenVocabulary.Comma);
+        $.OR3([
+          {
+            ALT: () => $.CONSUME3(tokenVocabulary.Identifier), // variable
+          },
+          {
+            ALT: () => $.CONSUME1(tokenVocabulary.String, { LABEL: 'String' }), // namespace
+          },
+        ]);
+      });
+
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
     $.RULE('value', () => {
       $.AT_LEAST_ONE(() => {
         $.OR(
           $.XvalueOr ??
             ($.XvalueOr = [
+              { ALT: () => $.SUBRULE($.extractValue) },
+              { ALT: () => $.SUBRULE($.xmlExtract) },
               {
                 ALT: () =>
                   $.CONSUME(tokenVocabulary.ValueSeperator, {
@@ -714,7 +796,7 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
               { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // cast(l_xy as number)
               { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
-              { ALT: () => $.CONSUME(tokenVocabulary.FromKw) }, // extract(hour from sysdate)
+              // { ALT: () => $.CONSUME(tokenVocabulary.FromKw) }, // extract(hour from sysdate)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
               { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
@@ -751,6 +833,8 @@ class PlSqlParser extends CstParser {
         $.OR(
           $.XvalueOrWithoutIn ??
             ($.XvalueOrWithoutIn = [
+              { ALT: () => $.SUBRULE($.extractValue) },
+              { ALT: () => $.SUBRULE($.xmlExtract) },
               { ALT: () => $.CONSUME(tokenVocabulary.ValueSeperator) },
               { ALT: () => $.CONSUME(tokenVocabulary.String) },
               { ALT: () => $.SUBRULE($.number) },
@@ -1003,15 +1087,26 @@ class PlSqlParser extends CstParser {
               },
             });
             $.CONSUME(tokenVocabulary.ClosingBracket); // )
-            $.CONSUME(tokenVocabulary.ValuesKw); // values
-            $.CONSUME2(tokenVocabulary.OpenBracket); // (
-            $.MANY_SEP2({
-              SEP: tokenVocabulary.Comma,
-              DEF: () => {
-                $.SUBRULE($.value);
+            $.OR2([
+              {
+                ALT: () => {
+                  $.CONSUME(tokenVocabulary.ValuesKw); // values
+                  $.CONSUME2(tokenVocabulary.OpenBracket); // (
+                  $.MANY_SEP2({
+                    SEP: tokenVocabulary.Comma,
+                    DEF: () => {
+                      $.SUBRULE($.value);
+                    },
+                  });
+                  $.CONSUME2(tokenVocabulary.ClosingBracket); // )
+                },
               },
-            });
-            $.CONSUME2(tokenVocabulary.ClosingBracket); // )
+              {
+                ALT: () => {
+                  $.SUBRULE($.query);
+                },
+              },
+            ]);
           },
         },
         {
@@ -1108,9 +1203,9 @@ class PlSqlParser extends CstParser {
           });
         });
         // optional because will be taken care of in value parser
-        $.OPTION8(() => {
-          $.CONSUME(tokenVocabulary.ClosingBracket); // )
-        });
+        //$.OPTION8(() => {
+        $.CONSUME(tokenVocabulary.ClosingBracket); // )
+        // });
       });
     });
 
@@ -1162,9 +1257,9 @@ class PlSqlParser extends CstParser {
             $.CONSUME(tokenVocabulary.TableKw);
             $.CONSUME(tokenVocabulary.OpenBracket);
             $.SUBRULE($.value);
-            $.OPTION(() => {
-              $.CONSUME(tokenVocabulary.ClosingBracket); // gets eaten from value rule
-            });
+            // $.OPTION(() => {
+            $.CONSUME(tokenVocabulary.ClosingBracket); // gets eaten from value rule
+            //});
           },
         },
       ]);

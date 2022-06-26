@@ -75,4 +75,21 @@ describe('DML statement', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('insert into select', () => {
+    const code = `
+    begin
+      insert into my_log_table
+          ( log_id
+          , log_message
+          , log_created_at
+          )
+      select proc_log_id, proc_msg, proc_ts
+        from curr_process_logs;
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

@@ -7,6 +7,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Launch current-error",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/dev-test-file.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Launch index",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/index.ts",
