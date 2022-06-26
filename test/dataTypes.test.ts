@@ -12,7 +12,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('timestamp', () => {
@@ -26,7 +26,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('timestamp tz', () => {
@@ -39,7 +39,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline procedure', () => {

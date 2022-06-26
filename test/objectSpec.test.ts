@@ -16,7 +16,7 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('package body c', () => {
@@ -34,7 +34,7 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('package body quoted name', () => {
@@ -52,7 +52,7 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('package body with schema', () => {
@@ -70,7 +70,7 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('package body with schema quoted', () => {
@@ -88,7 +88,7 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('package spec with schema quoted', () => {
@@ -103,6 +103,6 @@ describe('object specifications', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 });

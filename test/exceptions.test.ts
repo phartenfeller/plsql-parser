@@ -11,7 +11,7 @@ describe('exceptions', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('declare exception', () => {
@@ -23,7 +23,7 @@ describe('exceptions', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('listen on exception', () => {
@@ -43,7 +43,7 @@ describe('exceptions', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('nested raise in exception block', () => {
@@ -62,6 +62,6 @@ describe('exceptions', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 });

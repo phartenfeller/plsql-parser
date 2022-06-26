@@ -11,7 +11,7 @@ describe('TypeDef', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('record type', () => {
@@ -28,7 +28,7 @@ describe('TypeDef', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('table type on record type', () => {
@@ -47,6 +47,6 @@ describe('TypeDef', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 });

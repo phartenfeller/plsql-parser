@@ -238,9 +238,8 @@ class PlSqlParser extends CstParser {
               ALT: () => $.SUBRULE($.functionCallSemicolon),
             },
             { ALT: () => $.SUBRULE($.queryStatement) },
-            { ALT: () => $.SUBRULE($.insertStatement) },
-            { ALT: () => $.SUBRULE($.deleteStatement) },
-            { ALT: () => $.SUBRULE($.updateStatement) },
+            { ALT: () => $.SUBRULE($.dmlStatement) },
+            { ALT: () => $.SUBRULE($.forallStatement) },
             { ALT: () => $.SUBRULE($.transactionStatement) },
             { ALT: () => $.SUBRULE($.forLoop) },
             { ALT: () => $.SUBRULE($.whileLoop) },
@@ -958,7 +957,37 @@ class PlSqlParser extends CstParser {
       ]);
     });
 
-    $.RULE('insertStatement', () => {
+    $.RULE('forallStatement', () => {
+      $.CONSUME(tokenVocabulary.ForallKw);
+      $.CONSUME(tokenVocabulary.Identifier); // l_var
+      $.CONSUME(tokenVocabulary.InKw); // in
+      $.SUBRULE($.value); // l_num1
+      $.CONSUME(tokenVocabulary.DoubleDot); // ..
+      $.SUBRULE2($.value); // 3
+      $.SUBRULE($.dmlOperation);
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('dmlStatement', () => {
+      $.SUBRULE($.dmlOperation);
+      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('dmlOperation', () => {
+      $.OR([
+        {
+          ALT: () => $.SUBRULE($.insertOperation),
+        },
+        {
+          ALT: () => $.SUBRULE($.updateOperation),
+        },
+        {
+          ALT: () => $.SUBRULE($.deleteOperation),
+        },
+      ]);
+    });
+
+    $.RULE('insertOperation', () => {
       $.CONSUME(tokenVocabulary.InsertKw); // insert
       $.CONSUME(tokenVocabulary.IntoKw); // into
       $.CONSUME(tokenVocabulary.Identifier); // table_name
@@ -997,23 +1026,9 @@ class PlSqlParser extends CstParser {
         $.CONSUME2(tokenVocabulary.IntoKw); // into
         $.CONSUME5(tokenVocabulary.Identifier); // variable
       });
-      $.SUBRULE($.semicolon); // ;
     });
 
-    $.RULE('deleteStatement', () => {
-      $.CONSUME(tokenVocabulary.DeleteKw); // delte
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.FromKw); // from
-      });
-      $.CONSUME(tokenVocabulary.Identifier); // table
-      $.OPTION1(() => {
-        // where 1 = 1 ...
-        $.SUBRULE($.whereClause);
-      });
-      $.SUBRULE($.semicolon); // ;
-    });
-
-    $.RULE('updateStatement', () => {
+    $.RULE('updateOperation', () => {
       $.CONSUME(tokenVocabulary.UpdateKw); // update
       $.CONSUME(tokenVocabulary.Identifier); // table
       $.CONSUME(tokenVocabulary.SetKw); // set
@@ -1029,7 +1044,18 @@ class PlSqlParser extends CstParser {
         // where 1 = 1 ...
         $.SUBRULE($.whereClause);
       });
-      $.SUBRULE($.semicolon); // ;
+    });
+
+    $.RULE('deleteOperation', () => {
+      $.CONSUME(tokenVocabulary.DeleteKw); // delte
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.FromKw); // from
+      });
+      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.OPTION1(() => {
+        // where 1 = 1 ...
+        $.SUBRULE($.whereClause);
+      });
     });
 
     $.RULE('transactionStatement', () => {

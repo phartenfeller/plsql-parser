@@ -13,7 +13,7 @@ describe('Cursors', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('cursor use', () => {
@@ -28,7 +28,7 @@ describe('Cursors', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('cursor declaration and use', () => {
@@ -46,6 +46,6 @@ describe('Cursors', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 });
