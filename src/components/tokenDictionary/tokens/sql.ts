@@ -150,6 +150,12 @@ const HavingKw = createToken({
   longer_alt: Identifier,
 });
 
+const ForallKw = createToken({
+  name: 'ForallKw',
+  pattern: /forall/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -175,4 +181,5 @@ export default [
   UpdateKw,
   SetKw,
   HavingKw,
+  ForallKw,
 ];

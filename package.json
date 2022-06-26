@@ -1,7 +1,7 @@
 {
   "name": "oracle-plsql-parser",
   "description": "Parser for Oracle PL/SQL",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "repository": "https://github.com/phartenfeller/plsql-parser.git",
   "website": "https://github.com/phartenfeller/plsql-parser",
   "author": "Philipp Hartenfeller",
@@ -16,7 +16,7 @@
     "test": "jest",
     "diagram": "node ./diagram/index.js",
     "build": "tsc",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
@@ -27,6 +27,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^28.1.1",
     "prettier": "^2.6.2",
     "ts-jest": "^28.0.3",
     "ts-migrate": "^0.1.28",
@@ -34,13 +35,6 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "chevrotain": "^10.1.2",
-    "jest": "^28.1.0"
-  },
-  "files": [
-    "dist",
-    "package.json",
-    "README",
-    "LICENSE"
-  ]
+    "chevrotain": "^10.1.2"
+  }
 }

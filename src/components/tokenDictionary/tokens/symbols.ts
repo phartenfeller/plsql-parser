@@ -22,6 +22,7 @@ const MultiLineComment = createToken({
   name: 'MultiLineComment',
   pattern: /\/\*[^`]*?\*\//,
   line_breaks: true,
+  group: Lexer.SKIPPED,
 });
 
 const Semicolon = createToken({

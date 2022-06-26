@@ -11,7 +11,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('boolean from equals', () => {
@@ -24,7 +24,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('boolean from in', () => {
@@ -37,7 +37,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('replace (keyword used as function)', () => {
@@ -50,7 +50,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('constant with dollar in name', () => {
@@ -63,7 +63,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('declare var with default', () => {
@@ -76,7 +76,7 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Calc with vars', () => {
@@ -91,6 +91,6 @@ describe('values', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 });

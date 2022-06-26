@@ -11,7 +11,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Not like', () => {
@@ -26,7 +26,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Like Concat', () => {
@@ -41,7 +41,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In constants', () => {
@@ -54,7 +54,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Not in constants', () => {
@@ -67,7 +67,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In subquery', () => {
@@ -80,7 +80,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In table on array', () => {
@@ -93,20 +93,20 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('In table with fc', () => {
     const code = `
       begin
-        select extractValue(value(t), '*/Name', l_this_holds_xml) as wow_a_value
-          from table(xmlsequence(l_xml.extract('//Parse/My/PLSQL', l_this_holds_xml))
+        select extractValue(value(t), '*/Name', l_namespace) as wow_a_value
+          from table(xmlsequence(l_xml.extract('//Parse/My/PLSQL', l_namespace)))
         ;
       end;
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Bulk collect', () => {
@@ -122,7 +122,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Join', () => {
@@ -136,7 +136,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Left Join', () => {
@@ -150,7 +150,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Right Join', () => {
@@ -164,7 +164,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('Inner Join', () => {
@@ -178,7 +178,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('outer Join', () => {
@@ -192,7 +192,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('cross Join', () => {
@@ -205,7 +205,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('multiple Joins', () => {
@@ -222,7 +222,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('column alias as', () => {
@@ -236,7 +236,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('column alias no as', () => {
@@ -250,7 +250,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('table alias', () => {
@@ -266,7 +266,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('group by', () => {
@@ -283,7 +283,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('group by having', () => {
@@ -301,7 +301,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('order by', () => {
@@ -318,7 +318,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('order by fc_call', () => {
@@ -335,7 +335,7 @@ describe('Queries', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('group by + order by', () => {
@@ -353,7 +353,7 @@ describe('Queries', () => {
   `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('with clause', () => {
@@ -370,7 +370,7 @@ describe('Queries', () => {
   `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('multiple with clause', () => {
@@ -395,6 +395,32 @@ describe('Queries', () => {
   `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('select other schema', () => {
+    const code = `
+    begin
+      select *
+        from other_schema.employees e;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('join other schema', () => {
+    const code = `
+    begin
+      select *
+        from employees e
+        join other_schema.departments d
+          on e.detpno = d.deptno;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
   });
 });

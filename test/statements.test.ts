@@ -9,7 +9,7 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('goto label declaration', () => {
@@ -21,7 +21,7 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('use goto command', () => {
@@ -32,7 +32,7 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('goto combined', () => {
@@ -50,7 +50,7 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('select into', () => {
@@ -65,7 +65,7 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('select into type', () => {
@@ -84,6 +84,32 @@ describe('statements', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toBe(0);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('extract simple', () => {
+    const code = `
+      declare
+        l_test number;
+      begin
+        l_test := EXTRACT(HOUR FROM SYSTIMESTAMP);
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('extract in case', () => {
+    const code = `
+      declare
+        l_test number;
+      begin
+        l_test := CASE WHEN EXTRACT(HOUR FROM SYSTIMESTAMP) >= 15 THEN 1 ELSE 2 END;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
   });
 });
