@@ -92,7 +92,6 @@ class PlSqlParser extends CstParser {
           $.OR([
             { ALT: () => $.SUBRULE($.packageObjSpec) },
             { ALT: () => $.SUBRULE($.variableDeclaration) },
-            { ALT: () => $.SUBRULE($.comment) },
             { ALT: () => $.SUBRULE($.typeDefiniton) },
           ]);
         });
@@ -229,7 +228,6 @@ class PlSqlParser extends CstParser {
         { GATE: $.BACKTRACK($.assignment), ALT: () => $.SUBRULE($.assignment) },
         ...($.XstatementOr ??
           ($.XstatementOr = [
-            { ALT: () => $.SUBRULE($.comment) },
             { ALT: () => $.SUBRULE($.nullStatement) },
             { ALT: () => $.SUBRULE($.exitStatement) },
             { ALT: () => $.SUBRULE($.ifStatement) },
@@ -416,7 +414,6 @@ class PlSqlParser extends CstParser {
       $.MANY(() => {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) },
-          { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.objectDeclaration) },
         ]);
       });
@@ -436,7 +433,6 @@ class PlSqlParser extends CstParser {
         $.OR2([
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
-          { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
       });
@@ -470,7 +466,6 @@ class PlSqlParser extends CstParser {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
           { ALT: () => $.SUBRULE($.pragmaStatement) },
-          { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
@@ -496,7 +491,6 @@ class PlSqlParser extends CstParser {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // l_num number := 1;
           { ALT: () => $.SUBRULE($.pragmaStatement) },
-          { ALT: () => $.SUBRULE($.comment) },
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.typeDefiniton) },
         ]);
@@ -987,13 +981,6 @@ class PlSqlParser extends CstParser {
           },
         },
         { ALT: () => $.CONSUME(tokenVocabulary.DtypeTimestampWTZ) }, // timestamp with timezone
-      ]);
-    });
-
-    $.RULE('comment', () => {
-      $.OR([
-        { ALT: () => $.CONSUME(tokenVocabulary.SingleLineComment) },
-        { ALT: () => $.CONSUME(tokenVocabulary.MultiLineComment) },
       ]);
     });
 
