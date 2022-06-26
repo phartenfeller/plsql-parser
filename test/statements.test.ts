@@ -86,4 +86,30 @@ describe('statements', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('extract simple', () => {
+    const code = `
+      declare
+        l_test number;
+      begin
+        l_test := EXTRACT(HOUR FROM SYSTIMESTAMP);
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('extract in case', () => {
+    const code = `
+      declare
+        l_test number;
+      begin
+        l_test := CASE WHEN EXTRACT(HOUR FROM SYSTIMESTAMP) >= 15 THEN 1 ELSE 2 END;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
