@@ -36,5 +36,11 @@
   },
   "dependencies": {
     "chevrotain": "^10.1.2"
-  }
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README",
+    "LICENSE"
+  ]
 }
