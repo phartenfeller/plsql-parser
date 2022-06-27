@@ -1,6 +1,60 @@
 import parse from '../src/components/mainParser/recoveryParser';
 
 describe('DML statement', () => {
+  test('insert', () => {
+    const code = `
+      begin
+        insert into my_table
+          (id, name)
+        values
+          (1, 'test');
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('insert other schema', () => {
+    const code = `
+      begin
+        insert into ohter_schema.my_table
+          (id, name)
+        values
+          (1, 'test');
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('insert other schema', () => {
+    const code = `
+      begin
+        update my_table
+           set name = 'new val'
+         where id = 1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('update other schema', () => {
+    const code = `
+      begin
+        update ohter_schema.my_table
+           set name = 'new val'
+         where id = 1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('delete with from', () => {
     const code = `
       begin
@@ -17,6 +71,18 @@ describe('DML statement', () => {
     const code = `
       begin
         delete my_table
+         where my_category = 'dogs';
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('delete other schema', () => {
+    const code = `
+      begin
+        delete from other_schema.my_table
          where my_category = 'dogs';
       end;
     `;

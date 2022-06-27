@@ -1072,7 +1072,7 @@ class PlSqlParser extends CstParser {
     $.RULE('insertOperation', () => {
       $.CONSUME(tokenVocabulary.InsertKw); // insert
       $.CONSUME(tokenVocabulary.IntoKw); // into
-      $.CONSUME(tokenVocabulary.Identifier); // table_name
+      $.SUBRULE($.dottedIdentifier); // table_name
       $.OR([
         {
           ALT: () => {
@@ -1123,7 +1123,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('updateOperation', () => {
       $.CONSUME(tokenVocabulary.UpdateKw); // update
-      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.SUBRULE($.dottedIdentifier); // table_name
       $.CONSUME(tokenVocabulary.SetKw); // set
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Comma,
@@ -1144,7 +1144,7 @@ class PlSqlParser extends CstParser {
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.FromKw); // from
       });
-      $.CONSUME(tokenVocabulary.Identifier); // table
+      $.SUBRULE($.dottedIdentifier); // table_name
       $.OPTION1(() => {
         // where 1 = 1 ...
         $.SUBRULE($.whereClause);
