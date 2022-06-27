@@ -40,6 +40,60 @@ describe('values', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('boolean from smaller', () => {
+    const code = `
+      declare 
+        l_bool boolean;
+      begin
+        l_bool := 1 < 3;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('boolean from chained condition', () => {
+    const code = `
+      declare 
+        l_bool boolean;
+      begin
+        l_bool := 1 < 3 and 1 < 2;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('boolean from chained with is not null', () => {
+    const code = `
+      declare 
+        l_num  number := 1;
+        l_bool boolean;
+      begin
+        l_bool := 1 < 3 and l_num is not null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('boolean from chained with not', () => {
+    const code = `
+      declare 
+        l_num  number := 1;
+        l_bool boolean;
+      begin
+        l_bool := 1 < 3 and not 1 = -1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('replace (keyword used as function)', () => {
     const code = `
       declare 

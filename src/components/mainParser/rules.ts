@@ -341,6 +341,14 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
+    $.RULE('nullCheck', () => {
+      $.CONSUME(tokenVocabulary.IsKw);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.NotKw);
+      });
+      $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
+    });
+
     $.RULE('singleCondition', () => {
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.NotKw);
@@ -355,13 +363,7 @@ class PlSqlParser extends CstParser {
             },
           },
           {
-            ALT: () => {
-              $.CONSUME(tokenVocabulary.IsKw);
-              $.OPTION3(() => {
-                $.CONSUME2(tokenVocabulary.NotKw);
-              });
-              $.CONSUME(tokenVocabulary.Null, { LABEL: 'rhs' });
-            },
+            ALT: () => $.SUBRULE($.nullCheck),
           },
           {
             // in (...)
@@ -793,7 +795,11 @@ class PlSqlParser extends CstParser {
               // { ALT: () => $.CONSUME(tokenVocabulary.FromKw) }, // extract(hour from sysdate)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
-              { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
+
+              { ALT: () => $.SUBRULE($.relationalOperators) }, // bool <= = != ...
+              { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
+              { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
+              { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
               {
@@ -848,7 +854,11 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
-              { ALT: () => $.CONSUME(tokenVocabulary.Equals) }, // bool := 1 = 2
+
+              { ALT: () => $.SUBRULE($.relationalOperators) }, // bool <= = != ...
+              { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
+              { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
+              { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
             ])
