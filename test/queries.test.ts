@@ -109,6 +109,66 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('select into', () => {
+    const code = `
+      declare
+        l_num number;
+      begin
+        select count(*)
+          into l_num
+          from countries
+         where 1 = 1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('select into type', () => {
+    const code = `
+      declare
+        type t_my_type is record (
+          my_num number
+        , my_str countries.country_name%type
+        , my_ts  timestamp(6)
+        );
+
+        l_vals t_my_type;
+      begin
+        select count(*)
+          into l_vals.my_num
+          from countries
+         where 1 = 1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('select into type multiple', () => {
+    const code = `
+      declare
+        type t_my_type is record (
+          my_num number
+        , my_str countries.country_name%type
+        , my_ts  timestamp(6)
+        );
+
+        l_vals t_my_type;
+      begin
+        select count(*), 'what'
+          into l_vals.my_num, l_vals.my_str
+          from countries
+         where 1 = 1;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('Bulk collect', () => {
     const code = `
       declare
