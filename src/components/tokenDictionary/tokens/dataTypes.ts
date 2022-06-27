@@ -106,6 +106,12 @@ const OfKw = createToken({
   longer_alt: Identifier,
 });
 
+const MemberOfKw = createToken({
+  name: 'MemberOfKw',
+  pattern: /member(\s*)of/i,
+  longer_alt: Identifier,
+});
+
 const IndexKw = createToken({
   name: 'IndexKw',
   pattern: /index/i,
@@ -148,6 +154,7 @@ export default [
   Rowtype,
   Type,
   OfKw,
+  MemberOfKw,
   IndexKw,
   ByKw,
   RecordKw,

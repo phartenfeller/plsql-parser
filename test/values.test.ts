@@ -94,6 +94,20 @@ describe('values', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('boolean from member of', () => {
+    const code = `
+    declare
+      l_arr apex_t_varchar2 := apex_t_varchar2('one', 'two');
+      l_bool boolean;
+    begin
+      l_bool := 'one' member of (l_arr);
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('replace (keyword used as function)', () => {
     const code = `
       declare 

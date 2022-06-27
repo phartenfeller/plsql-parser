@@ -2,6 +2,7 @@ declare
   l_num1 number := 1;
   l_num2 number := 4;
   l_bool boolean := true;
+  l_arr apex_t_varchar2 := apex_t_varchar2('one', 'two');
 begin
   null;
 
@@ -34,6 +35,8 @@ begin
                   AND workbook.sheets_tab (t_sheet).col_fmts_tab (p_col).pi_numfmtid IS NOT NULL
                   )
               then
+    null;
+  elsif 'one' member of (l_arr) then
     null;
   else
     null;

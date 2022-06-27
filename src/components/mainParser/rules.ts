@@ -384,6 +384,12 @@ class PlSqlParser extends CstParser {
               ]);
             },
           },
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.MemberOfKw);
+              $.SUBRULE1($.valueInBrackets, { LABEL: 'rhs' });
+            },
+          },
         ]);
       });
     });
@@ -800,6 +806,7 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
               { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
               { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
+              { ALT: () => $.CONSUME(tokenVocabulary.MemberOfKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
               {
@@ -859,6 +866,7 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
               { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
               { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
+              { ALT: () => $.CONSUME(tokenVocabulary.MemberOfKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
             ])
