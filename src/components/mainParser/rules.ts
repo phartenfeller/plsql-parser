@@ -1249,6 +1249,12 @@ class PlSqlParser extends CstParser {
         SEP: tokenVocabulary.Comma,
         DEF: () => {
           $.SUBRULE($.value); // value to support fc + alias.col
+          $.OPTION(() => {
+            $.CONSUME(tokenVocabulary.AscDescKw);
+          });
+          $.OPTION1(() => {
+            $.CONSUME(tokenVocabulary.NullsFirstLastKw);
+          });
         },
       });
     });
@@ -1316,13 +1322,25 @@ class PlSqlParser extends CstParser {
       });
     });
 
-    // TODO union, minus, intersect
-    // TODO distinct
-    $.RULE('query', () => {
-      $.OPTION9(() => {
-        $.SUBRULE($.withClause);
+    $.RULE('queryOverClause', () => {
+      $.CONSUME(tokenVocabulary.OverKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      // partition by col1, col2
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.PartitionByKw);
+        $.AT_LEAST_ONE_SEP({
+          // col1, col2, fct1(3)
+          SEP: tokenVocabulary.Comma,
+          DEF: () => $.SUBRULE($.dottedIdentifier),
+        });
       });
-      $.CONSUME(tokenVocabulary.SelectKw); // select
+      $.OPTION1(() => {
+        $.SUBRULE($.orderClause);
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
+    $.RULE('queryColumns', () => {
       $.AT_LEAST_ONE_SEP({
         // col1, col2, fct1(3)
         SEP: tokenVocabulary.Comma,
@@ -1330,11 +1348,24 @@ class PlSqlParser extends CstParser {
           // also includes just >> * <<
           $.SUBRULE($.value); // direct value / function call / variable
           $.OPTION(() => {
+            $.SUBRULE($.queryOverClause);
+          });
+          $.OPTION4(() => {
             $.CONSUME(tokenVocabulary.AsKw);
-            $.CONSUME2(tokenVocabulary.Identifier); // alias
+            $.CONSUME(tokenVocabulary.Identifier); // alias
           });
         },
       });
+    });
+
+    // TODO union, minus, intersect
+    // TODO distinct
+    $.RULE('query', () => {
+      $.OPTION9(() => {
+        $.SUBRULE($.withClause);
+      });
+      $.CONSUME(tokenVocabulary.SelectKw); // select
+      $.SUBRULE($.queryColumns);
       $.OPTION1(() => {
         $.CONSUME1(tokenVocabulary.IntoKw); // into
         $.AT_LEAST_ONE_SEP2({

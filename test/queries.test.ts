@@ -381,6 +381,40 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('order by asc desc', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.league_id = fl.league_id
+         order by 1 desc, fl.league_name asc
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('order by nulls first last', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.league_id = fl.league_id
+         order by 1 desc nulls first, fl.league_name asc nulls last
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('order by fc_call', () => {
     const code = `
       begin
@@ -477,6 +511,36 @@ describe('Queries', () => {
         from employees e
         join other_schema.departments d
           on e.detpno = d.deptno;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('window function simple over partition', () => {
+    const code = `
+    begin
+      select empno
+           , deptno
+           , sal
+           , first_value(sal) over (partition by deptno) as first_sal_in_dept
+        from emp;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('window function simple over partition + order', () => {
+    const code = `
+    begin
+      select empno
+           , deptno
+           , sal
+           , first_value(sal) over (partition by deptno order by sal asc nulls last) as first_sal_in_dept
+        from emp;
     end;
   `;
 

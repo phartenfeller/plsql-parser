@@ -30,12 +30,6 @@ const End = createToken({
   longer_alt: Identifier,
 });
 
-const Null = createToken({
-  name: 'Null',
-  pattern: /null/i,
-  longer_alt: Identifier,
-});
-
 const CreateKw = createToken({
   name: 'CreateKw',
   pattern: /create/i,
@@ -126,7 +120,6 @@ const allTokens = [
   End,
   ...dataTypes,
   ...values,
-  Null,
   ...sql,
   ...dynSql,
   ...transaction,

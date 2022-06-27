@@ -33,8 +33,26 @@ const GroupByKw = createToken({
 
 const OrderByKw = createToken({
   name: 'OrderByKw',
-  pattern: /order by/i,
+  pattern: /order(\s*)by/i,
   longer_alt: Identifier,
+});
+
+const AscDescKw = createToken({
+  name: 'AscDescKw',
+  pattern: /asc|desc/i,
+  longer_alt: Identifier,
+});
+
+const NullsFirstLastKw = createToken({
+  name: 'NullsFirstLastKw',
+  pattern: /nulls(\s*)(first|last)/i,
+  longer_alt: Identifier,
+});
+
+const Null = createToken({
+  name: 'Null',
+  pattern: /null/i,
+  longer_alt: NullsFirstLastKw,
 });
 
 const WithKw = createToken({
@@ -156,6 +174,18 @@ const ForallKw = createToken({
   longer_alt: Identifier,
 });
 
+const OverKw = createToken({
+  name: 'OverKw',
+  pattern: /over/i,
+  longer_alt: Identifier,
+});
+
+const PartitionByKw = createToken({
+  name: 'PartitionByKw',
+  pattern: /partition(\s*)by/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -163,6 +193,9 @@ export default [
   WhereKw,
   GroupByKw,
   OrderByKw,
+  AscDescKw,
+  NullsFirstLastKw,
+  Null,
   WithKw,
   AndOr,
   AndKw,
@@ -182,4 +215,6 @@ export default [
   SetKw,
   HavingKw,
   ForallKw,
+  OverKw,
+  PartitionByKw,
 ];
