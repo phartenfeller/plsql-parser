@@ -102,6 +102,12 @@ const Integer = createToken({
 });
 const String = createToken({ name: 'String', pattern: /'((?:''|[^'])*)'/ });
 
+const Quote = createToken({
+  name: 'Quote',
+  pattern: /"/,
+  group: Lexer.SKIPPED,
+});
+
 const WhiteSpace = createToken({
   name: 'WhiteSpace',
   pattern: /[ \t\n\r]+/,
@@ -110,6 +116,7 @@ const WhiteSpace = createToken({
 
 const allTokens = [
   WhiteSpace,
+  Quote,
   // "keywords" appear before the Identifier
   ...pragma,
   ...exception,
@@ -156,8 +163,10 @@ export function lex(inputText: string) {
   const lexingResult = SelectLexer.tokenize(inputText);
 
   if (lexingResult.errors && lexingResult.errors.length > 0) {
-    console.log('errors: ', lexingResult.errors);
-    // throw Error('Sad Sad Panda, lexing errors detected');
+    //console.log('errors: ', lexingResult.errors);
+    throw Error(
+      `Lexing errors detected: ${JSON.stringify(lexingResult.errors)}`
+    );
   }
 
   return lexingResult;
