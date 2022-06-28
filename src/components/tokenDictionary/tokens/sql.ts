@@ -55,12 +55,6 @@ const Null = createToken({
   longer_alt: NullsFirstLastKw,
 });
 
-const WithKw = createToken({
-  name: 'WithKw',
-  pattern: /with/i,
-  longer_alt: Identifier,
-});
-
 const AndOr = createToken({
   name: 'AndOr',
   pattern: Lexer.NA,
@@ -186,6 +180,18 @@ const PartitionByKw = createToken({
   longer_alt: Identifier,
 });
 
+const WithinGroupKw = createToken({
+  name: 'WithinGroupKw',
+  pattern: /within(\s*)group/i,
+  longer_alt: Identifier,
+});
+
+const WithKw = createToken({
+  name: 'WithKw',
+  pattern: /with/i,
+  longer_alt: WithinGroupKw,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -217,4 +223,5 @@ export default [
   ForallKw,
   OverKw,
   PartitionByKw,
+  WithinGroupKw,
 ];

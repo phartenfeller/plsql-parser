@@ -547,4 +547,36 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('simple listagg', () => {
+    const code = `
+    begin
+      select department_id
+           , listagg(last_name, '; ') within group (order by hire_date) "employees"
+        from employees
+       group by department_id
+       order by department_id;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('anlaytic listagg', () => {
+    const code = `
+    begin
+      select department_id
+           , hire_date
+           , last_name
+           , listagg(last_name, '; ') within group (order by hire_date, last_name) over (partition by department_id) as "emp_list"
+        from employees
+       where hire_date < '01-SEP-2003'
+       order by 1, 2, 3;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

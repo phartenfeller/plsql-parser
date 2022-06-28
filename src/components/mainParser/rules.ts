@@ -1340,6 +1340,13 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
+    $.RULE('queryWithinGroupClause', () => {
+      $.CONSUME(tokenVocabulary.WithinGroupKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.orderClause);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
     $.RULE('queryColumns', () => {
       $.AT_LEAST_ONE_SEP({
         // col1, col2, fct1(3)
@@ -1348,10 +1355,15 @@ class PlSqlParser extends CstParser {
           // also includes just >> * <<
           $.SUBRULE($.value); // direct value / function call / variable
           $.OPTION(() => {
+            $.SUBRULE($.queryWithinGroupClause);
+          });
+          $.OPTION1(() => {
             $.SUBRULE($.queryOverClause);
           });
           $.OPTION4(() => {
-            $.CONSUME(tokenVocabulary.AsKw);
+            $.OPTION5(() => {
+              $.CONSUME(tokenVocabulary.AsKw);
+            });
             $.CONSUME(tokenVocabulary.Identifier); // alias
           });
         },
