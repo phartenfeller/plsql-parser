@@ -1370,6 +1370,29 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('sqlFromClause', () => {
+      $.CONSUME(tokenVocabulary.FromKw); // from
+      $.AT_LEAST_ONE_SEP({
+        // table 1, table 2
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.OR([
+            { ALT: () => $.SUBRULE($.querySource) },
+            {
+              ALT: () => {
+                $.CONSUME(tokenVocabulary.OpenBracket);
+                $.SUBRULE($.query);
+                $.CONSUME(tokenVocabulary.ClosingBracket);
+                $.OPTION1(() => {
+                  $.CONSUME3(tokenVocabulary.Identifier); // alias
+                });
+              },
+            },
+          ]);
+        },
+      });
+    });
+
     // TODO union, minus, intersect
     // TODO distinct
     $.RULE('query', () => {
@@ -1388,14 +1411,7 @@ class PlSqlParser extends CstParser {
           },
         });
       });
-      $.CONSUME(tokenVocabulary.FromKw); // from
-      $.AT_LEAST_ONE_SEP3({
-        // table 1, table 2
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.SUBRULE($.querySource);
-        },
-      });
+      $.SUBRULE($.sqlFromClause);
       $.SUBRULE($.tableJoin);
       $.OPTION2(() => {
         $.SUBRULE($.whereClause);

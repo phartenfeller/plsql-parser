@@ -1,6 +1,19 @@
 import parse from '../src/components/mainParser/recoveryParser';
 
 describe('Queries', () => {
+  test('table alias', () => {
+    const code = `
+      begin
+        select *
+          from dual d
+         ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('from table on array', () => {
     const code = `
       begin
@@ -573,6 +586,43 @@ describe('Queries', () => {
         from employees
        where hire_date < '01-SEP-2003'
        order by 1, 2, 3;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('from multiple tables', () => {
+    const code = `
+      begin
+        select *
+          from dual d
+             , football_clubs f;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('select from subquery', () => {
+    const code = `
+    begin
+      select * from ( select * from football_clubs);
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('select from table + subquery', () => {
+    const code = `
+    begin
+      select * 
+        from dual d
+           , ( select * from football_clubs) f;
     end;
   `;
 
