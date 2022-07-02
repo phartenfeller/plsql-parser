@@ -9,7 +9,10 @@ class PlSqlParser extends CstParser {
   global: any;
 
   constructor({ recover }: ParserArgs) {
-    super(tokenVocabulary, { recoveryEnabled: recover });
+    super(tokenVocabulary, {
+      recoveryEnabled: recover,
+      nodeLocationTracking: 'full',
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const $: any = this;
@@ -417,7 +420,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('createPackageSpec', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
-      $.SUBRULE($.dottedIdentifier); // pkg_name | schema_name.pkg_name
+      $.SUBRULE($.dottedIdentifier, { LABEL: 'package_name' }); // pkg_name | schema_name.pkg_name
       $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
@@ -519,7 +522,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('cursorDeclaration', () => {
       $.CONSUME(tokenVocabulary.CursorKw); // cursor
-      $.CONSUME(tokenVocabulary.Identifier); // my_cursor
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'cursor_name' }); // my_cursor
       $.CONSUME(tokenVocabulary.IsKw); // is
       $.SUBRULE($.query);
       $.CONSUME(tokenVocabulary.Semicolon); // ;
@@ -533,7 +536,7 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('exceptionDeclaration', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'exception_name' });
       $.CONSUME(tokenVocabulary.ExceptionKw);
       $.CONSUME(tokenVocabulary.Semicolon);
     });
@@ -558,7 +561,7 @@ class PlSqlParser extends CstParser {
     // TODO make sure return is only called in functions
     $.RULE('standardVariableDeclaration', () => {
       // follow pattern ident (constant) type...
-      $.CONSUME(tokenVocabulary.Identifier); // l_row
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'variable_name' }); // l_row
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.ConstantKw);
       });
@@ -887,7 +890,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('funcSpec', () => {
       $.CONSUME(tokenVocabulary.FunctionKw); // function
-      $.CONSUME(tokenVocabulary.Identifier); // fnc_name
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'function_name' }); // fnc_name
       $.OPTION(() => {
         $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
       });
@@ -909,7 +912,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('procSpec', () => {
       $.CONSUME(tokenVocabulary.ProcedureKw); // procedure
-      $.CONSUME(tokenVocabulary.Identifier); // prc_name
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'procedure_name' }); // prc_name
       $.OPTION(() => {
         $.SUBRULE($.argumentList); // (pi_vc in varchar2, pi_dat in date)
       });

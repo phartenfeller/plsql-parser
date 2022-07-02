@@ -1,3 +1,4 @@
+import { CstNode } from 'chevrotain';
 import { lex } from '../tokenDictionary/tokens';
 import PlSqlParser from './rules';
 import logParserErrors from './util/logParserErrors';
@@ -11,7 +12,7 @@ function parse(input: string, log = false) {
   parserInstance.input = lexResult.tokens;
 
   // No semantic actions so this won't return anything yet.
-  const cst = parserInstance.global();
+  const cst: CstNode = parserInstance.global();
 
   if (parserInstance.errors.length > 0 && log) {
     logParserErrors(parserInstance.errors);

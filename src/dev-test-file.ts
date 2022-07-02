@@ -2,6 +2,7 @@ import readFile from './util/readFile';
 import { lex } from './components/tokenDictionary/tokens';
 import parse from './components/mainParser/noRecoveryParser';
 import { IToken } from 'chevrotain';
+import plSqlInterpreter from './components/cstVisitor';
 
 // const yellowLog = (text) => `\x1b[33m${text}\x1b[0m`;
 
@@ -50,7 +51,11 @@ const main = async () => {
       throw new Error('File is not a string');
     }
     logLexer(file);
-    parse(file, true);
+    const res = parse(file, true);
+    // const ast = cstToAst(res.cst);
+    // console.log(JSON.stringify(ast, null, 2));
+    const interpreted = plSqlInterpreter.visit(res.cst);
+    console.log('interpreted', JSON.stringify(interpreted, null, 2));
   } catch (err) {
     console.log(err);
   }
