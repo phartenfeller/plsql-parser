@@ -115,8 +115,34 @@ class PlSqlInterpreter extends BaseCstVisitor {
         obj.arguments = this.visit(fs.children.argumentList);
       }
 
+      if (fs?.children?.dataType) {
+        obj.return = recusiveGetTokenString(fs.children.dataType);
+      } else if (fs?.children?.objType) {
+        obj.return = recusiveGetTokenString(fs.children.objType);
+      }
+
       obj.deterministic = !!fs?.children?.DeterministicKw;
       obj.resultCache = !!fs?.children?.ResultCacheKw;
+      obj.pipelined = !!fs?.children?.PipelinedKw;
+
+      return obj;
+    }
+
+    if (ctx.procSpec && ctx.procSpec[0]) {
+      const ps = ctx.procSpec[0];
+
+      obj.type = ObjectType.prc;
+      obj.context = ObjectContext.spec;
+
+      obj.position = getPosition(ps.location);
+
+      if (ps?.children?.procedure_name) {
+        obj.name = recusiveGetTokenString(ps.children.procedure_name);
+      }
+
+      if (ps?.children?.argumentList) {
+        obj.arguments = this.visit(ps.children.argumentList);
+      }
 
       return obj;
 
@@ -133,7 +159,9 @@ class PlSqlInterpreter extends BaseCstVisitor {
       a.name = recusiveGetTokenString(arg.children.Identifier);
       a.dataType = recusiveGetTokenString(arg.children.dataType);
 
-      if (
+      if (!arg.children.inOut) {
+        a.direction = ArgumentDirection.in;
+      } else if (
         arg.children.inOut[0].children.InKw &&
         arg.children.inOut[0].children.OutKw
       ) {
