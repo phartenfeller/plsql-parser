@@ -3,6 +3,7 @@ import { parserInstance } from '../mainParser/noRecoveryParser';
 import { recusiveGetToken, recusiveGetTokenString } from './recusiveGetToken';
 import {
   ArgumentDirection,
+  GlobalObjects,
   NodePosition,
   ObjectContext,
   ObjectType,
@@ -30,11 +31,13 @@ class PlSqlInterpreter extends BaseCstVisitor {
   }
 
   global(ctx: any) {
-    const globalObjects: any[] = [];
+    const globalObjects = <GlobalObjects>{};
 
     if (ctx.createPackage && typeof ctx.createPackage.length !== 'undefined') {
+      globalObjects.packages = [];
+
       ctx.createPackage.forEach((p: CstNode) =>
-        globalObjects.push(this.visit(p))
+        globalObjects.packages.push(this.visit(p))
       );
     }
 
@@ -46,7 +49,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
 
     if (ctx.createPackageSpec && ctx.createPackageSpec[0]) {
       const ps = ctx.createPackageSpec[0];
-      pkg.type = 'packageSpec';
+      pkg.type = ObjectContext.spec;
       pkg.position = getPosition(ps.location);
       pkg.name = recusiveGetTokenString(ps.children.package_name);
 
@@ -59,6 +62,24 @@ class PlSqlInterpreter extends BaseCstVisitor {
 
       if (ps.children.objectDeclaration) {
         pkg.content.objects = ps.children.objectDeclaration.map((p: CstNode) =>
+          this.visit(p)
+        );
+      }
+    } else if (ctx.createPackageBody && ctx.createPackageBody[0]) {
+      const pb = ctx.createPackageBody[0];
+      pkg.type = ObjectContext.body;
+      pkg.position = getPosition(pb.location);
+      pkg.name = recusiveGetTokenString(pb.children.package_name);
+
+      pkg.content = <PackageContent>{};
+      if (pb.children.variableDeclaration) {
+        pkg.content.variables = pb.children.variableDeclaration.map(
+          (p: CstNode) => this.visit(p)
+        );
+      }
+
+      if (pb.children.objectDeclaration) {
+        pkg.content.objects = pb.children.objectDeclaration.map((p: CstNode) =>
           this.visit(p)
         );
       }

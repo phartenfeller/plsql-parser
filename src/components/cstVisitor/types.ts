@@ -1,8 +1,13 @@
+/* eslint-disable no-unused-vars */
 export type NodePosition = {
   startLine: number | undefined;
   startOffset: number;
   endLine: number | undefined;
   endColumn: number | undefined;
+};
+
+export type GlobalObjects = {
+  packages: PackageDef[];
 };
 
 export type VariableDef = {
@@ -19,7 +24,7 @@ export type PackageContent = {
 };
 
 export type PackageDef = {
-  type: string;
+  type: ObjectContext;
   position: NodePosition;
   name: string;
   content: PackageContent;

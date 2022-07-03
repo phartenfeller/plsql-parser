@@ -438,7 +438,7 @@ class PlSqlParser extends CstParser {
     $.RULE('createPackageBody', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.CONSUME(tokenVocabulary.BodyKw); // body
-      $.SUBRULE($.dottedIdentifier); // pkg_name | schema_name.pkg_name
+      $.SUBRULE($.dottedIdentifier, { LABEL: 'package_name' }); // pkg_name | schema_name.pkg_name
       $.CONSUME(tokenVocabulary.AsIs);
       $.MANY(() => {
         $.OR2([

@@ -52,8 +52,7 @@ const main = async () => {
     }
     logLexer(file);
     const res = parse(file, true);
-    // const ast = cstToAst(res.cst);
-    // console.log(JSON.stringify(ast, null, 2));
+
     const interpreted = plSqlInterpreter.visit(res.cst);
     console.log('interpreted', JSON.stringify(interpreted, null, 2));
   } catch (err) {
