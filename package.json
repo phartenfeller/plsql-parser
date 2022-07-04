@@ -1,7 +1,7 @@
 {
   "name": "oracle-plsql-parser",
   "description": "Parser for Oracle PL/SQL",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": "https://github.com/phartenfeller/plsql-parser.git",
   "website": "https://github.com/phartenfeller/plsql-parser",
   "author": "Philipp Hartenfeller",

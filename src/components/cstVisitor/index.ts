@@ -30,7 +30,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
     this.validateVisitor();
   }
 
-  global(ctx: any) {
+  global(ctx: any): GlobalObjects {
     const globalObjects = <GlobalObjects>{};
 
     if (ctx.createPackage && typeof ctx.createPackage.length !== 'undefined') {
@@ -41,7 +41,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
       );
     }
 
-    return { globalObjects };
+    return globalObjects;
   }
 
   createPackage(ctx: any): PackageDef {

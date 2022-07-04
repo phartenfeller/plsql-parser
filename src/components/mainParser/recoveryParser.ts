@@ -1,11 +1,12 @@
 import { CstNode } from 'chevrotain';
 import { lex } from '../tokenDictionary/tokens';
 import PlSqlParser from './rules';
+import { ParseResult } from './types';
 import logParserErrors from './util/logParserErrors';
 
 const parserInstance = new PlSqlParser({ recover: true });
 
-function parse(input: string, log = false) {
+function parse(input: string, log = false): ParseResult {
   const lexResult = lex(input);
 
   // ".input" is a setter which will reset the parser's internal's state.
