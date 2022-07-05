@@ -629,4 +629,60 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('fetch first rows only', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+       fetch first 5 rows only
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('fetch first rows with ties', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+       fetch first 5 rows with ties
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('fetch first row only', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+       fetch first row only
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('fetch first 5 percent rows only', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+       fetch first 5 percent rows only
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

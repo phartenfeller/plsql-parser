@@ -192,6 +192,31 @@ const WithKw = createToken({
   longer_alt: WithinGroupKw,
 });
 
+// dont want single tokens for first / last as they are also function names
+const FetchFirstLastKw = createToken({
+  name: 'FetchFirstLastKw',
+  pattern: /fetch\s+(first|last)/i,
+  longer_alt: Identifier,
+});
+
+const FetchKw = createToken({
+  name: 'FetchKw',
+  pattern: /fetch/i,
+  longer_alt: FetchFirstLastKw,
+});
+
+const PercentKw = createToken({
+  name: 'PercentKw',
+  pattern: /percent/i,
+  longer_alt: Identifier,
+});
+
+const RowsOnlyTiesKw = createToken({
+  name: 'RowsOnlyTiesKw',
+  pattern: /row[s]?(\s*)(only|with(\s*)ties)/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -224,4 +249,8 @@ export default [
   OverKw,
   PartitionByKw,
   WithinGroupKw,
+  FetchFirstLastKw,
+  FetchKw,
+  PercentKw,
+  RowsOnlyTiesKw,
 ];

@@ -1396,6 +1396,20 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('fetchQueryClause', () => {
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.FetchFirstLastKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.FetchKw) },
+      ]);
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Integer);
+        $.OPTION1(() => {
+          $.CONSUME(tokenVocabulary.PercentKw);
+        });
+      });
+      $.CONSUME(tokenVocabulary.RowsOnlyTiesKw);
+    });
+
     // TODO union, minus, intersect
     // TODO distinct
     $.RULE('query', () => {
@@ -1424,6 +1438,9 @@ class PlSqlParser extends CstParser {
       });
       $.OPTION4(() => {
         $.SUBRULE($.orderClause);
+      });
+      $.OPTION5(() => {
+        $.SUBRULE($.fetchQueryClause);
       });
     });
 

@@ -118,6 +118,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
   }
 
   objectDeclaration(ctx: any) {
+    // TODO: type
     const obj = <any>{};
 
     if (ctx.funcSpec && ctx.funcSpec[0]) {
