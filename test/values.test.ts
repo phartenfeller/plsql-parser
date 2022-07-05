@@ -161,4 +161,45 @@ describe('values', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('alternate quoting string 1', () => {
+    const code = `
+    declare
+      l_str varchar2(255 char);
+    begin
+      l_str := q'[ what is ' up ' here ' ?']';
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('alternate quoting string 2', () => {
+    const code = `
+    declare
+      l_str varchar2(255 char);
+    begin
+      l_str := q'! what is ' up ' here ' ?'!';
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('alternate quoting string multiline', () => {
+    const code = `
+    declare
+      l_str varchar2(255 char);
+    begin
+      l_str := q'( 
+          what is '
+       up ' here ' ?')';
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

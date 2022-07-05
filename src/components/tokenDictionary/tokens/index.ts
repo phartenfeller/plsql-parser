@@ -12,6 +12,7 @@ import subprograms from './subprograms';
 import symbols from './symbols';
 import transaction from './transaction';
 import values from './values';
+import strings from './strings';
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -94,7 +95,6 @@ const Integer = createToken({
   name: 'Integer',
   pattern: /0|[1-9]\d*/,
 });
-const String = createToken({ name: 'String', pattern: /'((?:''|[^'])*)'/ });
 
 const Quote = createToken({
   name: 'Quote',
@@ -140,7 +140,7 @@ const allTokens = [
   Identifier,
   Float,
   Integer,
-  String,
+  ...strings,
 ];
 
 const SelectLexer = new Lexer(allTokens, { positionTracking: 'full' });
