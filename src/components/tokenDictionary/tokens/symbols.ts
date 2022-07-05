@@ -95,6 +95,12 @@ const Concat = createToken({
   categories: ValueSeperator,
 });
 
+const Pipe = createToken({
+  name: 'Pipe',
+  pattern: /\|/,
+  longer_alt: Concat,
+});
+
 const Percent = createToken({
   name: 'Percent',
   pattern: /%/,
@@ -131,6 +137,7 @@ export default [
   OpenBracket,
   ClosingBracket,
   Concat,
+  Pipe,
   Percent,
   Dollar,
   Dot,
