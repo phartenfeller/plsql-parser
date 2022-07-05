@@ -1,9 +1,14 @@
-export function recusiveGetToken(ctx: any | any[]) {
+type IdentifierArray = {
+  value: string;
+  startPos: number;
+};
+
+function recusiveGetToken(ctx: any | any[]) {
   if (!ctx) {
     throw new Error(`No ctx passed`);
   }
 
-  const values: string[] = [];
+  const values: IdentifierArray[] = [];
 
   let ctxTokens: any[] = [];
 
@@ -15,7 +20,10 @@ export function recusiveGetToken(ctx: any | any[]) {
 
   ctxTokens.forEach((c) => {
     if (c.image) {
-      values.push(c.image);
+      values.push({
+        value: c.image,
+        startPos: c.startOffset ?? c.location.startOffset,
+      });
     } else if (c.children) {
       values.push(...recusiveGetToken(c.children));
     } else {
@@ -25,7 +33,10 @@ export function recusiveGetToken(ctx: any | any[]) {
         if (c[k] && Array.isArray(c[k])) {
           c[k].forEach((v: any) => {
             if (v.image) {
-              values.push(v.image);
+              values.push({
+                value: v.image,
+                startPos: v.startOffset ?? v.location.startOffset,
+              });
             } else if (v.children) {
               values.push(...recusiveGetToken(v.children));
             } else {
@@ -42,7 +53,8 @@ export function recusiveGetToken(ctx: any | any[]) {
   return values;
 }
 
-export function recusiveGetTokenString(ctx: any | any[]) {
+export default function recusiveGetTokenString(ctx: any | any[]) {
   const values = recusiveGetToken(ctx);
-  return values.join(' ');
+  const sorted = values.sort((a, b) => a.startPos - b.startPos);
+  return sorted.map((v) => v.value).join('');
 }

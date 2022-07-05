@@ -1,6 +1,6 @@
 import { CstNode, CstNodeLocation } from 'chevrotain';
 import { parserInstance } from '../mainParser/noRecoveryParser';
-import { recusiveGetToken, recusiveGetTokenString } from './recusiveGetToken';
+import recusiveGetTokenString from './recusiveGetTokenString';
 import {
   ArgumentDirection,
   GlobalObjects,
@@ -72,6 +72,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
       pkg.name = recusiveGetTokenString(pb.children.package_name);
 
       pkg.content = <PackageContent>{};
+      pkg.content.objects = [];
       if (pb.children.variableDeclaration) {
         pkg.content.variables = pb.children.variableDeclaration.map(
           (p: CstNode) => this.visit(p)
@@ -81,6 +82,12 @@ class PlSqlInterpreter extends BaseCstVisitor {
       if (pb.children.objectDeclaration) {
         pkg.content.objects = pb.children.objectDeclaration.map((p: CstNode) =>
           this.visit(p)
+        );
+      }
+
+      if (pb.children.packageObjSpec) {
+        pb.children.packageObjSpec.forEach((p: CstNode) =>
+          pkg.content.objects?.push(this.visit(p))
         );
       }
     }
@@ -113,62 +120,86 @@ class PlSqlInterpreter extends BaseCstVisitor {
   }
 
   value(ctx: any) {
-    const values = recusiveGetToken(ctx);
-    return values.join(' ');
+    return recusiveGetTokenString(ctx);
   }
 
   objectDeclaration(ctx: any) {
-    // TODO: type
-    const obj = <any>{};
-
     if (ctx.funcSpec && ctx.funcSpec[0]) {
-      const fs = ctx.funcSpec[0];
-
-      obj.type = ObjectType.fc;
-      obj.context = ObjectContext.spec;
-
-      obj.position = getPosition(fs.location);
-
-      if (fs?.children?.function_name) {
-        obj.name = recusiveGetTokenString(fs.children.function_name);
-      }
-
-      if (fs?.children?.argumentList) {
-        obj.arguments = this.visit(fs.children.argumentList);
-      }
-
-      if (fs?.children?.dataType) {
-        obj.return = recusiveGetTokenString(fs.children.dataType);
-      } else if (fs?.children?.objType) {
-        obj.return = recusiveGetTokenString(fs.children.objType);
-      }
-
-      obj.deterministic = !!fs?.children?.DeterministicKw;
-      obj.resultCache = !!fs?.children?.ResultCacheKw;
-      obj.pipelined = !!fs?.children?.PipelinedKw;
-
-      return obj;
+      const fc = this.visit(ctx.funcSpec[0]);
+      fc.position = getPosition(ctx.funcSpec[0].location);
+      return fc;
     }
 
     if (ctx.procSpec && ctx.procSpec[0]) {
-      const ps = ctx.procSpec[0];
+      const prc = this.visit(ctx.procSpec[0]);
+      prc.position = getPosition(ctx.procSpec[0].location);
+      return prc;
+    }
+  }
 
-      obj.type = ObjectType.prc;
-      obj.context = ObjectContext.spec;
+  funcSpec(ctx: any) {
+    const obj = <any>{};
 
-      obj.position = getPosition(ps.location);
+    obj.type = ObjectType.fc;
+    obj.context = ObjectContext.spec;
 
-      if (ps?.children?.procedure_name) {
-        obj.name = recusiveGetTokenString(ps.children.procedure_name);
-      }
+    //obj.position = getPosition(ctx.location);
 
-      if (ps?.children?.argumentList) {
-        obj.arguments = this.visit(ps.children.argumentList);
-      }
+    if (ctx?.function_name) {
+      obj.name = recusiveGetTokenString(ctx.function_name);
+    }
 
-      return obj;
+    if (ctx?.argumentList) {
+      obj.arguments = this.visit(ctx.argumentList);
+    }
 
-      //debugger;
+    if (ctx?.dataType) {
+      obj.return = recusiveGetTokenString(ctx.dataType);
+    } else if (ctx?.objType) {
+      obj.return = recusiveGetTokenString(ctx.objType);
+    }
+
+    obj.deterministic = !!ctx?.DeterministicKw;
+    obj.resultCache = !!ctx?.ResultCacheKw;
+    obj.pipelined = !!ctx?.PipelinedKw;
+
+    return obj;
+  }
+
+  procSpec(ctx: any) {
+    const obj = <any>{};
+
+    obj.type = ObjectType.prc;
+    obj.context = ObjectContext.spec;
+
+    // obj.position = getPosition(ctx.location);
+
+    if (ctx?.procedure_name) {
+      obj.name = recusiveGetTokenString(ctx.procedure_name);
+    }
+
+    if (ctx?.argumentList) {
+      obj.arguments = this.visit(ctx.argumentList);
+    }
+
+    return obj;
+  }
+
+  packageObjSpec(ctx: any) {
+    if (ctx.funcBody && ctx.funcBody[0] && ctx.funcBody[0].children.funcSpec) {
+      const fc = this.visit(ctx.funcBody[0].children.funcSpec);
+      fc.context = ObjectContext.body;
+      fc.position = getPosition(ctx.funcBody[0].location);
+      return fc;
+    } else if (
+      ctx.procBody &&
+      ctx.procBody[0] &&
+      ctx.procBody[0].children.procSpec
+    ) {
+      const prc = this.visit(ctx.procBody[0].children.procSpec);
+      prc.context = ObjectContext.body;
+      prc.position = getPosition(ctx.procBody[0].location);
+      return prc;
     }
   }
 
@@ -179,7 +210,11 @@ class PlSqlInterpreter extends BaseCstVisitor {
       const a = <any>{};
 
       a.name = recusiveGetTokenString(arg.children.Identifier);
-      a.dataType = recusiveGetTokenString(arg.children.dataType);
+      if (arg.children.dataType) {
+        a.dataType = recusiveGetTokenString(arg.children.dataType);
+      } else if (arg.children.objType) {
+        a.dataType = recusiveGetTokenString(arg.children.objType);
+      }
 
       if (!arg.children.inOut) {
         a.direction = ArgumentDirection.in;
