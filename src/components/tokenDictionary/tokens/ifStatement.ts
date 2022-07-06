@@ -1,4 +1,4 @@
-import { createToken } from 'chevrotain';
+import { createToken, TokenType } from 'chevrotain';
 import exceptions from './exception';
 import Identifier from './Identifier';
 
@@ -29,7 +29,10 @@ const Then = createToken({
 const CaseKw = createToken({
   name: 'CaseKw',
   pattern: /case/i,
-  longer_alt: exceptions.find((e) => e.name === 'CaseNotFoundKw'),
+  longer_alt: [
+    exceptions.find((e) => e.name === 'CaseNotFoundKw') as TokenType,
+    Identifier,
+  ],
 });
 
 export default [If, Elsif, Else, Then, CaseKw];
