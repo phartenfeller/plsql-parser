@@ -120,12 +120,6 @@ const CrossKw = createToken({
   categories: JoinDirection,
 });
 
-const OnKw = createToken({
-  name: 'OnKw',
-  pattern: /on/i,
-  longer_alt: Identifier,
-});
-
 const InsertKw = createToken({
   name: 'InsertKw',
   pattern: /insert/i,
@@ -186,16 +180,10 @@ const WithinGroupKw = createToken({
   longer_alt: Identifier,
 });
 
-const WithKw = createToken({
-  name: 'WithKw',
-  pattern: /with/i,
-  longer_alt: WithinGroupKw,
-});
-
 // dont want single tokens for first / last as they are also function names
 const FetchFirstLastKw = createToken({
   name: 'FetchFirstLastKw',
-  pattern: /fetch\s+(first|last)/i,
+  pattern: /fetch\s+(first|last|next)/i,
   longer_alt: Identifier,
 });
 
@@ -211,10 +199,28 @@ const PercentKw = createToken({
   longer_alt: Identifier,
 });
 
-const RowsOnlyTiesKw = createToken({
-  name: 'RowsOnlyTiesKw',
-  pattern: /row[s]?(\s*)(only|with(\s*)ties)/i,
+const OnlyKw = createToken({
+  name: 'OnlyKw',
+  pattern: /only/i,
   longer_alt: Identifier,
+});
+
+const WithTiesKw = createToken({
+  name: 'WithTiesKw',
+  pattern: /with(\s*)ties/i,
+  longer_alt: Identifier,
+});
+
+const WithKw = createToken({
+  name: 'WithKw',
+  pattern: /with/i,
+  longer_alt: [WithinGroupKw, WithTiesKw, Identifier],
+});
+
+const OnKw = createToken({
+  name: 'OnKw',
+  pattern: /on/i,
+  longer_alt: [Identifier, OnlyKw],
 });
 
 export default [
@@ -227,7 +233,6 @@ export default [
   AscDescKw,
   NullsFirstLastKw,
   Null,
-  WithKw,
   AndOr,
   AndKw,
   OrKw,
@@ -238,7 +243,6 @@ export default [
   InnerKw,
   OuterKw,
   CrossKw,
-  OnKw,
   InsertKw,
   ValuesKw,
   DeleteKw,
@@ -252,5 +256,8 @@ export default [
   FetchFirstLastKw,
   FetchKw,
   PercentKw,
-  RowsOnlyTiesKw,
+  OnlyKw,
+  WithTiesKw,
+  WithKw,
+  OnKw,
 ];

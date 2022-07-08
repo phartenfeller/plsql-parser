@@ -685,4 +685,33 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('offset rows', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+      offset 5 rows
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('offset and fetch next', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+      offset 10 rows
+       fetch next 7 rows only
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

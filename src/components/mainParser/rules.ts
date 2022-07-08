@@ -1412,18 +1412,28 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('offsetQueryClause', () => {
+      $.CONSUME(tokenVocabulary.OffsetKw);
+      $.CONSUME(tokenVocabulary.Integer);
+      $.CONSUME(tokenVocabulary.RowKw);
+    });
+
     $.RULE('fetchQueryClause', () => {
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.FetchFirstLastKw) },
         { ALT: () => $.CONSUME(tokenVocabulary.FetchKw) },
       ]);
-      $.OPTION(() => {
+      $.OPTION1(() => {
         $.CONSUME(tokenVocabulary.Integer);
-        $.OPTION1(() => {
+        $.OPTION2(() => {
           $.CONSUME(tokenVocabulary.PercentKw);
         });
       });
-      $.CONSUME(tokenVocabulary.RowsOnlyTiesKw);
+      $.CONSUME(tokenVocabulary.RowKw);
+      $.OR1([
+        { ALT: () => $.CONSUME(tokenVocabulary.WithTiesKw) },
+        { ALT: () => $.CONSUME(tokenVocabulary.OnlyKw) },
+      ]);
     });
 
     // TODO union, minus, intersect
@@ -1456,6 +1466,9 @@ class PlSqlParser extends CstParser {
         $.SUBRULE($.orderClause);
       });
       $.OPTION5(() => {
+        $.SUBRULE($.offsetQueryClause);
+      });
+      $.OPTION6(() => {
         $.SUBRULE($.fetchQueryClause);
       });
     });

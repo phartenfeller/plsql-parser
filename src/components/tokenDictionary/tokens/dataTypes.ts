@@ -1,5 +1,6 @@
-import { createToken, Lexer } from 'chevrotain';
+import { createToken, Lexer, TokenType } from 'chevrotain';
 import Identifier from './Identifier';
+import exception from './exception';
 
 const DtypeNumber = createToken({
   name: 'DtypeNumber',
@@ -91,7 +92,10 @@ const JsonScalarT = createToken({
 const Rowtype = createToken({
   name: 'Rowtype',
   pattern: /rowtype/i,
-  longer_alt: Identifier,
+  longer_alt: [
+    exception.find((t) => t.name === 'RowtypeMismatchKw') as TokenType,
+    Identifier,
+  ],
 });
 
 const Type = createToken({
@@ -100,10 +104,16 @@ const Type = createToken({
   longer_alt: Identifier,
 });
 
+const OffsetKw = createToken({
+  name: 'OffsetKw',
+  pattern: /offset/i,
+  longer_alt: Identifier,
+});
+
 const OfKw = createToken({
   name: 'OfKw',
   pattern: /of/i,
-  longer_alt: Identifier,
+  longer_alt: [OffsetKw, Identifier],
 });
 
 const MemberOfKw = createToken({
@@ -153,6 +163,7 @@ export default [
   JsonScalarT,
   Rowtype,
   Type,
+  OffsetKw,
   OfKw,
   MemberOfKw,
   IndexKw,

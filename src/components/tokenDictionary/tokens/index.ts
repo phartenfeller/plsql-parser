@@ -86,6 +86,15 @@ const ExtractKw = createToken({
   longer_alt: Identifier,
 });
 
+const RowKw = createToken({
+  name: 'RowKw',
+  pattern: /row[s]?/i,
+  longer_alt: [
+    Identifier,
+    exception.find((t) => t.name === 'RowtypeMismatchKw') as TokenType,
+  ],
+});
+
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
@@ -133,6 +142,7 @@ const allTokens = [
   TableKw,
   CursorKw,
   ExtractKw,
+  RowKw,
   ...subprograms,
   ...symbols,
   ...relationalOperators,
