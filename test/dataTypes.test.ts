@@ -56,7 +56,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline function', () => {
@@ -74,7 +74,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline procedure IN FUNCTION', () => {
@@ -97,7 +97,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline function with default', () => {
@@ -115,7 +115,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline function with :=', () => {
@@ -133,7 +133,7 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
   });
 
   test('inline function IN PROCEDURE', () => {
@@ -156,7 +156,26 @@ describe('Data Types', () => {
     `;
 
     const result = parse(code, false);
-    expect(result.errors.length).toEqual(0);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('pragma exception init', () => {
+    const code = `
+      declare
+        function get_one()
+          return number
+        as
+          pragma exception_init(e_conversion_failed, -20111); 
+        begin
+          return 1;
+        end get_one;
+      begin
+        null;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
   });
 });
 

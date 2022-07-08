@@ -617,7 +617,12 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.PragmaKw);
       $.OR([
         { ALT: () => $.CONSUME(tokenVocabulary.AutonomousTransactionKw) },
-        { ALT: () => $.CONSUME(tokenVocabulary.ExceptionInitKw) },
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.ExceptionInitKw);
+            $.SUBRULE($.valueInBrackets);
+          },
+        },
         { ALT: () => $.CONSUME(tokenVocabulary.RestrictReferencesKw) },
         { ALT: () => $.CONSUME(tokenVocabulary.SeriallyReusableKw) },
       ]);
