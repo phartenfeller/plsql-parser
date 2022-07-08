@@ -238,6 +238,7 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.SUBRULE($.nullStatement) },
             { ALT: () => $.SUBRULE($.exitStatement) },
             { ALT: () => $.SUBRULE($.ifStatement) },
+            { ALT: () => $.SUBRULE($.compilerIfStatement) },
             { ALT: () => $.SUBRULE($.caseStatement) },
             {
               ALT: () => $.SUBRULE($.functionCallSemicolon),
@@ -286,6 +287,12 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.Then); // Then
     });
 
+    $.RULE('compilerIfCondition', () => {
+      $.SUBRULE($.chainedConditions);
+      $.CONSUME(tokenVocabulary.Dollar); // $
+      $.CONSUME(tokenVocabulary.Then); // Then
+    });
+
     $.RULE('ifStatement', () => {
       $.CONSUME(tokenVocabulary.If); // if
       $.SUBRULE($.ifCondition);
@@ -310,6 +317,54 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.End); // end
       $.CONSUME2(tokenVocabulary.If); // if
       $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('compileErrorStatement', () => {
+      $.CONSUME(tokenVocabulary.CompileErrorKw);
+      $.AT_LEAST_ONE(() => {
+        $.SUBRULE($.value);
+      });
+      $.CONSUME3(tokenVocabulary.Dollar); // $
+      $.CONSUME(tokenVocabulary.End); // end
+    });
+
+    $.RULE('compilerIfStatement', () => {
+      $.CONSUME(tokenVocabulary.Dollar); // $
+      $.CONSUME(tokenVocabulary.If); // if
+      $.SUBRULE($.compilerIfCondition);
+      $.MANY(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.statement) },
+          { ALT: () => $.SUBRULE($.compileErrorStatement) },
+        ]);
+      });
+      $.OPTION(() => {
+        $.MANY2(() => {
+          $.CONSUME1(tokenVocabulary.Dollar); // $
+          $.CONSUME(tokenVocabulary.Elsif); // elsif
+          $.SUBRULE2($.compilerIfCondition);
+          $.MANY3(() => {
+            $.OR2([
+              { ALT: () => $.SUBRULE2($.statement) },
+              { ALT: () => $.SUBRULE2($.compileErrorStatement) },
+            ]);
+          });
+        });
+      });
+      $.OPTION2(() => {
+        $.CONSUME2(tokenVocabulary.Dollar); // $
+        $.CONSUME(tokenVocabulary.Else); // else
+        $.MANY4(() => {
+          $.OR3([
+            { ALT: () => $.SUBRULE3($.statement) },
+            { ALT: () => $.SUBRULE3($.compileErrorStatement) },
+          ]);
+        });
+      });
+      $.CONSUME3(tokenVocabulary.Dollar); // $
+      $.CONSUME(tokenVocabulary.End); // end
+      // no if keyword
+      // no semicolon
     });
 
     $.RULE('relationalOperators', () => {

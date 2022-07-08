@@ -107,9 +107,16 @@ const Percent = createToken({
   longer_alt: Identifier,
 });
 
+const CompileErrorKw = createToken({
+  name: 'CompileErrorKw',
+  pattern: /\$error/i,
+  longer_alt: Identifier,
+});
+
 const Dollar = createToken({
   name: 'Dollar',
   pattern: /\$/,
+  longer_alt: CompileErrorKw,
 });
 
 const Dot = createToken({
@@ -139,6 +146,7 @@ export default [
   Concat,
   Pipe,
   Percent,
+  CompileErrorKw,
   Dollar,
   Dot,
   Arrow,

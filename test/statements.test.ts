@@ -112,4 +112,43 @@ describe('statements', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('compiler if statement', () => {
+    const code = `
+    begin
+      $if wwv_flow_api.c_current >= 20200331 $then
+        select 
+          case friendly_url 
+              when 'Yes' then 1
+              when 'No' then 0
+          end  
+          into l_is_friendly_url
+          from apex_applications 
+        where application_id = pi_application_id;
+      $else
+        l_is_friendly_url := 0;
+      $end"
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('compiler if statement with error', () => {
+    const code = `
+    begin
+      $if 1 = 1 $then
+        null;
+      $elsif 1 = 2 $then
+        $error 'what is going on why is 1 = 2 ???' $end
+      $else
+        $error 'what is this number?' || 1 $end
+      $end"
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
