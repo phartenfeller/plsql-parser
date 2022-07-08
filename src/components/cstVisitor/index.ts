@@ -9,6 +9,9 @@ import {
   ObjectType,
   PackageContent,
   PackageDef,
+  SimpleVariableDef,
+  TypeClass,
+  TypeDef,
   VariableDef,
 } from './types';
 
@@ -90,6 +93,16 @@ class PlSqlInterpreter extends BaseCstVisitor {
           pkg.content.objects?.push(this.visit(p))
         );
       }
+
+      if (pb.children.typeDefiniton) {
+        pkg.content.types = pb.children.typeDefiniton.map((p: CstNode) => {
+          const t = this.visit(p);
+          if (p.location) {
+            t.position = getPosition(p.location);
+          }
+          return t;
+        });
+      }
     }
     return pkg;
   }
@@ -97,10 +110,8 @@ class PlSqlInterpreter extends BaseCstVisitor {
   variableDeclaration(ctx: any): VariableDef | null {
     const v = <VariableDef>{};
 
-    console.log('variableDeclaration', ctx);
     if (ctx.standardVariableDeclaration[0]) {
       const sv = ctx.standardVariableDeclaration[0];
-      console.log('standardVariableDeclaration', sv);
 
       v.position = getPosition(sv.location);
       v.name = recusiveGetTokenString(sv.children.variable_name);
@@ -121,6 +132,40 @@ class PlSqlInterpreter extends BaseCstVisitor {
 
   value(ctx: any) {
     return recusiveGetTokenString(ctx);
+  }
+
+  typeDefiniton(ctx: any) {
+    const type = <TypeDef>{};
+
+    type.type = ctx.type_table_type ? TypeClass.table : TypeClass.record;
+
+    if (ctx?.type_name) {
+      type.name = recusiveGetTokenString(ctx.type_name);
+    }
+
+    if (ctx.type_table_type) {
+      type.tableOf = recusiveGetTokenString(ctx.type_table_type);
+    }
+
+    if (ctx.type_table_index) {
+      type.tableIndex = recusiveGetTokenString(ctx.type_table_index);
+    }
+
+    if (
+      ctx.type_record_variable_name?.length &&
+      ctx.type_record_variable_name.length > 0
+    ) {
+      type.recordFields = [];
+
+      for (let i = 0; i < ctx.type_record_variable_name.length; i++) {
+        const field = <SimpleVariableDef>{};
+        field.name = recusiveGetTokenString(ctx.type_record_variable_name[i]);
+        field.type = recusiveGetTokenString(ctx.type_record_variable_type[i]);
+        type.recordFields.push(field);
+      }
+    }
+
+    return type;
   }
 
   objectDeclaration(ctx: any) {

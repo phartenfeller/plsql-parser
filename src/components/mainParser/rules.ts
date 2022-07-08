@@ -52,7 +52,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('typeDefiniton', () => {
       $.CONSUME(tokenVocabulary.Type);
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'type_name' });
       $.CONSUME(tokenVocabulary.IsKw);
       $.OR([
         {
@@ -60,11 +60,11 @@ class PlSqlParser extends CstParser {
           ALT: () => {
             $.CONSUME(tokenVocabulary.TableKw);
             $.CONSUME(tokenVocabulary.OfKw);
-            $.SUBRULE($.variableSpec);
+            $.SUBRULE($.variableSpec, { LABEL: 'type_table_type' });
             $.OPTION(() => {
               $.CONSUME(tokenVocabulary.IndexKw);
               $.CONSUME(tokenVocabulary.ByKw);
-              $.SUBRULE1($.variableSpec);
+              $.SUBRULE1($.variableSpec, { LABEL: 'type_table_index' });
             });
           },
         },
@@ -76,8 +76,12 @@ class PlSqlParser extends CstParser {
             $.AT_LEAST_ONE_SEP({
               SEP: tokenVocabulary.Comma,
               DEF: () => {
-                $.CONSUME1(tokenVocabulary.Identifier);
-                $.SUBRULE2($.variableSpec);
+                $.CONSUME1(tokenVocabulary.Identifier, {
+                  LABEL: 'type_record_variable_name',
+                });
+                $.SUBRULE2($.variableSpec, {
+                  LABEL: 'type_record_variable_type',
+                });
               },
             });
             $.CONSUME(tokenVocabulary.ClosingBracket);

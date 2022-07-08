@@ -10,17 +10,30 @@ export type GlobalObjects = {
   packages: PackageDef[];
 };
 
-export type VariableDef = {
+export type SimpleVariableDef = {
   type: string;
   position: NodePosition;
   name: string;
+};
+
+export type VariableDef = SimpleVariableDef & {
   constant: boolean;
   value: string | number | undefined;
+};
+
+export type TypeDef = {
+  type: TypeClass;
+  position: NodePosition;
+  name: string;
+  tableOf?: string;
+  tableIndex?: string;
+  recordFields?: SimpleVariableDef[];
 };
 
 export type PackageContent = {
   variables?: VariableDef[];
   objects?: any[];
+  types?: any[];
 };
 
 export type PackageDef = {
@@ -44,4 +57,9 @@ export enum ArgumentDirection {
   in = 'in',
   out = 'out',
   inOut = 'in out',
+}
+
+export enum TypeClass {
+  record = 'record',
+  table = 'table',
 }
