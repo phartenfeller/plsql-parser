@@ -6,7 +6,14 @@ const StringTk = createToken({
 });
 
 // /y mode is needed to only match relevant part and not whole input
-const aqmPattern = /q'(\[|\(|\{|\^|#|!)[\S\s]*(\]|\)|\}|\^|#|!)'/y;
+// this is complicated bc when we have mutluple strings in a file we must make sure to only match one of a time
+// thatswhy we use a no match `(?:...)` with all ending chars and then a `'`
+
+// https://regex101.com/r/PC2HBb/1
+
+// eslint bug
+// eslint-disable-next-line no-useless-escape
+const aqmPattern = /q'(\[|\(|\{|\^|#|!)(?:[^[\]|\)|\}|\^|#|!]]|[^'])*'/y;
 
 const matchAQM: CustomPatternMatcherFunc = (
   text: string,
@@ -25,7 +32,7 @@ const matchAQM: CustomPatternMatcherFunc = (
   // Note we are accessing the capturing groups sub matches.
   const match = execResult[0];
   const prefix = execResult[1];
-  const suffix = execResult[2];
+  const suffix = match.charAt(match.length - 2);
 
   let matchError = false;
 
