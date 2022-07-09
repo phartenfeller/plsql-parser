@@ -105,4 +105,41 @@ describe('object specifications', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('package body with pragma', () => {
+    const code = `
+    create or replace package body my_pkg as
+      e_my_cust_error exception;
+      pragma exception_init(e_my_cust_error, -20111);
+    
+      function get_1
+        return integer
+      as
+      begin
+        return 1;
+      end;
+
+    end my_pkg;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('package spec with pragma', () => {
+    const code = `
+    create or replace package my_pkg as
+      e_my_cust_error exception;
+      pragma exception_init(e_my_cust_error, -20111);
+
+      function get_1
+        return integer
+      ;
+
+    end my_pkg;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

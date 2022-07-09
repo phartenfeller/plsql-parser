@@ -582,6 +582,7 @@ class PlSqlParser extends CstParser {
         $.OR([
           { ALT: () => $.SUBRULE($.variableDeclaration) },
           { ALT: () => $.SUBRULE($.objectDeclaration) },
+          { ALT: () => $.SUBRULE($.pragmaStatement) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
@@ -601,6 +602,7 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.SUBRULE($.packageObjSpec) },
           { ALT: () => $.SUBRULE($.variableDeclaration) }, // TODO here is also spec ? where is spec allowed ? remove from variable declaration ? wth
           { ALT: () => $.SUBRULE($.typeDefiniton) },
+          { ALT: () => $.SUBRULE($.pragmaStatement) },
         ]);
       });
       $.CONSUME(tokenVocabulary.End); // end
