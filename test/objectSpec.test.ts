@@ -142,4 +142,20 @@ describe('object specifications', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('package spec with type', () => {
+    const code = `
+    create or replace package my_pkg as
+      type t_my_type is record (
+        my_num number
+      , my_str countries.country_name%type
+      , my_ts  timestamp(6)
+      );
+
+    end my_pkg;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

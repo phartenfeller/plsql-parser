@@ -580,8 +580,9 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
         $.OR([
-          { ALT: () => $.SUBRULE($.variableDeclaration) },
           { ALT: () => $.SUBRULE($.objectDeclaration) },
+          { ALT: () => $.SUBRULE($.variableDeclaration) },
+          { ALT: () => $.SUBRULE($.typeDefiniton) },
           { ALT: () => $.SUBRULE($.pragmaStatement) },
         ]);
       });
