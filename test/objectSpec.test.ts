@@ -158,4 +158,34 @@ describe('object specifications', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('package spec authid definer', () => {
+    const code = `
+    create or replace package my_pkg 
+      authid definer
+    as
+      function get_1
+        return integer
+      ;
+    end my_pkg;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('package spec authid current_user', () => {
+    const code = `
+    create or replace package my_pkg 
+      authid current_user
+    as
+      function get_1
+        return integer
+      ;
+    end my_pkg;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

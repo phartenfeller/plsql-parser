@@ -83,6 +83,24 @@ const DefaultKw = createToken({
   longer_alt: Identifier,
 });
 
+const AuthidKw = createToken({
+  name: 'AuthidKw',
+  pattern: /authid/i,
+  longer_alt: Identifier,
+});
+
+const DefinerKw = createToken({
+  name: 'DefinerKw',
+  pattern: /definer/i,
+  longer_alt: Identifier,
+});
+
+const CurrentUserKw = createToken({
+  name: 'CurrentUserKw',
+  pattern: /current_user/i,
+  longer_alt: Identifier,
+});
+
 export default [
   PackageKw,
   CreatePackageKw,
@@ -98,4 +116,7 @@ export default [
   OutKw,
   NocopyKw,
   DefaultKw,
+  AuthidKw,
+  DefinerKw,
+  CurrentUserKw,
 ];

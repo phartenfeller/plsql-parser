@@ -577,9 +577,16 @@ class PlSqlParser extends CstParser {
     $.RULE('createPackageSpec', () => {
       $.SUBRULE($.createPackageStatement); // create (or replace) package
       $.SUBRULE($.dottedIdentifier, { LABEL: 'package_name' }); // pkg_name | schema_name.pkg_name
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.AuthidKw); // authid
+        $.OR([
+          { ALT: () => $.CONSUME(tokenVocabulary.DefinerKw) }, // definer
+          { ALT: () => $.CONSUME(tokenVocabulary.CurrentUserKw) }, // current_user
+        ]);
+      });
       $.CONSUME(tokenVocabulary.AsIs); // as
       $.MANY(() => {
-        $.OR([
+        $.OR2([
           { ALT: () => $.SUBRULE($.objectDeclaration) },
           { ALT: () => $.SUBRULE($.variableDeclaration) },
           { ALT: () => $.SUBRULE($.typeDefiniton) },
