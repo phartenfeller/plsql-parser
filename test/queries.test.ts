@@ -714,4 +714,18 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('subquery in where', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+       where club_id = (select max(club_id) from football_clubs)
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

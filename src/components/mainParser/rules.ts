@@ -282,6 +282,13 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('chainedConditionsWhere', () => {
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.AndOr,
+        DEF: () => $.SUBRULE($.conditionWhere),
+      });
+    });
+
     $.RULE('ifCondition', () => {
       $.SUBRULE($.chainedConditions);
       $.CONSUME(tokenVocabulary.Then); // Then
@@ -403,6 +410,18 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
+    $.RULE('conditionsInBracketsWhere', () => {
+      $.OPTION(() => $.CONSUME(tokenVocabulary.NotKw));
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.AndOr,
+        DEF: () => {
+          $.SUBRULE($.conditionWhere);
+        },
+      });
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
     $.RULE('nullCheck', () => {
       $.CONSUME(tokenVocabulary.IsKw);
       $.OPTION(() => {
@@ -415,7 +434,7 @@ class PlSqlParser extends CstParser {
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.NotKw);
       });
-      $.SUBRULE($.valueWithoutIn, { LABEL: 'lhs' });
+      $.SUBRULE($.valueWithoutOperators, { LABEL: 'lhs' });
       $.OPTION2(() => {
         $.OR([
           {
@@ -456,6 +475,72 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    // allow for subquery here
+    $.RULE('singleConditionWhere', () => {
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.NotKw);
+      });
+      $.OR([
+        // allow subquery here
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.OpenBracket);
+            $.SUBRULE($.query);
+            $.CONSUME(tokenVocabulary.ClosingBracket);
+          },
+        },
+        { ALT: () => $.SUBRULE($.valueWithoutOperators, { LABEL: 'lhs' }) },
+      ]);
+      $.OPTION2(() => {
+        $.OR5([
+          {
+            ALT: () => {
+              $.SUBRULE($.relationalOperators);
+              $.OR3([
+                // allow subquery here
+                {
+                  ALT: () => {
+                    $.CONSUME1(tokenVocabulary.OpenBracket);
+                    $.SUBRULE1($.query);
+                    $.CONSUME1(tokenVocabulary.ClosingBracket);
+                  },
+                },
+                { ALT: () => $.SUBRULE($.value, { LABEL: 'rhs' }) },
+              ]);
+            },
+          },
+          {
+            ALT: () => $.SUBRULE($.nullCheck),
+          },
+          {
+            // in (...)
+            ALT: () => {
+              $.OPTION4(() => {
+                $.CONSUME3(tokenVocabulary.NotKw);
+              });
+              $.CONSUME(tokenVocabulary.InKw);
+              $.OR4([
+                { ALT: () => $.SUBRULE($.valueInBrackets, { LABEL: 'rhs' }) },
+                {
+                  ALT: () => {
+                    $.CONSUME2(tokenVocabulary.OpenBracket);
+                    $.SUBRULE2($.query);
+                    $.CONSUME2(tokenVocabulary.ClosingBracket);
+                  },
+                },
+              ]);
+            },
+          },
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.MemberOfKw);
+              $.SUBRULE1($.valueInBrackets, { LABEL: 'rhs' });
+            },
+          },
+        ]);
+      });
+    });
+
     $.RULE('condition', () => {
       $.OR({
         DEF: [
@@ -464,6 +549,18 @@ class PlSqlParser extends CstParser {
             ALT: () => $.SUBRULE($.conditionsInBrackets),
           },
           { ALT: () => $.SUBRULE($.singleCondition) },
+        ],
+      });
+    });
+
+    $.RULE('conditionWhere', () => {
+      $.OR({
+        DEF: [
+          {
+            GATE: $.BACKTRACK($.conditionsInBracketsWhere),
+            ALT: () => $.SUBRULE($.conditionsInBracketsWhere),
+          },
+          { ALT: () => $.SUBRULE($.singleConditionWhere) },
         ],
       });
     });
@@ -876,13 +973,17 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
 
+              // excluded from 'valueWithoutOperators'
               { ALT: () => $.SUBRULE($.relationalOperators) }, // bool <= = != ...
+
               { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
               { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
               { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
               { ALT: () => $.CONSUME(tokenVocabulary.MemberOfKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
+
+              // excluded from 'valueWithoutOperators'
               {
                 ALT: () => $.CONSUME(tokenVocabulary.InKw), // bool := 1 in (1, 2)
               },
@@ -909,7 +1010,8 @@ class PlSqlParser extends CstParser {
       // });
     });
 
-    $.RULE('valueWithoutIn', () => {
+    // no 'in' and no relational operators
+    $.RULE('valueWithoutOperators', () => {
       $.AT_LEAST_ONE(() => {
         $.OR(
           $.XvalueOrWithoutIn ??
@@ -936,7 +1038,6 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
 
-              { ALT: () => $.SUBRULE($.relationalOperators) }, // bool <= = != ...
               { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
               { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
               { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
@@ -1296,7 +1397,7 @@ class PlSqlParser extends CstParser {
     $.RULE('whereClause', () => {
       // where 1 = 1 and col2 = 5
       $.CONSUME(tokenVocabulary.WhereKw);
-      $.SUBRULE($.chainedConditions);
+      $.SUBRULE($.chainedConditionsWhere);
     });
 
     $.RULE('groupClause', () => {
