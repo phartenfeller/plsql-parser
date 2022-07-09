@@ -13,7 +13,7 @@ const StringTk = createToken({
 
 // eslint bug
 // eslint-disable-next-line no-useless-escape
-const aqmPattern = /q'(\[|\(|\{|\^|#|!)(?:[^[\]|\)|\}|\^|#|!]]|[^'])*'/y;
+const aqmPattern = /q'(\[|\(|\{|\^|#|!)(?:[\S\s]|[^[\]|\)|\}|\^|#|!]]|[^'])*'/y;
 
 const matchAQM: CustomPatternMatcherFunc = (
   text: string,
