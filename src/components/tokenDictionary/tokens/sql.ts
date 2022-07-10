@@ -190,7 +190,7 @@ const FetchFirstLastKw = createToken({
 const FetchKw = createToken({
   name: 'FetchKw',
   pattern: /fetch/i,
-  longer_alt: FetchFirstLastKw,
+  longer_alt: [FetchFirstLastKw, Identifier],
 });
 
 const PercentKw = createToken({

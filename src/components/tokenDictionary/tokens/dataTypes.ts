@@ -41,7 +41,7 @@ const DtypeTimestampWTZ = createToken({
 const DtypeTimestamp = createToken({
   name: 'DtypeTimestamp',
   pattern: /timestamp/i,
-  longer_alt: DtypeTimestampWTZ,
+  longer_alt: [DtypeTimestampWTZ, Identifier],
 });
 
 const DtypeRaw = createToken({

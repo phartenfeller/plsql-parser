@@ -3,3 +3,4 @@ dist/test/**/*
 dist/jest.config.*
 test.*
 jest.config.*
+*.test.*
