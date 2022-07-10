@@ -173,10 +173,10 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('sqlCaseGlobalExpression', () => {
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.value);
       $.AT_LEAST_ONE(() => {
         $.CONSUME(tokenVocabulary.WhenKw);
-        $.SUBRULE($.value);
+        $.SUBRULE1($.value);
         $.CONSUME(tokenVocabulary.Then);
         $.SUBRULE2($.value);
       });

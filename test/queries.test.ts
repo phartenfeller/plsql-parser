@@ -728,4 +728,19 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('case global in query', () => {
+    const code = `
+    begin
+     select case to_number('2')
+              when 1 then 2
+              else 3
+            end as element
+      from dual;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
