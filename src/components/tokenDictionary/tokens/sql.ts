@@ -241,6 +241,12 @@ const PathKw = createToken({
   longer_alt: Identifier,
 });
 
+const FormatJsonKw = createToken({
+  name: 'FormatJsonKw',
+  pattern: /format(\s*)json/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -281,4 +287,5 @@ export default [
   JsonTableKw,
   ColumnsKw,
   PathKw,
+  FormatJsonKw,
 ];

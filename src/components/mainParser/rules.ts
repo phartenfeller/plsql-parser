@@ -1557,7 +1557,12 @@ class PlSqlParser extends CstParser {
 
     $.RULE('sqlJsonTableColumn', () => {
       $.CONSUME(tokenVocabulary.Identifier);
-      $.SUBRULE($.variableSpec);
+      $.OPTION(() => {
+        $.SUBRULE($.variableSpec);
+      });
+      $.OPTION1(() => {
+        $.CONSUME(tokenVocabulary.FormatJsonKw);
+      });
       $.CONSUME(tokenVocabulary.PathKw);
       $.CONSUME(tokenVocabulary.StringTk);
     });
