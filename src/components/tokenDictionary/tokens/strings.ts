@@ -1,4 +1,9 @@
-import { createToken, CustomPatternMatcherFunc, Lexer } from 'chevrotain';
+import {
+  createToken,
+  CustomPatternMatcherFunc,
+  CustomPatternMatcherReturn,
+  Lexer,
+} from 'chevrotain';
 
 const StringTk = createToken({
   name: 'StringTk',
@@ -6,60 +11,57 @@ const StringTk = createToken({
 });
 
 // /y mode is needed to only match relevant part and not whole input
-// this is complicated bc when we have mutluple strings in a file we must make sure to only match one of a time
-// thatswhy we use a no match `(?:...)` with all ending chars and then a `'`
-
-// https://regex101.com/r/PC2HBb/1
-
-// eslint bug
-// eslint-disable-next-line no-useless-escape
-const aqmPattern = /q'(\[|\(|\{|\^|#|!)(?:[\S\s]|[^[\]|\)|\}|\^|#|!]]|[^'])*'/y;
+const startPattern = /q'(\[|\(|\{|\^|#|!)/y;
 
 const matchAQM: CustomPatternMatcherFunc = (
   text: string,
   startOffset: number
 ) => {
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/sticky
-  aqmPattern.lastIndex = startOffset;
-
-  // Note that just because we are using a custom token pattern
-  // Does not mean we cannot implement it using JavaScript Regular Expressions...
-  const execResult = aqmPattern.exec(text);
-
-  if (!execResult) return null;
-
-  // Compute the payload.
-  // Note we are accessing the capturing groups sub matches.
-  const match = execResult[0];
-  const prefix = execResult[1];
-  const suffix = match.charAt(match.length - 2);
-
-  let matchError = false;
-
-  switch (prefix) {
-    case '[':
-      if (suffix !== ']') matchError = true;
-      break;
-    case '{':
-      if (suffix !== '}') matchError = true;
-      break;
-    case '(':
-      if (suffix !== ')') matchError = true;
-      break;
-    default:
-      if (prefix !== suffix) matchError = true;
-      break;
-  }
-
-  if (matchError) {
+  startPattern.lastIndex = startOffset;
+  const startMatch = startPattern.exec(text);
+  if (!startMatch) {
     return null;
   }
 
-  (execResult as any).payload = match
-    .replace(`q'${prefix}`, '')
-    .replace(`${suffix}'`, '');
+  const match = startMatch[0];
+  const prefix = startMatch[1];
+  let neededSuffix = '';
 
-  return execResult;
+  switch (prefix) {
+    case '[':
+      neededSuffix = `]'`;
+      break;
+    case '{':
+      neededSuffix = `}'`;
+      break;
+    case '(':
+      neededSuffix = `)'`;
+      break;
+    default:
+      neededSuffix = `${prefix}'`;
+      break;
+  }
+
+  let currentIndex = startOffset + match.length;
+  let tokenContent = match;
+
+  for (; currentIndex < text.length; currentIndex++) {
+    const currentChar = text[currentIndex];
+    if (
+      currentChar === neededSuffix[0] &&
+      text[currentIndex + 1] === neededSuffix[1]
+    ) {
+      const payload = tokenContent.replace(match, '');
+      tokenContent += currentChar;
+      tokenContent += text[currentIndex + 1];
+      const ret: unknown = [tokenContent];
+      (ret as CustomPatternMatcherReturn).payload = payload;
+      return ret as CustomPatternMatcherReturn;
+    }
+    tokenContent += currentChar;
+  }
+
+  return null;
 };
 
 const AlternateQuotingMechanism = createToken({
