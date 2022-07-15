@@ -223,6 +223,24 @@ const OnKw = createToken({
   longer_alt: [Identifier, OnlyKw],
 });
 
+const JsonTableKw = createToken({
+  name: 'JsonTableKw',
+  pattern: /json_table/i,
+  longer_alt: Identifier,
+});
+
+const ColumnsKw = createToken({
+  name: 'ColumnsKw',
+  pattern: /columns/i,
+  longer_alt: Identifier,
+});
+
+const PathKw = createToken({
+  name: 'PathKw',
+  pattern: /path/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SelectKw,
   IntoKw,
@@ -260,4 +278,7 @@ export default [
   WithTiesKw,
   WithKw,
   OnKw,
+  JsonTableKw,
+  ColumnsKw,
+  PathKw,
 ];

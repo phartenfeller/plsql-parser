@@ -1555,6 +1555,34 @@ class PlSqlParser extends CstParser {
       });
     });
 
+    $.RULE('sqlJsonTableColumn', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.SUBRULE($.variableSpec);
+      $.CONSUME(tokenVocabulary.PathKw);
+      $.CONSUME(tokenVocabulary.StringTk);
+    });
+
+    $.RULE('sqlJsonTable', () => {
+      $.CONSUME(tokenVocabulary.JsonTableKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.value);
+      $.CONSUME(tokenVocabulary.Comma);
+      $.CONSUME(tokenVocabulary.StringTk);
+      $.CONSUME(tokenVocabulary.ColumnsKw);
+      $.CONSUME1(tokenVocabulary.OpenBracket);
+      $.AT_LEAST_ONE_SEP({
+        SEP: tokenVocabulary.Comma,
+        DEF: () => {
+          $.SUBRULE($.sqlJsonTableColumn);
+        },
+      });
+      $.CONSUME1(tokenVocabulary.ClosingBracket);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+      $.OPTION1(() => {
+        $.CONSUME3(tokenVocabulary.Identifier); // alias
+      });
+    });
+
     $.RULE('sqlFromClause', () => {
       $.CONSUME(tokenVocabulary.FromKw); // from
       $.AT_LEAST_ONE_SEP({
@@ -1572,6 +1600,9 @@ class PlSqlParser extends CstParser {
                   $.CONSUME3(tokenVocabulary.Identifier); // alias
                 });
               },
+            },
+            {
+              ALT: () => $.SUBRULE($.sqlJsonTable),
             },
           ]);
         },

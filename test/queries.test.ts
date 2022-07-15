@@ -743,4 +743,26 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('basic json table', () => {
+    // src: src: https://oracle-base.com/articles/18c/json_table-enhancements-18c
+    const code = `
+    begin
+      select jt.*
+        from json_documents,
+             json_table(
+                data
+              , '$'
+                columns ( first_name    varchar2(50 char) path '$.firstname',
+                          last_name     varchar2(50 char) path '$.lastname',
+                          job           varchar2(10 char) path '$.job',
+                          active        varchar2(5 char)  path '$.active'
+                        )
+              ) jt;
+      end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
