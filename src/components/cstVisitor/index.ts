@@ -110,7 +110,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
   variableDeclaration(ctx: any): VariableDef | null {
     const v = <VariableDef>{};
 
-    if (ctx.standardVariableDeclaration[0]) {
+    if (ctx.standardVariableDeclaration?.[0]) {
       const sv = ctx.standardVariableDeclaration[0];
 
       v.position = getPosition(sv.location);
