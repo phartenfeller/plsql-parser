@@ -765,4 +765,21 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('json table in hack', () => {
+    // src: src: https://oracle-base.com/articles/18c/json_table-enhancements-18c
+    const code = `
+    begin
+      select proj_id
+        from json_table (
+          '[' || l_comma_sperated_ids ||']'
+        , '$[*]' 
+        columns single_id number path '$'
+        );
+      end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

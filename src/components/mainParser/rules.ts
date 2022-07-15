@@ -1569,14 +1569,31 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.Comma);
       $.CONSUME(tokenVocabulary.StringTk);
       $.CONSUME(tokenVocabulary.ColumnsKw);
-      $.CONSUME1(tokenVocabulary.OpenBracket);
-      $.AT_LEAST_ONE_SEP({
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.SUBRULE($.sqlJsonTableColumn);
+      $.OR([
+        {
+          ALT: () => {
+            $.AT_LEAST_ONE_SEP({
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.SUBRULE($.sqlJsonTableColumn);
+              },
+            });
+          },
         },
-      });
-      $.CONSUME1(tokenVocabulary.ClosingBracket);
+        {
+          ALT: () => {
+            $.CONSUME1(tokenVocabulary.OpenBracket);
+            $.AT_LEAST_ONE_SEP1({
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.SUBRULE1($.sqlJsonTableColumn);
+              },
+            });
+            $.CONSUME1(tokenVocabulary.ClosingBracket);
+          },
+        },
+      ]);
+
       $.CONSUME(tokenVocabulary.ClosingBracket);
       $.OPTION1(() => {
         $.CONSUME3(tokenVocabulary.Identifier); // alias
