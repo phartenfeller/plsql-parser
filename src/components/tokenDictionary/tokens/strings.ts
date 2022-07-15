@@ -69,6 +69,7 @@ const AlternateQuotingMechanism = createToken({
   pattern: matchAQM,
   line_breaks: true,
   categories: StringTk,
+  start_chars_hint: [`q'`],
 });
 
 const StandardString = createToken({
