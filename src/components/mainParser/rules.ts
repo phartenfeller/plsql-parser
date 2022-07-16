@@ -457,9 +457,7 @@ class PlSqlParser extends CstParser {
                 { ALT: () => $.SUBRULE($.valueInBrackets, { LABEL: 'rhs' }) },
                 {
                   ALT: () => {
-                    $.CONSUME(tokenVocabulary.OpenBracket);
-                    $.SUBRULE($.query);
-                    $.CONSUME(tokenVocabulary.ClosingBracket);
+                    $.SUBRULE($.queryInBrackets);
                   },
                 },
               ]);
@@ -484,9 +482,7 @@ class PlSqlParser extends CstParser {
         // allow subquery here
         {
           ALT: () => {
-            $.CONSUME(tokenVocabulary.OpenBracket);
-            $.SUBRULE($.query);
-            $.CONSUME(tokenVocabulary.ClosingBracket);
+            $.SUBRULE($.queryInBrackets);
           },
         },
         { ALT: () => $.SUBRULE($.valueWithoutOperators, { LABEL: 'lhs' }) },
@@ -500,12 +496,13 @@ class PlSqlParser extends CstParser {
                 // allow subquery here
                 {
                   ALT: () => {
-                    $.CONSUME1(tokenVocabulary.OpenBracket);
-                    $.SUBRULE1($.query);
-                    $.CONSUME1(tokenVocabulary.ClosingBracket);
+                    $.SUBRULE1($.queryInBrackets);
                   },
                 },
-                { ALT: () => $.SUBRULE($.value, { LABEL: 'rhs' }) },
+                {
+                  ALT: () =>
+                    $.SUBRULE1($.valueWithoutOperators, { LABEL: 'rhs' }),
+                },
               ]);
             },
           },
@@ -523,9 +520,7 @@ class PlSqlParser extends CstParser {
                 { ALT: () => $.SUBRULE($.valueInBrackets, { LABEL: 'rhs' }) },
                 {
                   ALT: () => {
-                    $.CONSUME2(tokenVocabulary.OpenBracket);
-                    $.SUBRULE2($.query);
-                    $.CONSUME2(tokenVocabulary.ClosingBracket);
+                    $.SUBRULE2($.queryInBrackets);
                   },
                 },
               ]);
@@ -1048,10 +1043,10 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
 
-              { ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
-              { ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
-              { ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
-              { ALT: () => $.CONSUME(tokenVocabulary.MemberOfKw) },
+              //{ ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
+              //{ ALT: () => $.SUBRULE($.nullCheck) }, // bool x is (not) null
+              //{ ALT: () => $.CONSUME(tokenVocabulary.NotKw) },
+              //{ ALT: () => $.CONSUME(tokenVocabulary.MemberOfKw) },
 
               { ALT: () => $.CONSUME(tokenVocabulary.ReplaceKw) }, // keyword and also function
             ])
@@ -1489,9 +1484,7 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.WithKw);
       $.CONSUME(tokenVocabulary.Identifier);
       $.CONSUME(tokenVocabulary.AsKw);
-      $.CONSUME(tokenVocabulary.OpenBracket);
-      $.SUBRULE($.query);
-      $.CONSUME(tokenVocabulary.ClosingBracket);
+      $.SUBRULE($.queryInBrackets);
       $.OPTION(() => {
         $.CONSUME(tokenVocabulary.Comma);
         $.AT_LEAST_ONE_SEP({
@@ -1499,9 +1492,7 @@ class PlSqlParser extends CstParser {
           DEF: () => {
             $.CONSUME2(tokenVocabulary.Identifier);
             $.CONSUME2(tokenVocabulary.AsKw);
-            $.CONSUME2(tokenVocabulary.OpenBracket);
-            $.SUBRULE2($.query);
-            $.CONSUME2(tokenVocabulary.ClosingBracket);
+            $.SUBRULE1($.queryInBrackets);
           },
         });
       });
@@ -1615,9 +1606,7 @@ class PlSqlParser extends CstParser {
             { ALT: () => $.SUBRULE($.querySource) },
             {
               ALT: () => {
-                $.CONSUME(tokenVocabulary.OpenBracket);
-                $.SUBRULE($.query);
-                $.CONSUME(tokenVocabulary.ClosingBracket);
+                $.SUBRULE($.queryInBrackets);
                 $.OPTION1(() => {
                   $.CONSUME3(tokenVocabulary.Identifier); // alias
                 });
@@ -1653,6 +1642,12 @@ class PlSqlParser extends CstParser {
         { ALT: () => $.CONSUME(tokenVocabulary.WithTiesKw) },
         { ALT: () => $.CONSUME(tokenVocabulary.OnlyKw) },
       ]);
+    });
+
+    $.RULE('queryInBrackets', () => {
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.SUBRULE($.query);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
     // TODO union, minus, intersect
@@ -1779,9 +1774,7 @@ class PlSqlParser extends CstParser {
         },
         {
           ALT: () => {
-            $.CONSUME2(tokenVocabulary.OpenBracket); // (
-            $.SUBRULE($.query); // select * from dual
-            $.CONSUME3(tokenVocabulary.ClosingBracket); // )
+            $.SUBRULE($.queryInBrackets);
           },
         },
         {

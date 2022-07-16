@@ -96,6 +96,27 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('In subquery and other', () => {
+    const code = `
+      begin
+        select cake_id
+          into l_cake_id
+          from my_cake_talbe
+         where cake_ingredient_count = (
+                select min(cake_ingredient_count)
+                  from lct_cake_details
+                 where cake_details_id = pi_details_id
+            )
+          and 1 = 1
+          and cake_id = cake_id
+    ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('In table on array', () => {
     const code = `
       begin
