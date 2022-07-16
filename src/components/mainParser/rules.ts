@@ -1744,6 +1744,14 @@ class PlSqlParser extends CstParser {
           { ALT: () => $.CONSUME(tokenVocabulary.OthersKw) }, // others
           { ALT: () => $.CONSUME(tokenVocabulary.Identifier) }, // user_defined_exception
         ]);
+        $.MANY1(() => {
+          $.CONSUME(tokenVocabulary.OrKw); // or
+          $.OR1([
+            { ALT: () => $.CONSUME1(tokenVocabulary.DefinedException) }, // dup_val_on_index
+            { ALT: () => $.CONSUME1(tokenVocabulary.OthersKw) }, // others
+            { ALT: () => $.CONSUME1(tokenVocabulary.Identifier) }, // user_defined_exception
+          ]);
+        });
         $.CONSUME(tokenVocabulary.Then); // then
         $.MANY2(() => {
           $.SUBRULE($.statement);

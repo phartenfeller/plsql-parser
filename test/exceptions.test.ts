@@ -64,4 +64,38 @@ describe('exceptions', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('2 exceptions handler', () => {
+    const code = `
+      declare
+      begin
+        raise e_my_exception;
+      exception
+        when e_my_exception or no_data_found then
+          raise;
+        when others then
+          raise;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('3 exceptions handler', () => {
+    const code = `
+      declare
+      begin
+        raise e_my_exception;
+      exception
+        when e_my_exception or no_data_found or invalid_number then
+          raise;
+        when others then
+          raise;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
