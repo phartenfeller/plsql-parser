@@ -3,6 +3,7 @@ import { parserInstance } from '../mainParser/noRecoveryParser';
 import recusiveGetTokenString from './recusiveGetTokenString';
 import {
   ArgumentDirection,
+  ExceptionDef,
   GlobalObjects,
   NodePosition,
   ObjectContext,
@@ -107,10 +108,9 @@ class PlSqlInterpreter extends BaseCstVisitor {
     return pkg;
   }
 
-  variableDeclaration(ctx: any): VariableDef | null {
-    const v = <VariableDef>{};
-
+  variableDeclaration(ctx: any): VariableDef | ExceptionDef | null {
     if (ctx.standardVariableDeclaration?.[0]) {
+      const v = <VariableDef>{};
       const sv = ctx.standardVariableDeclaration[0];
 
       v.position = getPosition(sv.location);
@@ -125,6 +125,13 @@ class PlSqlInterpreter extends BaseCstVisitor {
       }
 
       return v;
+    } else if (ctx.exceptionDeclaration?.[0]) {
+      const e = <ExceptionDef>{};
+      e.position = getPosition(ctx.exceptionDeclaration[0].location);
+      e.name = recusiveGetTokenString(
+        ctx.exceptionDeclaration[0].children.exception_name
+      );
+      return e;
     }
 
     return null;

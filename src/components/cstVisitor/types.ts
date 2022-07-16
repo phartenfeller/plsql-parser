@@ -21,6 +21,11 @@ export type VariableDef = SimpleVariableDef & {
   value: string | number | undefined;
 };
 
+export type ExceptionDef = {
+  position: NodePosition;
+  name: string;
+};
+
 export type TypeDef = {
   type: TypeClass;
   position: NodePosition;
