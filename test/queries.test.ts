@@ -736,6 +736,21 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('offset variable', () => {
+    const code = `
+    begin
+      select * 
+        from football_clubs
+      offset l_random rows
+       fetch next 7 rows only
+      ;
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('subquery in where', () => {
     const code = `
     begin

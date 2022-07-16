@@ -1622,7 +1622,10 @@ class PlSqlParser extends CstParser {
 
     $.RULE('offsetQueryClause', () => {
       $.CONSUME(tokenVocabulary.OffsetKw);
-      $.CONSUME(tokenVocabulary.Integer);
+      $.OR([
+        { ALT: () => $.CONSUME(tokenVocabulary.Integer) },
+        { ALT: () => $.SUBRULE($.dottedIdentifier) },
+      ]);
       $.CONSUME(tokenVocabulary.RowKw);
     });
 
