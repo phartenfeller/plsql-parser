@@ -118,7 +118,7 @@ const OfKw = createToken({
 
 const MemberOfKw = createToken({
   name: 'MemberOfKw',
-  pattern: /member(\s*)of/i,
+  pattern: /member\s+of/i,
   longer_alt: Identifier,
 });
 

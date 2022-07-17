@@ -33,7 +33,7 @@ const GroupByKw = createToken({
 
 const OrderByKw = createToken({
   name: 'OrderByKw',
-  pattern: /order(\s*)by/i,
+  pattern: /order\s+by/i,
   longer_alt: Identifier,
 });
 
@@ -45,7 +45,7 @@ const AscDescKw = createToken({
 
 const NullsFirstLastKw = createToken({
   name: 'NullsFirstLastKw',
-  pattern: /nulls(\s*)(first|last)/i,
+  pattern: /nulls\s+(first|last)/i,
   longer_alt: Identifier,
 });
 
@@ -170,13 +170,13 @@ const OverKw = createToken({
 
 const PartitionByKw = createToken({
   name: 'PartitionByKw',
-  pattern: /partition(\s*)by/i,
+  pattern: /partition\s+by/i,
   longer_alt: Identifier,
 });
 
 const WithinGroupKw = createToken({
   name: 'WithinGroupKw',
-  pattern: /within(\s*)group/i,
+  pattern: /within\s+group/i,
   longer_alt: Identifier,
 });
 
@@ -207,7 +207,7 @@ const OnlyKw = createToken({
 
 const WithTiesKw = createToken({
   name: 'WithTiesKw',
-  pattern: /with(\s*)ties/i,
+  pattern: /with\s+ties/i,
   longer_alt: Identifier,
 });
 
@@ -243,7 +243,7 @@ const PathKw = createToken({
 
 const FormatJsonKw = createToken({
   name: 'FormatJsonKw',
-  pattern: /format(\s*)json/i,
+  pattern: /format\s+json/i,
   longer_alt: Identifier,
 });
 
