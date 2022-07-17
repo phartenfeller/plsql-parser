@@ -4,13 +4,32 @@
 
 Contributions are welcomed, I am happy with every help :)
 
-## Concept
+## About
 
-This will be a multi stage parser. This means, that the first level only parses the general structure. For example it spots variable declarations but doesn't check whether the defined varchar2 variable really has a valid string value to it. That will be parsed in a later step in a string value parser.
+Lexer, parser and interpreter for Oracle PL/SQL.
 
-With this approach I want to improve complexity management and improve performance as the parsers have less depth in options to test for.
+This parser is build for basic code introspection and coding assistance. This means that it won't act 1:1 the same as the DB internal parser. For example parsing values is way more forgiving resulting in no errors from this parser where the DB parser would.
+
+The interpreter gives an object with insights about the code. For example which packages are included, their functions / procedures + their parameters. All with position info. I am using this to build a VS Code Plugin with a Language Server.
+
+## Usage
+
+```typescript
+import parse, { getInterpretation } from 'oracle-plsql-parser';
+
+const code = `begin ... end;`;
+
+// 2nd parameters logs errors to console
+const {errors, cst} = parse(text, true);
+
+// interpreter returns object with infos about the code
+const interpreted = plSqlInterpreter.visit(cst);
+console.log(interpreted);
+```
 
 ## Diagram
+
+**Currently broken and not updated**
 
 https://phartenfeller.github.io/plsql-parser/
 
