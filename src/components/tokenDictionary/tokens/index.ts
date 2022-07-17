@@ -13,6 +13,7 @@ import symbols from './symbols';
 import transaction from './transaction';
 import values from './values';
 import strings from './strings';
+import objectTokens from './objectTokens';
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -143,6 +144,7 @@ const allTokens = [
   CursorKw,
   ExtractKw,
   RowKw,
+  ...objectTokens,
   ...subprograms,
   ...symbols,
   ...relationalOperators,

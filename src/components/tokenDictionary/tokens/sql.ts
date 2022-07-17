@@ -31,9 +31,9 @@ const GroupByKw = createToken({
   longer_alt: Identifier,
 });
 
-const OrderByKw = createToken({
-  name: 'OrderByKw',
-  pattern: /order\s+by/i,
+const OrderKw = createToken({
+  name: 'OrderKw',
+  pattern: /order/i,
   longer_alt: Identifier,
 });
 
@@ -253,7 +253,7 @@ export default [
   FromKw,
   WhereKw,
   GroupByKw,
-  OrderByKw,
+  OrderKw,
   AscDescKw,
   NullsFirstLastKw,
   Null,

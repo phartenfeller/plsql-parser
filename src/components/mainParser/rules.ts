@@ -31,12 +31,22 @@ class PlSqlParser extends CstParser {
     };
 
     $.RULE('global', () => {
-      $.OR([
-        { ALT: () => $.SUBRULE($.block) },
-        { ALT: () => $.SUBRULE($.createPackage) },
-      ]);
-      $.OPTION(() => {
-        $.CONSUME(tokenVocabulary.Slash);
+      $.MANY(() => {
+        $.OR([
+          // plsql
+          {
+            ALT: () => {
+              $.OR1([
+                { ALT: () => $.SUBRULE($.block) },
+                { ALT: () => $.SUBRULE($.createPackage) },
+              ]);
+              $.OPTION(() => {
+                $.CONSUME(tokenVocabulary.Slash);
+              });
+            },
+          },
+          { ALT: () => $.SUBRULE($.createSequenceStatement) },
+        ]);
       });
     });
 
@@ -1424,7 +1434,8 @@ class PlSqlParser extends CstParser {
     });
 
     $.RULE('orderClause', () => {
-      $.CONSUME(tokenVocabulary.OrderByKw);
+      $.CONSUME(tokenVocabulary.OrderKw);
+      $.CONSUME(tokenVocabulary.ByKw);
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Comma,
         DEF: () => {
@@ -1810,6 +1821,109 @@ class PlSqlParser extends CstParser {
       });
       $.CONSUME(tokenVocabulary.End);
       $.CONSUME2(tokenVocabulary.LoopKw);
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('createSequenceStatement', () => {
+      $.CONSUME(tokenVocabulary.CreateKw); // create
+      $.CONSUME(tokenVocabulary.SequenceKw); // sequence
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'schema_name' }); // schema_name
+        $.CONSUME(tokenVocabulary.Dot); // .
+      });
+      $.CONSUME1(tokenVocabulary.Identifier, { LABEL: 'sequence_name' }); // sequence_name
+      // all the possible options...
+      // order of statements does not matter -> many
+      // unfortunately because of many the parser does not catch when a option appears multiple times
+      $.MANY(() => {
+        $.OR([
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.IncrementByKw); // increment by
+              $.CONSUME(tokenVocabulary.Integer, { LABEL: 'increment_amount' }); // 32
+            },
+          },
+          {
+            ALT: () => {
+              $.CONSUME(tokenVocabulary.StartWithKw); // start with
+              $.CONSUME1(tokenVocabulary.Integer, { LABEL: 'start_with_num' }); // 32
+            },
+          },
+          {
+            ALT: () => {
+              $.OR1([
+                {
+                  ALT: () => {
+                    $.CONSUME(tokenVocabulary.MaxvalueKw); // maxvalue
+                    $.CONSUME3(tokenVocabulary.Integer, {
+                      LABEL: 'maxvalue_num',
+                    });
+                  },
+                },
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.NoMaxvalueKw), // nomaxvalue
+                },
+              ]);
+            },
+          },
+          {
+            ALT: () => {
+              $.OR2([
+                {
+                  ALT: () => {
+                    $.CONSUME(tokenVocabulary.MinvalueKw); // minvalue
+                    $.CONSUME4(tokenVocabulary.Integer, {
+                      LABEL: 'minvalue_num',
+                    });
+                  },
+                },
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.NoMinvalueKw), // nominvalue
+                },
+              ]);
+            },
+          },
+          {
+            ALT: () => {
+              $.OR3([
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.CycleKw), // cycle
+                },
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.NoCycleKw), // nocycle
+                },
+              ]);
+            },
+          },
+          {
+            ALT: () => {
+              $.OR4([
+                {
+                  ALT: () => {
+                    $.CONSUME(tokenVocabulary.CacheKw); // cache
+                    $.CONSUME5(tokenVocabulary.Integer, { LABEL: 'cache_num' }); // 32
+                  },
+                },
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.NoCacheKw), // nocache
+                },
+              ]);
+            },
+          },
+          {
+            ALT: () => {
+              $.OR5([
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.OrderKw), // order
+                },
+                {
+                  ALT: () => $.CONSUME(tokenVocabulary.NoOrderKw), // noorder
+                },
+              ]);
+            },
+          },
+        ]);
+      });
       $.SUBRULE($.semicolon);
     });
 
