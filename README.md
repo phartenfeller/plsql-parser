@@ -11,7 +11,7 @@ You are welcome to contribute, I am happy with every help :)
 
 Lexer, parser and interpreter for Oracle PL/SQL.
 
-This parser is build for basic code introspection and coding assistance. This means that it won't act 1:1 the same as the DB internal parser. For example parsing values is way more forgiving resulting in no errors from this parser where the DB parser would.
+This parser is build for basic code introspection and coding assistance. This means that it won't act 1:1 the same as the DB internal parser. My goal is more to not have false negative than false positives. For example parsing values is way more forgiving resulting in no errors from this parser where the DB parser would.
 
 The interpreter gives an object with insights about the code. For example which packages are included, their functions / procedures + their parameters. All with position info. I am using this to build a VS Code Plugin with a Language Server.
 
