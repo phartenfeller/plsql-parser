@@ -39,6 +39,7 @@ export type PackageContent = {
   variables?: VariableDef[];
   objects?: any[];
   types?: any[];
+  exceptions?: ExceptionDef[];
 };
 
 export type PackageDef = {

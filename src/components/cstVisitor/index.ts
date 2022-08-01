@@ -1,5 +1,6 @@
 import { CstNode, CstNodeLocation } from 'chevrotain';
 import { parserInstance } from '../mainParser/noRecoveryParser';
+import { VariableDeclarationReturn, VarTypes } from './helperTypes';
 import recusiveGetTokenString from './recusiveGetTokenString';
 import {
   ArgumentDirection,
@@ -59,9 +60,24 @@ class PlSqlInterpreter extends BaseCstVisitor {
 
       pkg.content = <PackageContent>{};
       if (ps.children.variableDeclaration) {
-        pkg.content.variables = ps.children.variableDeclaration.map(
-          (p: CstNode) => this.visit(p)
-        );
+        ps.children.variableDeclaration.forEach((vd: CstNode) => {
+          const v: VariableDeclarationReturn = this.visit(vd);
+          if (v.type === VarTypes.variable) {
+            if (!pkg.content.variables) {
+              pkg.content.variables = [v.def as VariableDef];
+            } else {
+              pkg.content.variables.push(v.def as VariableDef);
+            }
+          } else if (v.type === VarTypes.exception) {
+            if (!pkg.content.exceptions) {
+              pkg.content.exceptions = [v.def as ExceptionDef];
+            } else {
+              pkg.content.exceptions.push(v.def as ExceptionDef);
+            }
+          } else {
+            throw new Error(`Unhandled variable type ${v.type}`);
+          }
+        });
       }
 
       if (ps.children.objectDeclaration) {
@@ -78,9 +94,24 @@ class PlSqlInterpreter extends BaseCstVisitor {
       pkg.content = <PackageContent>{};
       pkg.content.objects = [];
       if (pb.children.variableDeclaration) {
-        pkg.content.variables = pb.children.variableDeclaration.map(
-          (p: CstNode) => this.visit(p)
-        );
+        pb.children.variableDeclaration.forEach((vd: CstNode) => {
+          const v: VariableDeclarationReturn = this.visit(vd);
+          if (v.type === VarTypes.variable) {
+            if (!pkg.content.variables) {
+              pkg.content.variables = [v.def as VariableDef];
+            } else {
+              pkg.content.variables.push(v.def as VariableDef);
+            }
+          } else if (v.type === VarTypes.exception) {
+            if (!pkg.content.exceptions) {
+              pkg.content.exceptions = [v.def as ExceptionDef];
+            } else {
+              pkg.content.exceptions.push(v.def as ExceptionDef);
+            }
+          } else {
+            throw new Error(`Unhandled variable type ${v.type}`);
+          }
+        });
       }
 
       if (pb.children.objectDeclaration) {
@@ -108,7 +139,7 @@ class PlSqlInterpreter extends BaseCstVisitor {
     return pkg;
   }
 
-  variableDeclaration(ctx: any): VariableDef | ExceptionDef | null {
+  variableDeclaration(ctx: any): VariableDeclarationReturn | null {
     if (ctx.standardVariableDeclaration?.[0]) {
       const v = <VariableDef>{};
       const sv = ctx.standardVariableDeclaration[0];
@@ -124,14 +155,14 @@ class PlSqlInterpreter extends BaseCstVisitor {
         v.value = this.visit(sv.children.value);
       }
 
-      return v;
+      return { type: VarTypes.variable, def: v };
     } else if (ctx.exceptionDeclaration?.[0]) {
       const e = <ExceptionDef>{};
       e.position = getPosition(ctx.exceptionDeclaration[0].location);
       e.name = recusiveGetTokenString(
         ctx.exceptionDeclaration[0].children.exception_name
       );
-      return e;
+      return { type: VarTypes.exception, def: e };
     }
 
     return null;
