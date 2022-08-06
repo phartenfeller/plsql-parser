@@ -96,6 +96,47 @@ const RowKw = createToken({
   ],
 });
 
+const NoKw = createToken({
+  name: 'NoKw',
+  pattern: /no/i,
+  longer_alt: [
+    objectTokens.find((t) => t.name === 'NoCycleKw') as TokenType,
+    objectTokens.find((t) => t.name === 'NoMaxvalueKw') as TokenType,
+    objectTokens.find((t) => t.name === 'NoMinvalueKw') as TokenType,
+    objectTokens.find((t) => t.name === 'NoCacheKw') as TokenType,
+    objectTokens.find((t) => t.name === 'NoOrderKw') as TokenType,
+
+    subprograms.find((t) => t.name === 'NocopyKw') as TokenType,
+
+    relationalOperators.find((t) => t.name === 'NotKw') as TokenType,
+    Identifier,
+  ],
+});
+
+const ForceKw = createToken({
+  name: 'ForceKw',
+  pattern: /force/i,
+  longer_alt: Identifier,
+});
+
+const ForallKw = createToken({
+  name: 'ForallKw',
+  pattern: /forall/i,
+  longer_alt: Identifier,
+});
+
+const FormatJsonKw = createToken({
+  name: 'FormatJsonKw',
+  pattern: /format\s+json/i,
+  longer_alt: Identifier,
+});
+
+const ForKw = createToken({
+  name: 'ForKw',
+  pattern: /for/i,
+  longer_alt: [ForceKw, ForallKw, FormatJsonKw, Identifier],
+});
+
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
@@ -128,6 +169,10 @@ const allTokens = [
   Declare,
   Begin,
   End,
+  ForceKw,
+  ForallKw,
+  FormatJsonKw,
+  ForKw,
   ...dataTypes,
   ...values,
   ...sql,
@@ -148,6 +193,7 @@ const allTokens = [
   ...subprograms,
   ...symbols,
   ...relationalOperators,
+  NoKw,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
   Identifier,
   Float,

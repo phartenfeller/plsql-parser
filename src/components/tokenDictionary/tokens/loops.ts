@@ -1,12 +1,6 @@
 import { createToken } from 'chevrotain';
 import Identifier from './Identifier';
 
-const ForKw = createToken({
-  name: 'ForKw',
-  pattern: /for/i,
-  longer_alt: Identifier,
-});
-
 const LoopKw = createToken({
   name: 'LoopKw',
   pattern: /loop/i,
@@ -31,4 +25,4 @@ const GotoKw = createToken({
   longer_alt: Identifier,
 });
 
-export default [ForKw, LoopKw, DoubleDot, WhileKw, GotoKw];
+export default [LoopKw, DoubleDot, WhileKw, GotoKw];

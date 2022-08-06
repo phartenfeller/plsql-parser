@@ -32,21 +32,25 @@ class PlSqlParser extends CstParser {
 
     $.RULE('global', () => {
       $.MANY(() => {
-        $.OR([
-          // plsql
-          {
-            ALT: () => {
-              $.OR1([
-                { ALT: () => $.SUBRULE($.block) },
-                { ALT: () => $.SUBRULE($.createPackage) },
-              ]);
-              $.OPTION(() => {
-                $.CONSUME(tokenVocabulary.Slash);
-              });
+        $.OR({
+          MAX_LOOKAHEAD: 4, // create or replace package | view
+          DEF: [
+            // plsql
+            {
+              ALT: () => {
+                $.OR1([
+                  { ALT: () => $.SUBRULE($.block) },
+                  { ALT: () => $.SUBRULE($.createPackage) },
+                ]);
+                $.OPTION(() => {
+                  $.CONSUME(tokenVocabulary.Slash);
+                });
+              },
             },
-          },
-          { ALT: () => $.SUBRULE($.createSequenceStatement) },
-        ]);
+            { ALT: () => $.SUBRULE($.createSequenceStatement) },
+            { ALT: () => $.SUBRULE($.createViewStatement) },
+          ],
+        });
       });
     });
 
@@ -1924,6 +1928,29 @@ class PlSqlParser extends CstParser {
           },
         ]);
       });
+      $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('createViewStatement', () => {
+      $.CONSUME(tokenVocabulary.CreateKw); // create
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.OrKw); // or
+        $.CONSUME(tokenVocabulary.ReplaceKw); // replace
+      });
+      $.OPTION1(() => {
+        $.OPTION2(() => {
+          $.CONSUME(tokenVocabulary.NoKw); // no
+        });
+        $.CONSUME(tokenVocabulary.ForceKw); // force
+      });
+      $.CONSUME(tokenVocabulary.ViewKw); // view
+      $.OPTION3(() => {
+        $.CONSUME(tokenVocabulary.Identifier, { LABEL: 'schema_name' }); // schema_name
+        $.CONSUME(tokenVocabulary.Dot); // .
+      });
+      $.CONSUME1(tokenVocabulary.Identifier, { LABEL: 'view_name' }); // view_name
+      $.CONSUME(tokenVocabulary.AsKw); // as
+      $.SUBRULE($.query); // query
       $.SUBRULE($.semicolon);
     });
 

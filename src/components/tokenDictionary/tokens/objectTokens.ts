@@ -73,6 +73,12 @@ const NoOrderKw = createToken({
   longer_alt: Identifier,
 });
 
+const ViewKw = createToken({
+  name: 'ViewKw',
+  pattern: /view/i,
+  longer_alt: Identifier,
+});
+
 export default [
   SequenceKw,
   IncrementByKw,
@@ -86,4 +92,5 @@ export default [
   CacheKw,
   NoCacheKw,
   NoOrderKw,
+  ViewKw,
 ];

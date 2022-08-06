@@ -156,12 +156,6 @@ const HavingKw = createToken({
   longer_alt: Identifier,
 });
 
-const ForallKw = createToken({
-  name: 'ForallKw',
-  pattern: /forall/i,
-  longer_alt: Identifier,
-});
-
 const OverKw = createToken({
   name: 'OverKw',
   pattern: /over/i,
@@ -241,12 +235,6 @@ const PathKw = createToken({
   longer_alt: Identifier,
 });
 
-const FormatJsonKw = createToken({
-  name: 'FormatJsonKw',
-  pattern: /format\s+json/i,
-  longer_alt: Identifier,
-});
-
 export default [
   SelectKw,
   IntoKw,
@@ -273,7 +261,6 @@ export default [
   UpdateKw,
   SetKw,
   HavingKw,
-  ForallKw,
   OverKw,
   PartitionByKw,
   WithinGroupKw,
@@ -287,5 +274,4 @@ export default [
   JsonTableKw,
   ColumnsKw,
   PathKw,
-  FormatJsonKw,
 ];

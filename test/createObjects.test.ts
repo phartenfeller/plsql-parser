@@ -69,4 +69,48 @@ describe('Create Objects', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('simple view', () => {
+    const code = `
+    create view my_view as 
+      select * from my_table
+    ;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('simple view (or replace)', () => {
+    const code = `
+    create or replace view my_view as 
+      select * from my_table
+    ;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('simple view force', () => {
+    const code = `
+    create or replace force view my_view as 
+      select * from my_table
+    ;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('simple view no force', () => {
+    const code = `
+    create or replace no force view my_view as 
+      select * from my_table
+    ;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });
