@@ -885,4 +885,17 @@ describe('Queries', () => {
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
+
+  test('keyword as alias', () => {
+    // src: src: https://oracle-base.com/articles/18c/json_table-enhancements-18c
+    const code = `
+    begin
+        select case.case_id as if
+          from lct_cases case
+    end;
+  `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
 });

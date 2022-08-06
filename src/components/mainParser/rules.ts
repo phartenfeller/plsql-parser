@@ -1464,7 +1464,7 @@ class PlSqlParser extends CstParser {
         },
       ]);
       $.OPTION1(() => {
-        $.CONSUME3(tokenVocabulary.Identifier); // table alias
+        $.SUBRULE($.IdentifierOrKw); // table alias
       });
     });
 
@@ -1551,7 +1551,7 @@ class PlSqlParser extends CstParser {
             $.OPTION5(() => {
               $.CONSUME(tokenVocabulary.AsKw);
             });
-            $.CONSUME(tokenVocabulary.Identifier); // alias
+            $.SUBRULE($.IdentifierOrKw); // alias
           });
         },
       });
@@ -1925,6 +1925,25 @@ class PlSqlParser extends CstParser {
         ]);
       });
       $.SUBRULE($.semicolon);
+    });
+
+    $.RULE('IdentifierOrKw', () => {
+      $.OR(
+        [
+          { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+          {
+            ALT: () => $.SUBRULE($.KwAsIdentifier),
+          },
+        ],
+        { ERR_MSG: 'Exprected an Identifier' }
+      );
+    });
+
+    /* In some cases keywords are allowed as identifiers
+     * e.g. table alias cann be "case"
+     */
+    $.RULE('KwAsIdentifier', () => {
+      $.CONSUME(tokenVocabulary.OneWordKw);
     });
 
     $.RULE('semicolon', () => {

@@ -1,5 +1,6 @@
 import { createToken, Lexer } from 'chevrotain';
 import Identifier from './Identifier';
+import OneWordKw from './oneWordKw';
 
 const ValueKeyword = createToken({
   name: 'ValueKeyword',
@@ -10,20 +11,20 @@ const DateValue = createToken({
   name: 'DateValue',
   pattern: /(sysdate|current_date)/i,
   longer_alt: Identifier,
-  categories: ValueKeyword,
+  categories: [ValueKeyword, OneWordKw],
 });
 
 const TsValue = createToken({
   name: 'TsValue',
   pattern: /(systimestamp|current_timestamp)/i,
   longer_alt: Identifier,
-  categories: ValueKeyword,
+  categories: [ValueKeyword, OneWordKw],
 });
 
 const BoolValue = createToken({
   name: 'BoolValue',
   pattern: Lexer.NA,
-  categories: ValueKeyword,
+  categories: [ValueKeyword, OneWordKw],
 });
 
 const BoolTrue = createToken({

@@ -14,6 +14,7 @@ import transaction from './transaction';
 import values from './values';
 import strings from './strings';
 import objectTokens from './objectTokens';
+import OneWordKw from './oneWordKw';
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -121,6 +122,7 @@ const WhiteSpace = createToken({
 const allTokens = [
   WhiteSpace,
   Quote,
+  OneWordKw,
   // "keywords" appear before the Identifier
   ...pragma,
   ...exception,
