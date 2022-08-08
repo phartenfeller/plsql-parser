@@ -14,6 +14,7 @@ import transaction from './transaction';
 import values from './values';
 import strings from './strings';
 import objectTokens from './objectTokens';
+import { KwIdentifier } from './specialIdentifiers';
 
 /* ===== Keywords ===== */
 const Declare = createToken({
@@ -137,6 +138,13 @@ const ForKw = createToken({
   longer_alt: [ForceKw, ForallKw, FormatJsonKw, Identifier],
 });
 
+const CastKw = createToken({
+  name: 'CastKw',
+  pattern: /cast/i,
+  longer_alt: Identifier,
+  categories: [KwIdentifier],
+});
+
 const Float = createToken({
   name: 'Float',
   pattern: /([0-9]*[.])[0-9]+/,
@@ -173,6 +181,7 @@ const allTokens = [
   ForallKw,
   FormatJsonKw,
   ForKw,
+  CastKw,
   ...dataTypes,
   ...values,
   ...sql,
@@ -195,6 +204,7 @@ const allTokens = [
   ...relationalOperators,
   NoKw,
   // The Identifier must appear after the keywords because all keywords are valid identifiers.
+  KwIdentifier,
   Identifier,
   Float,
   Integer,

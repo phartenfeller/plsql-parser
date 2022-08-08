@@ -1,6 +1,7 @@
 import { createToken, TokenType } from 'chevrotain';
 import exceptions from './exception';
 import Identifier from './Identifier';
+import { KwIdentifier } from './specialIdentifiers';
 
 const If = createToken({
   name: 'If',
@@ -33,6 +34,7 @@ const CaseKw = createToken({
     exceptions.find((e) => e.name === 'CaseNotFoundKw') as TokenType,
     Identifier,
   ],
+  categories: [KwIdentifier],
 });
 
 export default [If, Elsif, Else, Then, CaseKw];

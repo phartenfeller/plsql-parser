@@ -1,9 +1,11 @@
 import { createToken, Lexer } from 'chevrotain';
 import Identifier from './Identifier';
+import { KwIdentifier } from './specialIdentifiers';
 
 const DefinedException = createToken({
   name: 'DefinedException',
   pattern: Lexer.NA,
+  categories: [KwIdentifier],
 });
 
 const AccessIntoNullKw = createToken({

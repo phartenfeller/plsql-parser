@@ -950,6 +950,15 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
+    $.RULE('castValue', () => {
+      $.CONSUME(tokenVocabulary.CastKw);
+      $.CONSUME(tokenVocabulary.OpenBracket);
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.AsKw);
+      $.SUBRULE($.dataType);
+      $.CONSUME(tokenVocabulary.ClosingBracket);
+    });
+
     $.RULE('value', () => {
       $.AT_LEAST_ONE(() => {
         $.OR(
@@ -957,6 +966,7 @@ class PlSqlParser extends CstParser {
             ($.XvalueOr = [
               { ALT: () => $.SUBRULE($.extractValue) },
               { ALT: () => $.SUBRULE($.xmlExtract) },
+              { ALT: () => $.SUBRULE($.castValue) },
               {
                 ALT: () =>
                   $.CONSUME(tokenVocabulary.ValueSeperator, {
@@ -986,8 +996,6 @@ class PlSqlParser extends CstParser {
               // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
               // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
               { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
-              { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // cast(l_xy as number)
-              { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
               // { ALT: () => $.CONSUME(tokenVocabulary.FromKw) }, // extract(hour from sysdate)
               { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
@@ -1552,13 +1560,18 @@ class PlSqlParser extends CstParser {
             $.SUBRULE($.queryOverClause);
           });
           $.OPTION4(() => {
-            $.OPTION5(() => {
-              $.CONSUME(tokenVocabulary.AsKw);
-            });
-            $.CONSUME(tokenVocabulary.Identifier); // alias
+            $.SUBRULE($.queryColumnAlias);
           });
         },
       });
+    });
+
+    $.RULE('queryColumnAlias', () => {
+      $.OPTION(() => {
+        $.CONSUME(tokenVocabulary.AsKw);
+      });
+      debugger;
+      $.CONSUME(tokenVocabulary.KwIdentifier); // alias
     });
 
     $.RULE('sqlJsonTableColumn', () => {
