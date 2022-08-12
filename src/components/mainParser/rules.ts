@@ -1427,8 +1427,7 @@ class PlSqlParser extends CstParser {
       $.SUBRULE($.chainedConditionsWhere);
     });
 
-    $.RULE('groupClause', () => {
-      $.CONSUME(tokenVocabulary.GroupByKw);
+    $.RULE('commaSepIdent', () => {
       $.AT_LEAST_ONE_SEP({
         SEP: tokenVocabulary.Comma,
         DEF: () => {
@@ -1439,6 +1438,21 @@ class PlSqlParser extends CstParser {
           $.CONSUME1(tokenVocabulary.Identifier);
         },
       });
+    });
+
+    $.RULE('groupClause', () => {
+      $.CONSUME(tokenVocabulary.GroupByKw);
+      $.OR([
+        { ALT: () => $.SUBRULE($.commaSepIdent) },
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.OpenBracket); // (
+            $.SUBRULE1($.commaSepIdent);
+            $.CONSUME(tokenVocabulary.ClosingBracket); // )
+          },
+        },
+      ]);
+
       $.OPTION1(() => {
         $.CONSUME(tokenVocabulary.HavingKw);
         $.SUBRULE($.chainedConditions);
