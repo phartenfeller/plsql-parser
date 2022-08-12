@@ -118,6 +118,7 @@ const ForceKw = createToken({
   name: 'ForceKw',
   pattern: /force/i,
   longer_alt: Identifier,
+  categories: [KwIdentifier],
 });
 
 const ForallKw = createToken({

@@ -961,7 +961,7 @@ class PlSqlParser extends CstParser {
 
     $.RULE('identWithCondDotsExtension', () => {
       $.CONSUME(tokenVocabulary.Dot);
-      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.KwIdentifier);
       $.OPTION(() => {
         $.SUBRULE($.valueInBrackets);
       });

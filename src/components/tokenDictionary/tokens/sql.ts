@@ -1,5 +1,6 @@
 import { createToken, Lexer } from 'chevrotain';
 import Identifier from './Identifier';
+import { KwIdentifier } from './specialIdentifiers';
 
 const SelectKw = createToken({
   name: 'SelectKw',
@@ -233,6 +234,7 @@ const PathKw = createToken({
   name: 'PathKw',
   pattern: /path/i,
   longer_alt: Identifier,
+  categories: [KwIdentifier],
 });
 
 export default [
