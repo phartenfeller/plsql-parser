@@ -959,13 +959,46 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.ClosingBracket);
     });
 
-    $.RULE('value', () => {
+    $.RULE('identWithCondDotsExtension', () => {
+      $.CONSUME(tokenVocabulary.Dot);
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.OPTION(() => {
+        $.SUBRULE($.valueInBrackets);
+      });
+    });
+
+    $.RULE('identWithCondDots', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.OPTION(() => {
+        $.OR([
+          { ALT: () => $.SUBRULE($.xmlExtract) },
+          {
+            ALT: () => {
+              $.OPTION1(() => $.SUBRULE($.valueInBrackets));
+              $.OPTION2(() => {
+                $.MANY(() => {
+                  $.SUBRULE($.identWithCondDotsExtension);
+                });
+              });
+            },
+          },
+        ]);
+      });
+    });
+
+    $.RULE('sqlObjectAll', () => {
+      $.CONSUME(tokenVocabulary.Identifier);
+      $.CONSUME(tokenVocabulary.Dot);
+      $.CONSUME(tokenVocabulary.Asterisk);
+    });
+
+    $.RULE('value', (modeSql = false) => {
       $.AT_LEAST_ONE(() => {
-        $.OR(
-          $.XvalueOr ??
+        $.OR([
+          { GATE: () => modeSql, ALT: () => $.SUBRULE($.sqlObjectAll) },
+          ...($.XvalueOr ??
             ($.XvalueOr = [
               { ALT: () => $.SUBRULE($.extractValue) },
-              { ALT: () => $.SUBRULE($.xmlExtract) },
               { ALT: () => $.SUBRULE($.castValue) },
               {
                 ALT: () =>
@@ -992,12 +1025,13 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Null) },
               { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
               { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-              { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+              { ALT: () => $.SUBRULE($.identWithCondDots) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
               // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
               // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
               { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
               // { ALT: () => $.CONSUME(tokenVocabulary.FromKw) }, // extract(hour from sysdate)
-              { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+              //  { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
 
               // excluded from 'valueWithoutOperators'
@@ -1014,8 +1048,8 @@ class PlSqlParser extends CstParser {
               {
                 ALT: () => $.CONSUME(tokenVocabulary.InKw), // bool := 1 in (1, 2)
               },
-            ])
-        );
+            ])),
+        ]);
       });
 
       // $.AT_LEAST_ONE_SEP({
@@ -1056,13 +1090,14 @@ class PlSqlParser extends CstParser {
               { ALT: () => $.CONSUME(tokenVocabulary.Null) },
               { ALT: () => $.CONSUME(tokenVocabulary.ValueKeyword) },
               { ALT: () => $.SUBRULE($.jsonDtypeValue) },
-              { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
+              { ALT: () => $.SUBRULE($.identWithCondDots) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.Identifier) },
               // { ALT: () => $.CONSUME(tokenVocabulary.OpenBracket) },
               // { ALT: () => $.CONSUME(tokenVocabulary.ClosingBracket) },
               { ALT: () => $.CONSUME(tokenVocabulary.Arrow) },
               { ALT: () => $.CONSUME(tokenVocabulary.AsKw) }, // cast(l_xy as number)
               { ALT: () => $.SUBRULE($.dataType) }, // cast(l_xy as number)
-              { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
+              // { ALT: () => $.CONSUME(tokenVocabulary.Dot) },
               { ALT: () => $.CONSUME(tokenVocabulary.Percent) }, // for e. g. sql%rowcount
 
               //{ ALT: () => $.CONSUME(tokenVocabulary.AndOr) }, // chain bool vals
@@ -1566,7 +1601,7 @@ class PlSqlParser extends CstParser {
         SEP: tokenVocabulary.Comma,
         DEF: () => {
           // also includes just >> * <<
-          $.SUBRULE($.value); // direct value / function call / variable
+          $.SUBRULE($.value, { ARGS: [true] }); // direct value / function call / variable
           $.OPTION(() => {
             $.SUBRULE($.queryWithinGroupClause);
           });
