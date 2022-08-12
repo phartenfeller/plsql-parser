@@ -398,6 +398,23 @@ describe('Queries', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
+  test('group by in brackets', () => {
+    const code = `
+      begin
+        select fc.club_name
+             , fl.league_name
+          from football_clubs fc
+          join football_leagues fl
+            on fc.club_league_id = fl.league_id
+         group by (fc.club_name, league_name)
+        ;
+      end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
   test('order by', () => {
     const code = `
       begin
