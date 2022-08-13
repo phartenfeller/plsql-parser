@@ -1370,14 +1370,28 @@ class PlSqlParser extends CstParser {
       $.CONSUME(tokenVocabulary.UpdateKw); // update
       $.SUBRULE($.dottedIdentifier); // table_name
       $.CONSUME(tokenVocabulary.SetKw); // set
-      $.AT_LEAST_ONE_SEP({
-        SEP: tokenVocabulary.Comma,
-        DEF: () => {
-          $.CONSUME2(tokenVocabulary.Identifier); // col_x
-          $.CONSUME(tokenVocabulary.Equals); // =
-          $.SUBRULE($.value); // 4
+      $.OR([
+        {
+          ALT: () => {
+            $.AT_LEAST_ONE_SEP({
+              SEP: tokenVocabulary.Comma,
+              DEF: () => {
+                $.CONSUME2(tokenVocabulary.Identifier); // col_x
+                $.CONSUME(tokenVocabulary.Equals); // =
+                $.SUBRULE($.value); // 4
+              },
+            });
+          },
         },
-      });
+        {
+          ALT: () => {
+            $.CONSUME(tokenVocabulary.RowKw); // row
+            $.CONSUME1(tokenVocabulary.Equals); // =
+            $.CONSUME(tokenVocabulary.Identifier); // l_rowtype
+          },
+        },
+      ]);
+
       $.OPTION(() => {
         // where 1 = 1 ...
         $.SUBRULE($.whereClause);

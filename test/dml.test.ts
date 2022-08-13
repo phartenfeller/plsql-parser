@@ -29,7 +29,7 @@ describe('DML statement', () => {
     expect(result.errors).toStrictEqual([]);
   });
 
-  test('insert other schema', () => {
+  test('update basic', () => {
     const code = `
       begin
         update my_table
@@ -155,6 +155,30 @@ describe('DML statement', () => {
     end;
     `;
 
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('insert into rowtype', () => {
+    const code = `
+    begin
+      insert into my_log_table
+           values l_log_row;
+    end;
+    `;
+
+    const result = parse(code, false);
+    expect(result.errors).toStrictEqual([]);
+  });
+
+  test('update rowtype', () => {
+    const code = `
+      begin
+        update ohter_schema.my_table
+           set row = l_log_row
+         where id = 1;
+      end;
+    `;
     const result = parse(code, false);
     expect(result.errors).toStrictEqual([]);
   });
